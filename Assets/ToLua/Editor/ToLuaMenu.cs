@@ -205,7 +205,7 @@ public static class ToLuaMenu
             return this;
         }
 
-        public BindType AddExtendTypes(Type[] types)
+        public BindType AddExtendTypes(IEnumerable<Type> types)
         {
             foreach (var type in types)
                 AddExtendType(type);
