@@ -205,6 +205,13 @@ public static class ToLuaMenu
             return this;
         }
 
+        public BindType AddExtendTypes(Type[] types)
+        {
+            foreach (var type in types)
+                AddExtendType(type);
+            return this;
+        }
+ 
         public BindType SetWrapName(string str)
         {
             wrapName = str;
