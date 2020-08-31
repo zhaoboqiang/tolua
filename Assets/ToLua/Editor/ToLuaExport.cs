@@ -171,46 +171,16 @@ public static class ToLuaExport
 
     class _MethodBase
     {
-        public bool IsStatic
-        {
-            get
-            {
-                return method.IsStatic;
-            }
-        }
+        public bool IsStatic => method.IsStatic;
 
-        public bool IsConstructor
-        {
-            get
-            {
-                return method.IsConstructor;
-            }
-        }
+        public bool IsConstructor => method.IsConstructor;
 
-        public string Name
-        {
-            get
-            {
-                return method.Name;
-            }
-        }
+        public string Name => method.Name;
 
-        public MethodBase Method
-        {
-            get
-            {
-                return method;
-            }
-        }
+        public MethodBase Method => method;
 
-        public bool IsGenericMethod
-        {
-            get
-            {
-                return method.IsGenericMethod;
-            }
-        }
-        
+        public bool IsGenericMethod => method.IsGenericMethod;
+
 
         MethodBase method;
         ParameterInfo[] args;

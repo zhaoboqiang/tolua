@@ -150,7 +150,8 @@ public static class ToLuaMenu
         {
             if (typeof(System.MulticastDelegate).IsAssignableFrom(t))
             {
-                throw new NotSupportedException(string.Format("\nDon't export Delegate {0} as a class, register it in customDelegateList", LuaMisc.GetTypeName(t)));
+                throw new NotSupportedException(
+                    $"\nDon't export Delegate {LuaMisc.GetTypeName(t)} as a class, register it in customDelegateList");
             }            
 
             //if (IsObsolete(t))
@@ -232,7 +233,7 @@ public static class ToLuaMenu
 
         public static bool IsObsolete(Type type)
         {
-            object[] attrs = type.GetCustomAttributes(true);
+            var attrs = type.GetCustomAttributes(true);
 
             for (int j = 0; j < attrs.Length; j++)
             {
@@ -360,9 +361,9 @@ public static class ToLuaMenu
         }
 
         allTypes.Clear();
-        BindType[] typeList = CustomSettings.customTypeList;
+        var typeList = CustomSettings.customTypeList;
 
-        BindType[] list = GenBindTypes(typeList);
+        var list = GenBindTypes(typeList);
         ToLuaExport.allTypes.AddRange(baseType);
 
         for (int i = 0; i < list.Length; i++)
@@ -391,29 +392,21 @@ public static class ToLuaMenu
 
     static HashSet<Type> GetCustomTypeDelegates()
     {
-        BindType[] list = CustomSettings.customTypeList;
-        HashSet<Type> set = new HashSet<Type>();
-        BindingFlags binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase | BindingFlags.Instance;
+        var list = CustomSettings.customTypeList;
+        var set = new HashSet<Type>();
+        var binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase | BindingFlags.Instance;
 
         for (int i = 0; i < list.Length; i++)
         {
-            Type type = list[i].type;
-            FieldInfo[] fields = type.GetFields(BindingFlags.GetField | BindingFlags.SetField | binding);
-            PropertyInfo[] props = type.GetProperties(BindingFlags.GetProperty | BindingFlags.SetProperty | binding);
-            MethodInfo[] methods = null;
+            var type = list[i].type;
+            var fields = type.GetFields(BindingFlags.GetField | BindingFlags.SetField | binding);
+            var props = type.GetProperties(BindingFlags.GetProperty | BindingFlags.SetProperty | binding);
 
-            if (type.IsInterface)
-            {
-                methods = type.GetMethods();
-            }
-            else
-            {
-                methods = type.GetMethods(BindingFlags.Instance | binding);
-            }
+            var methods = type.IsInterface ? type.GetMethods() : type.GetMethods(BindingFlags.Instance | binding);
 
             for (int j = 0; j < fields.Length; j++)
             {
-                Type t = fields[j].FieldType;
+                var t = fields[j].FieldType;
 
                 if (ToLuaExport.IsDelegateType(t))
                 {
@@ -423,7 +416,7 @@ public static class ToLuaMenu
 
             for (int j = 0; j < props.Length; j++)
             {
-                Type t = props[j].PropertyType;
+                var t = props[j].PropertyType;
 
                 if (ToLuaExport.IsDelegateType(t))
                 {
@@ -433,14 +426,14 @@ public static class ToLuaMenu
 
             for (int j = 0; j < methods.Length; j++)
             {
-                MethodInfo m = methods[j];
+                var m = methods[j];
 
                 if (m.IsGenericMethod)
                 {
                     continue;
                 }
 
-                ParameterInfo[] pifs = m.GetParameters();
+                var pifs = m.GetParameters();
 
                 for (int k = 0; k < pifs.Length; k++)
                 {
@@ -469,13 +462,13 @@ public static class ToLuaMenu
         }
 
         ToLuaExport.Clear();
-        List<DelegateType> list = new List<DelegateType>();
+        var list = new List<DelegateType>();
         list.AddRange(CustomSettings.customDelegateList);
-        HashSet<Type> set = GetCustomTypeDelegates();        
+        var set = GetCustomTypeDelegates();        
 
-        foreach (Type t in set)
+        foreach (var t in set)
         {
-            if (null == list.Find((p) => { return p.type == t; }))
+            if (null == list.Find((p) => p.type == t))
             {
                 list.Add(new DelegateType(t));
             }
@@ -490,13 +483,13 @@ public static class ToLuaMenu
 
     static ToLuaTree<string> InitTree()
     {                        
-        ToLuaTree<string> tree = new ToLuaTree<string>();
-        ToLuaNode<string> root = tree.GetRoot();        
-        BindType[] list = GenBindTypes(CustomSettings.customTypeList);
+        var tree = new ToLuaTree<string>();
+        var root = tree.GetRoot();        
+        var list = GenBindTypes(CustomSettings.customTypeList);
 
         for (int i = 0; i < list.Length; i++)
         {
-            string space = list[i].nameSpace;
+            var space = list[i].nameSpace;
             AddSpaceNameToTree(tree, root, space);
         }
 
@@ -514,20 +507,18 @@ public static class ToLuaMenu
 
     static void AddSpaceNameToTree(ToLuaTree<string> tree, ToLuaNode<string> parent, string space)
     {
-        if (space == null || space == string.Empty)
-        {
+        if (string.IsNullOrEmpty(space))
             return;
-        }
 
-        string[] ns = space.Split(new char[] { '.' });
+        var ns = space.Split(new char[] { '.' });
 
         for (int j = 0; j < ns.Length; j++)
         {
-            List<ToLuaNode<string>> nodes = tree.Find((_t) => { return _t == ns[j]; }, j);
+            var nodes = tree.Find((_t) => _t == ns[j], j);
 
             if (nodes.Count == 0)
             {
-                ToLuaNode<string> node = new ToLuaNode<string>();
+                var node = new ToLuaNode<string>();
                 node.value = ns[j];
                 parent.childs.Add(node);
                 node.parent = parent;
@@ -543,7 +534,7 @@ public static class ToLuaMenu
                 {
                     int count = j;
                     int size = j;
-                    ToLuaNode<string> nodecopy = nodes[i];
+                    var nodecopy = nodes[i];
 
                     while (nodecopy.parent != null)
                     {
@@ -617,20 +608,20 @@ public static class ToLuaMenu
         }
 
         allTypes.Clear();
-        ToLuaTree<string> tree = InitTree();        
-        StringBuilder sb = new StringBuilder();
-        List<DelegateType> dtList = new List<DelegateType>();
+        var tree = InitTree();        
+        var sb = new StringBuilder();
+        var dtList = new List<DelegateType>();
 
-        List<DelegateType> list = new List<DelegateType>();
+        var list = new List<DelegateType>();
         list.AddRange(CustomSettings.customDelegateList);
-        HashSet<Type> set = GetCustomTypeDelegates();
+        var set = GetCustomTypeDelegates();
 
-        List<BindType> backupList = new List<BindType>();
+        var backupList = new List<BindType>();
         backupList.AddRange(allTypes);
-        ToLuaNode<string> root = tree.GetRoot();
+        var root = tree.GetRoot();
         string libname = null;
 
-        foreach (Type t in set)
+        foreach (var t in set)
         {
             if (null == list.Find((p) => { return p.type == t; }))
             {
@@ -801,28 +792,10 @@ public static class ToLuaMenu
 
     static void BuildLuaBundle(string subDir, string sourceDir)
     {
-        string[] files = Directory.GetFiles(sourceDir + subDir, "*.bytes");
-        string bundleName = subDir == null ? "lua.unity3d" : "lua" + subDir.Replace('/', '_') + ".unity3d";
+        var files = Directory.GetFiles(sourceDir + subDir, "*.bytes");
+        var bundleName = subDir == null ? "lua.unity3d" : "lua" + subDir.Replace('/', '_') + ".unity3d";
         bundleName = bundleName.ToLower();
 
-#if UNITY_4_6 || UNITY_4_7
-        List<Object> list = new List<Object>();
-
-        for (int i = 0; i < files.Length; i++)
-        {
-            Object obj = AssetDatabase.LoadMainAssetAtPath(files[i]);
-            list.Add(obj);
-        }
-
-        BuildAssetBundleOptions options = BuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets | BuildAssetBundleOptions.DeterministicAssetBundle;
-
-        if (files.Length > 0)
-        {
-            string output = string.Format("{0}/{1}/" + bundleName, Application.streamingAssetsPath, GetOS());
-            File.Delete(output);
-            BuildPipeline.BuildAssetBundle(null, list.ToArray(), output, options, EditorUserBuildSettings.activeBuildTarget);            
-        }
-#else
         for (int i = 0; i < files.Length; i++)
         {
             AssetImporter importer = AssetImporter.GetAtPath(files[i]);
@@ -833,7 +806,6 @@ public static class ToLuaMenu
                 importer.assetBundleVariant = null;
             }
         }
-#endif
     }
 
     static void ClearAllLuaFiles()
@@ -922,7 +894,7 @@ public static class ToLuaMenu
     [MenuItem("Lua/Clear wrap files", false, 6)]
     static void ClearLuaWraps()
     {
-        string[] files = Directory.GetFiles(CustomSettings.saveDir, "*.cs", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(CustomSettings.saveDir, "*.cs", SearchOption.TopDirectoryOnly);
 
         for (int i = 0; i < files.Length; i++)
         {
@@ -930,11 +902,11 @@ public static class ToLuaMenu
         }
 
         ToLuaExport.Clear();
-        List<DelegateType> list = new List<DelegateType>();
+        var list = new List<DelegateType>();
         ToLuaExport.GenDelegates(list.ToArray());
         ToLuaExport.Clear();
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLineEx("using System;");
         sb.AppendLineEx("using LuaInterface;");
         sb.AppendLineEx();
@@ -965,7 +937,7 @@ public static class ToLuaMenu
             return;
         }
 
-        string[] files = Directory.GetFiles(sourceDir, searchPattern, option);
+        var files = Directory.GetFiles(sourceDir, searchPattern, option);
         int len = sourceDir.Length;
 
         if (sourceDir[len - 1] == '/' || sourceDir[len - 1] == '\\')
@@ -1009,7 +981,7 @@ public static class ToLuaMenu
 
     static void GetAllDirs(string dir, List<string> list)
     {
-        string[] dirs = Directory.GetDirectories(dir);
+        var dirs = Directory.GetDirectories(dir);
         list.AddRange(dirs);
 
         for (int i = 0; i < dirs.Length; i++)
@@ -1049,11 +1021,7 @@ public static class ToLuaMenu
                 File.Copy(path + "/Luajit64/Build.bat", tempDir + "/Build.bat", true);
             }
         }
-#if UNITY_5_3_OR_NEWER        
         else if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
-#else
-        else if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iPhone)
-#endif        
         {
             //Debug.Log("iOS默认用64位，32位自行考虑");
             File.Copy(path + "/Luajit64/Build.bat", tempDir + "/Build.bat", true);
@@ -1123,16 +1091,11 @@ public static class ToLuaMenu
         ClearAllLuaFiles();
         CreateStreamDir(GetOS());
 
-#if UNITY_4_6 || UNITY_4_7
-        string tempDir = CreateStreamDir("Lua");
-#else
         string tempDir = Application.dataPath + "/temp/Lua";
 
         if (!File.Exists(tempDir))
-        {
             Directory.CreateDirectory(tempDir);
-        }        
-#endif
+        
         CopyLuaBytesFiles(LuaConst.luaDir, tempDir);
         CopyLuaBytesFiles(LuaConst.toluaDir, tempDir);
 
@@ -1150,7 +1113,7 @@ public static class ToLuaMenu
         BuildLuaBundle(null, "Assets/temp/Lua");
 
         AssetDatabase.SaveAssets();        
-        string output = string.Format("{0}/{1}", Application.streamingAssetsPath, GetOS());        
+        string output = $"{Application.streamingAssetsPath}/{GetOS()}";        
         BuildPipeline.BuildAssetBundles(output, BuildAssetBundleOptions.DeterministicAssetBundle, EditorUserBuildSettings.activeBuildTarget);
 
         //Directory.Delete(Application.dataPath + "/temp/", true);
@@ -1173,16 +1136,10 @@ public static class ToLuaMenu
         ClearAllLuaFiles();                
         CreateStreamDir(GetOS());
 
-#if UNITY_4_6 || UNITY_4_7
-        string tempDir = CreateStreamDir("Lua");
-#else
         string tempDir = Application.dataPath + "/temp/Lua";
 
         if (!File.Exists(tempDir))
-        {
             Directory.CreateDirectory(tempDir);
-        }
-#endif
 
         string path = Application.dataPath.Replace('\\', '/');
         path = path.Substring(0, path.LastIndexOf('/'));        
@@ -1195,10 +1152,9 @@ public static class ToLuaMenu
         AssetDatabase.Refresh();
 
         string sourceDir = tempDir + "/Out";
-        List<string> dirs = new List<string>();        
+        var dirs = new List<string>();        
         GetAllDirs(sourceDir, dirs);
 
-#if UNITY_5 || UNITY_5_3_OR_NEWER
 		for (int i = 0; i < dirs.Count; i++)
         {
             string str = dirs[i].Remove(0, sourceDir.Length);
@@ -1208,19 +1164,10 @@ public static class ToLuaMenu
         BuildLuaBundle(null, "Assets/temp/Lua/Out");
 
         AssetDatabase.Refresh();
-        string output = string.Format("{0}/{1}", Application.streamingAssetsPath, GetOS());
+        var output = $"{Application.streamingAssetsPath}/{GetOS()}";
         BuildPipeline.BuildAssetBundles(output, BuildAssetBundleOptions.DeterministicAssetBundle, EditorUserBuildSettings.activeBuildTarget);
         Directory.Delete(Application.dataPath + "/temp/", true);
-#else
-        for (int i = 0; i < dirs.Count; i++)
-        {
-            string str = dirs[i].Remove(0, sourceDir.Length);
-            BuildLuaBundle(str.Replace('\\', '/'), "Assets/StreamingAssets/Lua/Out");
-        }
 
-        BuildLuaBundle(null, "Assets/StreamingAssets/Lua/Out/");
-        Directory.Delete(tempDir, true);
-#endif
         AssetDatabase.Refresh();
     }
 
@@ -1325,7 +1272,7 @@ public static class ToLuaMenu
         bool EnableSymbols = false;
         if (UpdateMonoCecil(ref EnableSymbols) != -1)
         {
-            BuildTargetGroup curBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            var curBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
             string existSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(curBuildTargetGroup);
             if (!existSymbols.Contains("ENABLE_LUA_INJECTION"))
             {
@@ -1347,7 +1294,7 @@ public static class ToLuaMenu
             return;
         }
 
-        BuildTargetGroup curBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+        var curBuildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
         string existSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(curBuildTargetGroup);
         PlayerSettings.SetScriptingDefineSymbolsForGroup(curBuildTargetGroup, existSymbols.Replace("ENABLE_LUA_INJECTION", ""));
         Debug.Log("Lua Injection Removed!");
@@ -1359,34 +1306,16 @@ public static class ToLuaMenu
         string appPath = Path.GetDirectoryName(appFileName);
         string directory = appPath + "/Data/Managed/";
         if (UnityEngine.Application.platform == UnityEngine.RuntimePlatform.OSXEditor)
-        {
             directory = appPath.Substring(0, appPath.IndexOf("MacOS")) + "Managed/";
-        }
-        string suitedMonoCecilPath = directory +
-#if UNITY_2017_1_OR_NEWER
-            "Unity.Cecil.dll";
-#else
-            "Mono.Cecil.dll";
-#endif
-        string suitedMonoCecilMdbPath = directory +
-#if UNITY_2017_1_OR_NEWER
-            "Unity.Cecil.Mdb.dll";
-#else
-            "Mono.Cecil.Mdb.dll";
-#endif
-        string suitedMonoCecilPdbPath = directory +
-#if UNITY_2017_1_OR_NEWER
-            "Unity.Cecil.Pdb.dll";
-#else
-            "Mono.Cecil.Pdb.dll";
-#endif
+        
+        string suitedMonoCecilPath = directory + "Unity.Cecil.dll";
+        string suitedMonoCecilMdbPath = directory + "Unity.Cecil.Mdb.dll";
+        string suitedMonoCecilPdbPath = directory + "Unity.Cecil.Pdb.dll";
         string suitedMonoCecilToolPath = directory + "Unity.CecilTools.dll";
 
         if (!File.Exists(suitedMonoCecilPath)
-#if UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_3_OR_NEWER
             && !File.Exists(suitedMonoCecilMdbPath)
             && !File.Exists(suitedMonoCecilPdbPath)
-#endif
         )
         {
             EnableSymbols = false;
@@ -1404,10 +1333,8 @@ public static class ToLuaMenu
         try
         {
             bInjectionToolUpdated = TryUpdate(suitedMonoCecilPath, existMonoCecilPath) ? true : bInjectionToolUpdated;
-#if UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_3_OR_NEWER
-            bInjectionToolUpdated = TryUpdate(suitedMonoCecilPdbPath, existMonoCecilPdbPath) ? true : bInjectionToolUpdated;
-            bInjectionToolUpdated = TryUpdate(suitedMonoCecilMdbPath, existMonoCecilMdbPath) ? true : bInjectionToolUpdated;
-#endif
+            bInjectionToolUpdated = TryUpdate(suitedMonoCecilPdbPath, existMonoCecilPdbPath) || bInjectionToolUpdated;
+            bInjectionToolUpdated = TryUpdate(suitedMonoCecilMdbPath, existMonoCecilMdbPath) || bInjectionToolUpdated;
             TryUpdate(suitedMonoCecilToolPath, existMonoCecilToolPath);
         }
         catch (Exception e)
@@ -1438,12 +1365,12 @@ public static class ToLuaMenu
             return string.Empty;
         }
 
-        FileStream fs = new FileStream(file, FileMode.Open);
+        var fs = new FileStream(file, FileMode.Open);
         System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-        byte[] retVal = md5.ComputeHash(fs);
+        var retVal = md5.ComputeHash(fs);
         fs.Close();
 
-        StringBuilder sb = StringBuilderCache.Acquire();
+        var sb = StringBuilderCache.Acquire();
         for (int i = 0; i < retVal.Length; i++)
         {
             sb.Append(retVal[i].ToString("x2"));
