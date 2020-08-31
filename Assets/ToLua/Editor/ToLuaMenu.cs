@@ -164,24 +164,23 @@ public static class ToLuaMenu
             name = ToLuaExport.CombineTypeStr(nameSpace, libName);            
             libName = ToLuaExport.ConvertToLibSign(libName);
 
-            if (name == "object")
+            switch (name)
             {
-                wrapName = "System_Object";
-                name = "System.Object";
-            }
-            else if (name == "string")
-            {
-                wrapName = "System_String";
-                name = "System.String";
-            }
-            else
-            {
-                wrapName = name.Replace('.', '_');
-                wrapName = ToLuaExport.ConvertToLibSign(wrapName);
+                case "object":
+                    wrapName = "System_Object";
+                    name = "System.Object";
+                    break;
+                case "string":
+                    wrapName = "System_String";
+                    name = "System.String";
+                    break;
+                default:
+                    wrapName = name.Replace('.', '_');
+                    wrapName = ToLuaExport.ConvertToLibSign(wrapName);
+                    break;
             }
 
-            int index = CustomSettings.staticClassTypes.IndexOf(type);
-
+            var index = Array.IndexOf(CustomSettings.staticClassTypes, type);
             if (index >= 0 || (type.IsAbstract && type.IsSealed))
             {
                 IsStatic = true;                
@@ -251,12 +250,10 @@ public static class ToLuaMenu
 
     static void AutoAddBaseType(BindType bt, bool beDropBaseType)
     {
-        Type t = bt.baseType;
+        var t = bt.baseType;
 
         if (t == null)
-        {
             return;
-        }
 
         if (CustomSettings.sealedList.Contains(t))
         {
@@ -437,7 +434,7 @@ public static class ToLuaMenu
 
                 for (int k = 0; k < pifs.Length; k++)
                 {
-                    Type t = pifs[k].ParameterType;
+                    var t = pifs[k].ParameterType;
                     if (t.IsByRef) t = t.GetElementType();
 
                     if (ToLuaExport.IsDelegateType(t))
@@ -465,7 +462,6 @@ public static class ToLuaMenu
         var list = new List<DelegateType>();
         list.AddRange(CustomSettings.customDelegateList);
         var set = GetCustomTypeDelegates();        
-
         foreach (var t in set)
         {
             if (null == list.Find((p) => p.type == t))
@@ -493,12 +489,12 @@ public static class ToLuaMenu
             AddSpaceNameToTree(tree, root, space);
         }
 
-        DelegateType[] dts = CustomSettings.customDelegateList;
+        var dts = CustomSettings.customDelegateList;
         string str = null;      
 
         for (int i = 0; i < dts.Length; i++)
         {            
-            string space = ToLuaExport.GetNameSpace(dts[i].type, out str);
+            var space = ToLuaExport.GetNameSpace(dts[i].type, out str);
             AddSpaceNameToTree(tree, root, space);            
         }
 
@@ -555,7 +551,7 @@ public static class ToLuaMenu
 
                 if (!flag)
                 {
-                    ToLuaNode<string> nnode = new ToLuaNode<string>();
+                    var nnode = new ToLuaNode<string>();
                     nnode.value = ns[j];
                     nnode.layer = j;
                     nnode.parent = parent;
@@ -619,14 +615,13 @@ public static class ToLuaMenu
         var backupList = new List<BindType>();
         backupList.AddRange(allTypes);
         var root = tree.GetRoot();
-        string libname = null;
 
         foreach (var t in set)
         {
-            if (null == list.Find((p) => { return p.type == t; }))
+            if (null == list.Find((p) => p.type == t))
             {
-                DelegateType dt = new DelegateType(t);                                
-                AddSpaceNameToTree(tree, root, ToLuaExport.GetNameSpace(t, out libname));
+                var dt = new DelegateType(t);                                
+                AddSpaceNameToTree(tree, root, ToLuaExport.GetNameSpace(t, out _));
                 list.Add(dt);
             }
         }
@@ -648,12 +643,10 @@ public static class ToLuaMenu
         Action<ToLuaNode<string>> begin = (node) =>
         {
             if (node.value == null)
-            {
                 return;
-            }
 
-            sb.AppendFormat("\t\tL.BeginModule(\"{0}\");\r\n", node.value);
-            string space = GetSpaceNameFromTree(node);
+            sb.Append($"\t\tL.BeginModule(\"{node.value}\");\r\n");
+            var space = GetSpaceNameFromTree(node);
 
             GenRegisterInfo(space, sb, list, dtList);
         };
@@ -669,14 +662,14 @@ public static class ToLuaMenu
         tree.DepthFirstTraversal(begin, end, tree.GetRoot());        
         sb.AppendLineEx("\t\tL.EndModule();");
         
-        if (CustomSettings.dynamicList.Count > 0)
+        if (CustomSettings.dynamicList.Length > 0)
         {
             sb.AppendLineEx("\t\tL.BeginPreLoad();");            
 
-            for (int i = 0; i < CustomSettings.dynamicList.Count; i++)
+            for (int i = 0; i < CustomSettings.dynamicList.Length; i++)
             {
-                Type t1 = CustomSettings.dynamicList[i];
-                BindType bt = backupList.Find((p) => { return p.type == t1; });
+                var t1 = CustomSettings.dynamicList[i];
+                var bt = backupList.Find((p) => p.type == t1);
                 if (bt != null) sb.AppendFormat("\t\tL.AddPreLoad(\"{0}\", LuaOpen_{1}, typeof({0}));\r\n", bt.name, bt.wrapName);
             }
 
@@ -686,27 +679,25 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
         sb.AppendLineEx("\t}");
 
-        for (int i = 0; i < dtList.Count; i++)
+        foreach (var dt in dtList)
         {
-            ToLuaExport.GenEventFunction(dtList[i].type, sb);
+            ToLuaExport.GenEventFunction(dt.type, sb);
         }
 
-        if (CustomSettings.dynamicList.Count > 0)
+        foreach (var t in CustomSettings.dynamicList)
         {
-            
-            for (int i = 0; i < CustomSettings.dynamicList.Count; i++)
+            var bt = backupList.Find((p) => p.type == t);
+            if (bt != null)
             {
-                Type t = CustomSettings.dynamicList[i];
-                BindType bt = backupList.Find((p) => { return p.type == t; });
-                if (bt != null) GenPreLoadFunction(bt, sb);
-            }            
-        }
+                GenPreLoadFunction(bt, sb);
+            }
+        }            
 
         sb.AppendLineEx("}\r\n");
         allTypes.Clear();
-        string file = CustomSettings.saveDir + "LuaBinder.cs";
+        var file = CustomSettings.saveDir + "LuaBinder.cs";
 
-        using (StreamWriter textWriter = new StreamWriter(file, false, Encoding.UTF8))
+        using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
         {
             textWriter.Write(sb.ToString());
             textWriter.Flush();
@@ -721,29 +712,27 @@ public static class ToLuaMenu
     {
         for (int i = 0; i < allTypes.Count; i++)
         {
-            Type dt = CustomSettings.dynamicList.Find((p) => { return allTypes[i].type == p; });
+            var dt = Array.Find(CustomSettings.dynamicList, (p) => allTypes[i].type == p);
 
             if (dt == null && allTypes[i].nameSpace == nameSpace)
             {
-                string str = "\t\t" + allTypes[i].wrapName + "Wrap.Register(L);\r\n";
+                var str = "\t\t" + allTypes[i].wrapName + "Wrap.Register(L);\r\n";
                 sb.Append(str);
                 allTypes.RemoveAt(i--);
             }
         }
 
-        string funcName = null;
-
         for (int i = 0; i < delegateList.Count; i++)
         {
-            DelegateType dt = delegateList[i];
-            Type type = dt.type;
-            string typeSpace = ToLuaExport.GetNameSpace(type, out funcName);
+            var dt = delegateList[i];
+            var type = dt.type;
+            var typeSpace = ToLuaExport.GetNameSpace(type, out var funcName);
 
             if (typeSpace == nameSpace)
             {
                 funcName = ToLuaExport.ConvertToLibSign(funcName);
-                string abr = dt.abr;
-                abr = abr == null ? funcName : abr;
+                var abr = dt.abr;
+                abr = abr ?? funcName;
                 sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", abr, dt.name);
                 wrappedDelegatesCache.Add(dt);
             }
@@ -752,7 +741,7 @@ public static class ToLuaMenu
 
     static void GenPreLoadFunction(BindType bt, StringBuilder sb)
     {
-        string funcName = "LuaOpen_" + bt.wrapName;
+        var funcName = "LuaOpen_" + bt.wrapName;
 
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]");
         sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", funcName);
@@ -814,7 +803,7 @@ public static class ToLuaMenu
 
         if (Directory.Exists(osPath))
         {
-            string[] files = Directory.GetFiles(osPath, "Lua*.unity3d");
+            var files = Directory.GetFiles(osPath, "Lua*.unity3d");
 
             for (int i = 0; i < files.Length; i++)
             {
@@ -918,9 +907,9 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t}");
         sb.AppendLineEx("}");
 
-        string file = CustomSettings.saveDir + "LuaBinder.cs";
+        var file = CustomSettings.saveDir + "LuaBinder.cs";
 
-        using (StreamWriter textWriter = new StreamWriter(file, false, Encoding.UTF8))
+        using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
         {
             textWriter.Write(sb.ToString());
             textWriter.Flush();
@@ -992,7 +981,7 @@ public static class ToLuaMenu
 
     static void CopyDirectory(string source, string dest, string searchPattern = "*.lua", SearchOption option = SearchOption.AllDirectories)
     {                
-        string[] files = Directory.GetFiles(source, searchPattern, option);
+        var files = Directory.GetFiles(source, searchPattern, option);
 
         for (int i = 0; i < files.Length; i++)
         {
@@ -1037,14 +1026,14 @@ public static class ToLuaMenu
     public static void BuildLuaToResources()
     {
         ClearAllLuaFiles();
-        string tempDir = CreateStreamDir("Lua");
+        var tempDir = CreateStreamDir("Lua");
         string destDir = Application.dataPath + "/Resources" + "/Lua";        
 
         string path = Application.dataPath.Replace('\\', '/');
         path = path.Substring(0, path.LastIndexOf('/'));
         CopyBuildBat(path, tempDir);
         CopyLuaBytesFiles(LuaConst.luaDir, tempDir, false);
-        Process proc = Process.Start(tempDir + "/Build.bat");
+        var proc = Process.Start(tempDir + "/Build.bat");
         proc.WaitForExit();
         CopyLuaBytesFiles(tempDir + "/Out/", destDir, false, "*.lua.bytes");
         CopyLuaBytesFiles(LuaConst.toluaDir, destDir);

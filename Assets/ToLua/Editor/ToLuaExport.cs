@@ -29,6 +29,7 @@ using LuaInterface;
 
 using Object = UnityEngine.Object;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 
@@ -1332,12 +1333,11 @@ public static class ToLuaExport
 
     static void GenRegisterEventTypes()
     {
-        List<Type> list = new List<Type>();
+        var list = new List<Type>();
 
         foreach (Type t in eventSet)
         {
-            string funcName = null;
-            string space = GetNameSpace(t, out funcName);
+            string space = GetNameSpace(t, out var funcName);
 
             if (space != className)
             {
@@ -1349,16 +1349,13 @@ public static class ToLuaExport
             int index = Array.FindIndex<DelegateType>(CustomSettings.customDelegateList, (p) => { return p.type == t; });
             string abr = null;
             if (index >= 0) abr = CustomSettings.customDelegateList[index].abr;
-            abr = abr == null ? funcName : abr;
+            abr = abr ?? funcName;
             funcName = ConvertToLibSign(space) + "_" + funcName;
 
             sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", abr, funcName);
         }
 
-        for (int i = 0; i < list.Count; i++)
-        {
-            eventSet.Remove(list[i]);
-        }
+        eventSet.Clear();
     }
 
     static void GenRegisterFunction()
@@ -1676,7 +1673,7 @@ public static class ToLuaExport
     {
         if (count != 0)
         {
-            return string.Format("count - {0}", count);
+            return $"count - {count}";
         }
 
         return "count";
@@ -1685,9 +1682,7 @@ public static class ToLuaExport
     static void GenOutFunction()
     {
         if (isStaticClass || CustomSettings.outList.IndexOf(type) < 0)
-        {
             return;
-        }
 
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]");
         sb.AppendLineEx("\tstatic int get_out(IntPtr L)");
@@ -1716,9 +1711,7 @@ public static class ToLuaExport
 	static void InitCtorList()
 	{
 		if (isStaticClass || type.IsAbstract || typeof(MonoBehaviour).IsAssignableFrom(type))
-		{
 			return;
-		}
 
 		ConstructorInfo[] constructors = type.GetConstructors(BindingFlags.Instance | binding);
 

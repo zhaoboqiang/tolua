@@ -16,8 +16,7 @@ public static class CustomSettings
 
     //导出时强制做为静态类的类型(注意customTypeList 还要添加这个类型才能导出)
     //unity 有些类作为sealed class, 其实完全等价于静态类
-    public static List<Type> staticClassTypes = new List<Type>
-    {        
+    public static Type[] staticClassTypes => new[] {        
         typeof(UnityEngine.Application),
         typeof(UnityEngine.Time),
         typeof(UnityEngine.Screen),
@@ -32,8 +31,7 @@ public static class CustomSettings
     };
 
     //附加导出委托类型(在导出委托时, customTypeList 中牵扯的委托类型都会导出， 无需写在这里)
-    public static DelegateType[] customDelegateList = 
-    {        
+    public static DelegateType[] customDelegateList => new[] {        
         _DT(typeof(Action)),                
         _DT(typeof(UnityEngine.Events.UnityAction)),
         _DT(typeof(System.Predicate<int>)),
@@ -43,8 +41,7 @@ public static class CustomSettings
     };
 
     //在这里添加你要导出注册到lua的类型列表
-    public static BindType[] customTypeList =
-    {                
+    public static BindType[] customTypeList => new[] {                
         //------------------------为例子导出--------------------------------
         //_GT(typeof(TestEventListener)),
         //_GT(typeof(TestProtol)),
@@ -104,7 +101,6 @@ public static class CustomSettings
         _GT(typeof(Texture2D)),
         _GT(typeof(Shader)),        
         _GT(typeof(Renderer)),
-        _GT(typeof(WWW)),
         _GT(typeof(Screen)),        
         _GT(typeof(CameraClearFlags)),
         _GT(typeof(AudioClip)),        
@@ -113,9 +109,6 @@ public static class CustomSettings
         _GT(typeof(AsyncOperation)).SetBaseType(typeof(System.Object)),        
         _GT(typeof(LightType)),
         _GT(typeof(SleepTimeout)),
-#if UNITY_5_3_OR_NEWER && !UNITY_5_6_OR_NEWER
-        _GT(typeof(UnityEngine.Experimental.Director.DirectorPlayer)),
-#endif
         _GT(typeof(Animator)),
         _GT(typeof(Input)),
         _GT(typeof(KeyCode)),
@@ -124,11 +117,6 @@ public static class CustomSettings
        
 
         _GT(typeof(MeshRenderer)),
-#if !UNITY_5_4_OR_NEWER
-        _GT(typeof(ParticleEmitter)),
-        _GT(typeof(ParticleRenderer)),
-        _GT(typeof(ParticleAnimator)), 
-#endif
 
         _GT(typeof(BoxCollider)),
         _GT(typeof(MeshCollider)),
@@ -146,32 +134,23 @@ public static class CustomSettings
 
         _GT(typeof(QualitySettings)),
         _GT(typeof(RenderSettings)),                                                   
-        _GT(typeof(BlendWeights)),           
+        _GT(typeof(SkinWeights)),           
         _GT(typeof(RenderTexture)),
         _GT(typeof(Resources)),     
         _GT(typeof(LuaProfiler)),
     };
 
-    public static List<Type> dynamicList = new List<Type>()
-    {
+    public static Type[] dynamicList => new[] {
         typeof(MeshRenderer),
-#if !UNITY_5_4_OR_NEWER
-        typeof(ParticleEmitter),
-        typeof(ParticleRenderer),
-        typeof(ParticleAnimator),
-#endif
-
         typeof(BoxCollider),
         typeof(MeshCollider),
         typeof(SphereCollider),
         typeof(CharacterController),
         typeof(CapsuleCollider),
-
         typeof(Animation),
         typeof(AnimationClip),
         typeof(AnimationState),
-
-        typeof(BlendWeights),
+        typeof(SkinWeights),
         typeof(RenderTexture),
         typeof(Rigidbody),
     };
@@ -180,7 +159,6 @@ public static class CustomSettings
     //使用方法参见例子14
     public static List<Type> outList = new List<Type>()
     {
-        
     };
         
     //ngui优化，下面的类没有派生类，可以作为sealed class
