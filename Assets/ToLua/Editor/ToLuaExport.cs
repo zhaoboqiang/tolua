@@ -4040,7 +4040,7 @@ public static class ToLuaExport
 
         for (int i = 0; i < list.Length; i++)
         {
-            string type = list[i].strType;
+            var type = list[i].strType;
             string name = list[i].name;
             sb.AppendFormat("\t\tStackTraits<{0}>.Push = Push_{1};\r\n", type, name);            
         }
@@ -4071,7 +4071,7 @@ public static class ToLuaExport
             sb.AppendLineEx("\t}\r\n");
 
             //生成转换函数1
-            sb.AppendFormat("\tpublic {0} {1}(LuaFunction func, LuaTable self, bool flag)\r\n", strType, name);
+            sb.AppendFormat("\tpublic static {0} {1}(LuaFunction func, LuaTable self, bool flag)\r\n", strType, name);
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tif (func == null)");
             sb.AppendLineEx("\t\t{");
@@ -4143,8 +4143,8 @@ public static class ToLuaExport
 
         if (c1 != c2) return false;
 
-        ParameterInfo[] lp = a.GetParameters();
-        ParameterInfo[] rp = b.GetParameters();
+        var lp = a.GetParameters();
+        var rp = b.GetParameters();
 
         var ll = new List<Type>();
         var lr = new List<Type>();
@@ -4221,7 +4221,7 @@ public static class ToLuaExport
 
             if (field != null)
             {
-                string str = field.GetValue(null) as string;
+                var str = field.GetValue(null) as string;
                 var spaces = str.Split(';');
 
                 for (int i = 0; i < spaces.Length; i++)
