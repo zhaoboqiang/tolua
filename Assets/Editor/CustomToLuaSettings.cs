@@ -11,15 +11,15 @@ public class CustomToLuaSettings : ToLuaSettings
     static CustomToLuaSettings()
     {
         ToLuaSettingsUtility.Initialize(new CustomToLuaSettings());
-        
+
         LuaSettingsUtility.Initialize(new LuaSettings
         {
             luaRegister = LuaBinder.Register,
             delegates = LuaDelegates.delegates
         });
     }
-    
-    public string saveDir => Application.dataPath + "/Source/Generate/";    
+
+    public string saveDir => Application.dataPath + "/Source/Generate/";
     public string toluaBaseType => Application.dataPath + "/ToLua/BaseType/";
     public string baseLuaDir => Application.dataPath + "/ToLua/Lua/";
     public string injectionFilesPath => Application.dataPath + "/ToLua/Injection/";
@@ -30,9 +30,13 @@ public class CustomToLuaSettings : ToLuaSettings
         {
             return new[]
             {
+                "Assembly-CSharp-Editor",
+                "CString",
+                "Debugger",
                 "LuaInterface.Editor",
                 "ExCSS.Unity",
                 "JetBrains.Rider.Unity.Editor.Plugin.Full.Repacked",
+                "Mono.Security",
                 "mscorlib",
                 "netstandard",
                 "nunit.framework",
@@ -41,6 +45,9 @@ public class CustomToLuaSettings : ToLuaSettings
                 "System.Xml",
                 "System.Xml.Linq",
                 "Unity.Cecil",
+                "ToLua.Injection.Editor",
+                "ToLua.Scripts",
+                "ToLua.Scripts.Editor",
                 "Unity.CollabProxy.Editor",
                 "Unity.CompilationPipeline.Common",
                 "Unity.Legacy.NRefactory",
@@ -116,9 +123,10 @@ public class CustomToLuaSettings : ToLuaSettings
             };
         }
     }
-    
 
-    public Type[] dynamicList => new[] {
+
+    public Type[] dynamicList => new[]
+    {
         typeof(MeshRenderer),
         typeof(BoxCollider),
         typeof(MeshCollider),
@@ -138,7 +146,7 @@ public class CustomToLuaSettings : ToLuaSettings
     public List<Type> outList => new List<Type>()
     {
     };
-        
+
     //ngui优化，下面的类没有派生类，可以作为sealed class
     public List<Type> sealedList => new List<Type>()
     {
@@ -180,4 +188,3 @@ public class CustomToLuaSettings : ToLuaSettings
         typeof(Localization),*/
     };
 }
-
