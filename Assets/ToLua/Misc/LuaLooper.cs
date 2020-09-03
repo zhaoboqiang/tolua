@@ -62,14 +62,14 @@ public class LuaLooper : MonoBehaviour
 
     LuaBeatEvent GetEvent(string name)
     {
-        LuaTable table = luaState.GetTable(name);
+        var table = luaState.GetTable(name);
 
         if (table == null)
         {
-            throw new LuaException(string.Format("Lua table {0} not exists", name));
+            throw new LuaException($"Lua table {name} not exists");
         }
 
-        LuaBeatEvent e = new LuaBeatEvent(table);
+        var e = new LuaBeatEvent(table);
         table.Dispose();
         table = null;
         return e;
@@ -77,7 +77,7 @@ public class LuaLooper : MonoBehaviour
 
     void ThrowException()
     {
-        string error = luaState.LuaToString(-1);
+        var error = luaState.LuaToString(-1);
         luaState.LuaPop(2);                
         throw new LuaException(error, LuaException.GetLastError());
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -8,10 +7,11 @@ using System.Reflection;
 using UnityEditorInternal;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using LuaInterface.Editor;
 
 public class InjectionBlackListGenerator : EditorWindow
 {
-    public static string blackListFilePath = CustomSettings.injectionFilesPath + "InjectionBlackList.txt";
+    public static string blackListFilePath = ToLuaSettingsUtility.Settings.injectionFilesPath + "InjectionBlackList.txt";
     public static Action onBlackListGenerated;
 
     static string pathsInfoSavedPath;
@@ -335,7 +335,7 @@ public class InjectionBlackListGenerator : EditorWindow
     {
         if (pathsInfoSavedPath == null)
         {
-            pathsInfoSavedPath = CustomSettings.injectionFilesPath + "LuaInjectionSkipPaths.txt";
+            pathsInfoSavedPath = ToLuaSettingsUtility.Settings.injectionFilesPath + "LuaInjectionSkipPaths.txt";
         }
         if (paths != null)
         {
@@ -349,15 +349,16 @@ public class InjectionBlackListGenerator : EditorWindow
         else
         {
             paths = new List<string>();
-            string toluaPath = GetRelativePath(CustomSettings.injectionFilesPath.Substring(0, CustomSettings.injectionFilesPath.Length - "Injection/".Length));
+            var toluaPath = GetRelativePath(ToLuaSettingsUtility.Settings.injectionFilesPath.Substring(0, 
+                ToLuaSettingsUtility.Settings.injectionFilesPath.Length - "Injection/".Length));
             paths.Add(toluaPath + "Core/");
             paths.Add(toluaPath + "Injection/");
             paths.Add(toluaPath + "Misc/");
             paths.Add(toluaPath + "Injection/");
             paths.Add(toluaPath + "Misc/");
             paths.Add(Application.dataPath + "/Plugins/");
-            paths.Add(CustomSettings.toluaBaseType);
-            paths.Add(GetRelativePath(CustomSettings.saveDir));
+            paths.Add(ToLuaSettingsUtility.Settings.toluaBaseType);
+            paths.Add(GetRelativePath(ToLuaSettingsUtility.Settings.saveDir));
         }
     }
 

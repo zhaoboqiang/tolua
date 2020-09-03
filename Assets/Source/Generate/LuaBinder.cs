@@ -1,9 +1,8 @@
-﻿using System;
-using LuaInterface;
+﻿using LuaInterface;
 
-public static class LuaBinder
+public static class LuaBinder 
 {
-	public static void Bind(LuaState L)
+	public static void Register(LuaState L)
 	{
 		throw new LuaException("Please generate LuaBinder files first!");
 	}

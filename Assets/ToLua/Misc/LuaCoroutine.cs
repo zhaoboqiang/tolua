@@ -269,7 +269,7 @@ public static class LuaCoroutine
     private static int WrapLuaCoroutine(IntPtr L)
     {
         LuaFunction func = ToLua.ToLuaFunction(L, 1);
-        IEnumerator enumerator = CoWrap(func);
+        var enumerator = CoWrap(func);
         ToLua.Push(L, enumerator);
         return 1;
     }

@@ -27,16 +27,16 @@ namespace LuaInterface
 {
     public static class TypeTraits<T>
     {        
-        static public Func<IntPtr, int, bool> Check = DefaultCheck;
-        static public Type type = typeof(T);
-        static public bool IsValueType = type.IsValueType;
-        static public bool IsArray = type.IsArray;
+        public static Func<IntPtr, int, bool> Check = DefaultCheck;
+        public static Type type = typeof(T);
+        public static bool IsValueType = type.IsValueType;
+        public static bool IsArray = type.IsArray;
 
         static string typeName = string.Empty;                
         static int nilType = -1;
         static int metaref = -1;
 
-        static public void Init(Func<IntPtr, int, bool> check)
+        public static void Init(Func<IntPtr, int, bool> check)
         {            
             if (check != null)
             {
@@ -44,7 +44,7 @@ namespace LuaInterface
             }
         }
 
-        static public string GetTypeName()
+        public static string GetTypeName()
         {
             if (typeName == string.Empty)
             {
@@ -54,7 +54,7 @@ namespace LuaInterface
             return typeName;
         }
 
-        static public int GetLuaReference(IntPtr L)
+        public static int GetLuaReference(IntPtr L)
         {
 #if MULTI_STATE
             return LuaStatic.GetMetaReference(L, type);
@@ -77,7 +77,7 @@ namespace LuaInterface
 
         static bool DefaultCheck(IntPtr L, int pos)
         {            
-            LuaTypes luaType = LuaDLL.lua_type(L, pos);
+            var luaType = LuaDLL.lua_type(L, pos);
 
             switch (luaType)
             {
@@ -122,7 +122,7 @@ namespace LuaInterface
 
             if (udata != -1)
             {
-                ObjectTranslator translator = ObjectTranslator.Get(L);
+                var translator = ObjectTranslator.Get(L);
                 obj = translator.GetObject(udata);
 
                 if (obj != null)
@@ -164,9 +164,9 @@ namespace LuaInterface
 
     public static class DelegateTraits<T>
     {        
-        static DelegateFactory.DelegateCreate _Create = null;        
+        static DelegateCreate _Create = null;        
 
-        static public void Init(DelegateFactory.DelegateCreate func)
+        static public void Init(DelegateCreate func)
         {
             _Create = func;            
         }
@@ -176,7 +176,7 @@ namespace LuaInterface
 #if UNITY_EDITOR
             if (_Create == null)
             {
-                throw new LuaException(string.Format("Delegate {0} not register", TypeTraits<T>.GetTypeName()));
+                throw new LuaException($"Delegate {TypeTraits<T>.GetTypeName()} not register");
             }
 #endif
             if (func != null)

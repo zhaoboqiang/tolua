@@ -149,10 +149,7 @@ namespace LuaInterface
                 if (o != null && o.Equals(null))
                 {
                     node.obj = null;
-                    if (collectListener != null)
-                    {
-                        collectListener(o, collectedIndex);
-                    }
+                    collectListener?.Invoke(o, collectedIndex);
                 }
             }
         }

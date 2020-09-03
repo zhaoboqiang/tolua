@@ -32,20 +32,9 @@ namespace LuaInterface
     {
         public static LuaFileUtils Instance
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new LuaFileUtils();
-                }
+            get => instance ?? (instance = new LuaFileUtils());
 
-                return instance;
-            }
-
-            protected set
-            {
-                instance = value;
-            }
+            protected set => instance = value;
         }
 
         //beZip = false 在search path 中查找读取lua文件。否则从外部设置过来bundel文件中读取lua文件
@@ -67,7 +56,7 @@ namespace LuaInterface
                 instance = null;
                 searchPaths.Clear();
 
-                foreach (KeyValuePair<string, AssetBundle> iter in zipMap)
+                foreach (var iter in zipMap)
                 {
                     iter.Value.Unload(true);
                 }
@@ -79,36 +68,26 @@ namespace LuaInterface
         //格式: 路径/?.lua
         public bool AddSearchPath(string path, bool front = false)
         {
-            int index = searchPaths.IndexOf(path);
-
+            var index = searchPaths.IndexOf(path);
             if (index >= 0)
-            {
                 return false;
-            }
 
             if (front)
-            {
                 searchPaths.Insert(0, path);
-            }
             else
-            {
                 searchPaths.Add(path);
-            }
 
             return true;
         }
 
         public bool RemoveSearchPath(string path)
         {
-            int index = searchPaths.IndexOf(path);
-
-            if (index >= 0)
-            {
-                searchPaths.RemoveAt(index);
-                return true;
-            }
-
-            return false;
+            var index = searchPaths.IndexOf(path);
+            if (index < 0)
+                return false;
+            
+            searchPaths.RemoveAt(index);
+            return true;
         }
 
         public void AddSearchBundle(string name, AssetBundle bundle)
@@ -138,11 +117,9 @@ namespace LuaInterface
                 fileName = fileName.Substring(0, fileName.Length - 4);
             }
 
-            string fullPath = null;
-
             for (int i = 0; i < searchPaths.Count; i++)
             {
-                fullPath = searchPaths[i].Replace("?", fileName);
+                var fullPath = searchPaths[i].Replace("?", fileName);
 
                 if (File.Exists(fullPath))
                 {
@@ -157,7 +134,7 @@ namespace LuaInterface
         {
             if (!beZip)
             {
-                string path = FindFile(fileName);
+                var path = FindFile(fileName);
                 byte[] str = null;
 
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
@@ -191,7 +168,7 @@ namespace LuaInterface
 
             using (CString.Block())
             {
-                CString sb = CString.Alloc(512);
+                var sb = CString.Alloc(512);
 
                 for (int i = 0; i < searchPaths.Count; i++)
                 {
@@ -229,7 +206,7 @@ namespace LuaInterface
 
             using (CString.Block())
             {
-                CString sb = CString.Alloc(256);
+                var sb = CString.Alloc(256);
                 sb.Append("lua");
                 int pos = fileName.LastIndexOf('/');
 
@@ -254,11 +231,7 @@ namespace LuaInterface
 
             if (zipFile != null)
             {
-#if UNITY_4_6 || UNITY_4_7
-                TextAsset luaCode = zipFile.Load(fileName, typeof(TextAsset)) as TextAsset;
-#else
-                TextAsset luaCode = zipFile.LoadAsset<TextAsset>(fileName);
-#endif
+                var luaCode = zipFile.LoadAsset<TextAsset>(fileName);
                 if (luaCode != null)
                 {
                     buffer = luaCode.bytes;

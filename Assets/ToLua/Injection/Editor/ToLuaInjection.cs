@@ -922,7 +922,7 @@ public static class ToLuaInjection
         sb.Append("return ");
         ToLuaText.TransferDic(temp, sb);
         sb.Remove(sb.Length - 1, 1);
-        File.WriteAllText(CustomSettings.baseLuaDir + "System/Injection/InjectionBridgeInfo.lua", StringBuilderCache.GetStringAndRelease(sb));
+        File.WriteAllText(ToLuaSettingsUtility.Settings.baseLuaDir + "System/Injection/InjectionBridgeInfo.lua", StringBuilderCache.GetStringAndRelease(sb));
     }
 
     static int AppendMethod(MethodDefinition method)
@@ -995,7 +995,7 @@ public static class ToLuaInjection
 
     static void ExportInjectionEditorInfo(SortedDictionary<string, List<InjectedMethodInfo>> data)
     {
-        string incrementalFilePath = CustomSettings.injectionFilesPath + "InjectionBridgeEditorInfo.xml";
+        string incrementalFilePath = ToLuaSettingsUtility.Settings.injectionFilesPath + "InjectionBridgeEditorInfo.xml";
         if (File.Exists(incrementalFilePath))
         {
             File.Delete(incrementalFilePath);
@@ -1032,7 +1032,7 @@ public static class ToLuaInjection
     {
         bridgeInfo.Clear();
         methodCounter = 0;
-        string incrementalFilePath = CustomSettings.injectionFilesPath + "InjectionBridgeEditorInfo.xml";
+        string incrementalFilePath = ToLuaSettingsUtility.Settings.injectionFilesPath + "InjectionBridgeEditorInfo.xml";
         if (!File.Exists(incrementalFilePath))
         {
             return true;

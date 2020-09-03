@@ -1,0 +1,9 @@
+﻿{
+  "name": "ToLua.Scripts.Editor",
+  "references": [
+    "ToLua.Scripts"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ]
+}
