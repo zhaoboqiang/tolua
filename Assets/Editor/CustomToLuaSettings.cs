@@ -41,6 +41,7 @@ public class CustomToLuaSettings : ToLuaSettings
                 "netstandard",
                 "nunit.framework",
                 "System",
+                "System.Configuration",
                 "System.Core",
                 "System.Xml",
                 "System.Xml.Linq",
@@ -96,7 +97,7 @@ public class CustomToLuaSettings : ToLuaSettings
                 // UnityEngine.SubsystemsModule
                 // UnityEngine.TerrainModule
                 // UnityEngine.TerrainPhysicsModule
-                // UnityEngine.TestRunner
+                "UnityEngine.TestRunner",
                 // UnityEngine.TextCoreModule
                 // UnityEngine.TextRenderingModule
                 // UnityEngine.TilemapModule

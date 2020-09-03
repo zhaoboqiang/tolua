@@ -11,7 +11,7 @@ namespace LuaInterface.Editor
         {
             Settings = settings;
         }
-        
+
         public static ToLuaSettings Settings { get; private set; }
 
         //导出时强制做为静态类的类型(注意customTypeList 还要添加这个类型才能导出)

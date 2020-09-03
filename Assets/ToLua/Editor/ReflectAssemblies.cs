@@ -43,12 +43,51 @@ namespace LuaInterface.Editor
                     else if (typeName.Contains("<") && typeName.Contains(">"))
                         Debug.Log($"{type.Name} Contains<>");
 
-                    lines.Add($"\t\"{type.Name}\", {type.IsGenericType}, {type.IsAbstract}, {type.IsVisible}, {type.IsPublic}");
+                    lines.Add(
+                        $"\t\"{type.Name}\", {type.IsGenericType}, {type.IsAbstract}, {type.IsVisible}, {type.IsPublic}");
                 }
             }
 
             var text = string.Join("\n", lines);
             File.WriteAllText("d:/types.txt", text);
+        }
+
+        [MenuItem("Reflect/Print exported types")]
+        public static void PrintExportedTypes()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            var lines = new List<string>();
+            foreach (var assembly in assemblies)
+            {
+                lines.Add(assembly.GetName().Name);
+
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.IsGenericType)
+                        continue;
+                    
+                    var typeName = type.Name;
+                    /*
+                    if (typeName.Contains("`"))
+                        continue;
+                    */
+
+                    if (!type.IsVisible)
+                        continue;
+
+                    if (!type.IsPublic)
+                        continue;
+
+                    if (ToLuaMenu.BindType.IsObsolete(type))
+                        continue;
+                    
+                    lines.Add($"\t{type.Name}");
+                }
+            }
+
+            var text = string.Join("\n", lines);
+            File.WriteAllText("d:/exported_types.txt", text);
         }
     }
 }
