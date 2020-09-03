@@ -15,7 +15,7 @@ namespace LuaInterface.Editor
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in assemblies)
             {
-                names.Add($"\t\"{assembly.GetName().Name}\"");
+                names.Add($"\t\t\"{assembly.GetName().Name}\",");
             }
 
             names.Sort();
