@@ -9,4 +9,10 @@ namespace LuaInterface
 
         public Dictionary<Type, DelegateCreate> delegates;
     }
+
+    [Serializable]
+    public struct LuaAssembly
+    {
+        public string Name;
+    }
 }

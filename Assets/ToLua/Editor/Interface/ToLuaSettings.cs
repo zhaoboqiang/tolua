@@ -11,7 +11,7 @@ namespace LuaInterface
         string baseLuaDir { get; }
         string injectionFilesPath { get; }
 
-        string[] ExcludedAssemblies { get; }
+        string ExcludeAssemblyCsv { get; } 
 
         Type[] dynamicList { get; }
 

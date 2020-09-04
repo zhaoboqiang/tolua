@@ -1,0 +1,4 @@
+﻿{
+	"name": "CSVSerializer",
+	"references": [ "SimpleLogger" ]
+}

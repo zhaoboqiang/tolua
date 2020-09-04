@@ -1,4 +1,7 @@
 ﻿
+using System;
+using UnityEngine;
+
 namespace LuaInterface
 {
     public static class LuaSettingsUtility
@@ -8,6 +11,12 @@ namespace LuaInterface
         public static void Initialize(LuaSettings settings)
         {
             Settings = settings;
+        }
+
+        public static T[] LoadCsv<T>(string fileName)
+        {
+            var text = System.IO.File.ReadAllText(Application.dataPath + "/Editor/" + fileName + ".csv");
+            return CSVSerializer.Deserialize<T>(text);
         }
     }
 }

@@ -52,11 +52,13 @@ namespace LuaInterface.Editor
             return new DelegateType(t);
         }
 
+        private static LuaAssembly[] ExcludedAssemblies => LuaSettingsUtility.LoadCsv<LuaAssembly>(Settings.ExcludeAssemblyCsv);
+
         public static ToLuaMenu.BindType[] customTypeList
         {
             get
             {
-                var excludedAssemblies = Settings.ExcludedAssemblies;
+                var excludedAssemblies = ExcludedAssemblies;
                 var bindTypes = new List<ToLuaMenu.BindType>();
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -67,7 +69,7 @@ namespace LuaInterface.Editor
                     var assemblyName = assembly.GetName().Name;
                     Debug.Log($"[Assembly] {assemblyName}");
 
-                    if (excludedAssemblies.Contains(assemblyName))
+                    if (excludedAssemblies.Contains(new LuaAssembly{Name = assemblyName}))
                         continue;
 
                     foreach (var type in assembly.GetTypes())
