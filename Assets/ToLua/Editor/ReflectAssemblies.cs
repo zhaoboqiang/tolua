@@ -36,12 +36,37 @@ namespace LuaInterface.Editor
             File.WriteAllText(filepath, string.Join("\n", lines));
         }
 
+        private static void UpdateAssembliesCsv(List<LuaIncludedAssembly> newAssemblies)
+        {
+            newAssemblies.Sort();
+
+            // Load previous configurations
+            var oldAssemblies = ToLuaSettingsUtility.IncludedAssemblies.ToDictionary(key => key.Name);
+
+            // merge previous configurations
+            for (int index = 0, count = newAssemblies.Count; index < count; ++index)
+            {
+                var newAssembly = newAssemblies[index];
+
+                if (oldAssemblies.TryGetValue(newAssembly.Name, out var oldAssembly))
+                {
+                    newAssemblies[index] = oldAssembly;
+                }
+            }
+
+            // save configurations
+            var lines = new List<string> { "Name,Android,iOS" };
+            foreach (var assembly in newAssemblies)
+                lines.Add($"{assembly.Name},{assembly.Android},{assembly.iOS}");
+            SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
+        }
+
         [MenuItem("Reflect/Print all")]
         public static void PrintAll()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var allAssemblies = new List<LuaIncludedAssembly>();
+            var newAssemblies = new List<LuaIncludedAssembly>();
 
             var interfaces = new List<string> { "AssemblyName,Interface" };
             var enums = new List<string> { "AssemblyName,EnumName" };
@@ -52,7 +77,7 @@ namespace LuaInterface.Editor
             {
                 var assemblyName = assembly.GetName().Name;
 
-                allAssemblies.Add(new LuaIncludedAssembly { Name = assemblyName, Android = true, iOS = true });
+                newAssemblies.Add(new LuaIncludedAssembly { Name = assemblyName, Android = true, iOS = true });
 
                 /*
                 if (!ToLuaSettingsUtility.IsAssemblyIncluded(assemblyName))
@@ -77,11 +102,8 @@ namespace LuaInterface.Editor
                     }
                     else
                     {
-                        classes.Add(
-                            $"{assemblyName},{typeName}");
-
-                        methods.Add(
-                            $"{assemblyName},{typeName}");
+                        classes.Add($"{assemblyName},{typeName}");
+                        methods.Add($"{assemblyName},{typeName}");
                     }
                 }
             }
@@ -91,27 +113,7 @@ namespace LuaInterface.Editor
             classes.Sort();
             methods.Sort();
 
-            // Load previous configurations
-            var oldAssemblies = ToLuaSettingsUtility.IncludedAssemblies.ToDictionary(key => key.Name);
-
-            // merge previous configurations
-            for (int index = 0, count = allAssemblies.Count; index < count; ++index)
-            {
-                var newAssembly = allAssemblies[index];
-
-                if (oldAssemblies.TryGetValue(newAssembly.Name, out var oldAssembly))
-                {
-                    allAssemblies[index] = oldAssembly;
-                }
-            }
-
-            // save configurations
-            {
-                var lines = new List<string> { "Name,Android,iOS" };
-                foreach (var assembly in allAssemblies)
-                    lines.Add($"{assembly.Name},{assembly.Android},{assembly.iOS}");
-                SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
-            }
+            UpdateAssembliesCsv(newAssemblies);
 
             File.WriteAllText("d:/interface.csv", string.Join("\n", interfaces));
             File.WriteAllText("d:/enum.csv", string.Join("\n", enums));
