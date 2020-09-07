@@ -38,7 +38,7 @@ namespace LuaInterface.Editor
 
         private static void UpdateAssembliesCsv(List<LuaIncludedAssembly> newAssemblies)
         {
-            newAssemblies.Sort();
+            newAssemblies.Sort((lhs, rhs) => lhs.Name.CompareTo(rhs.Name));
 
             // Load previous configurations
             var oldAssemblies = ToLuaSettingsUtility.IncludedAssemblies.ToDictionary(key => key.Name);
