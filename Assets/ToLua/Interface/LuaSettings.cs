@@ -11,8 +11,10 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaAssembly
+    public struct LuaIncludedAssembly
     {
         public string Name;
+        public bool Android;
+        public bool iOS;
     }
 }

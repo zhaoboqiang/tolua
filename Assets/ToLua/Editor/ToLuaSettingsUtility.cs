@@ -52,47 +52,84 @@ namespace LuaInterface.Editor
             return new DelegateType(t);
         }
 
-        private static LuaAssembly[] ExcludedAssemblies => LuaSettingsUtility.LoadCsv<LuaAssembly>(Settings.ExcludeAssemblyCsv);
+        private static LuaIncludedAssembly[] includedAssemblies;
+
+        public static LuaIncludedAssembly[] IncludedAssemblies =>
+            includedAssemblies ?? (includedAssemblies = LuaSettingsUtility.LoadCsv<LuaIncludedAssembly>(
+                Settings.IncludedAssemblyCsv));
+
+        public static bool IsAssemblyIncluded(string assemblyName)
+        {
+            foreach (var includedAssembly in IncludedAssemblies)
+            {
+                if (includedAssembly.Name == assemblyName)
+                {
+#if UNITY_IOS
+                    if (includedAssembly.iOS)
+                        return true;
+#elif UNITY_ANDROID
+                    if (includedAssembly.Android)
+                        return true;
+#else
+                    if (includedAssembly.iOS || includedAssembly.Android)
+                        return true;
+#endif
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsTypeExcluded(Type type)
+        {
+            if (type.IsGenericType)
+                return true;
+
+            if (!type.IsVisible)
+                return true;
+
+            if (!type.IsPublic)
+                return true;
+
+            if (ToLuaMenu.BindType.IsObsolete(type))
+                return true;
+
+            /*
+            var typeName = type.Name;
+            if (typeName.Contains("`"))
+                continue;
+            */
+
+            return false;
+        }
 
         public static ToLuaMenu.BindType[] customTypeList
         {
             get
             {
-                var excludedAssemblies = ExcludedAssemblies;
+                includedAssemblies = null;
+
                 var bindTypes = new List<ToLuaMenu.BindType>();
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                var typeIndex = 0;
+                // var typeIndex = 0;
 
                 foreach (var assembly in assemblies)
                 {
                     var assemblyName = assembly.GetName().Name;
-                    Debug.Log($"[Assembly] {assemblyName}");
+                    //Debug.Log($"[Assembly] {assemblyName}");
 
-                    if (excludedAssemblies.Contains(new LuaAssembly{Name = assemblyName}))
+                    if (!IsAssemblyIncluded(assemblyName))
                         continue;
 
                     foreach (var type in assembly.GetTypes())
                     {
-                        if (type.IsGenericType)
-                            continue;
-
                         var typeName = type.Name;
-                        /*
-                        if (typeName.Contains("`"))
-                            continue;
-                        */
 
-                        if (!type.IsVisible)
+                        if (IsTypeExcluded(type))
                             continue;
 
-                        if (!type.IsPublic)
-                            continue;
-
-                        if (ToLuaMenu.BindType.IsObsolete(type))
-                            continue;
-
-                        Debug.Log($"\t[{typeIndex++} {typeName}");
+                        //Debug.Log($"\t[{typeIndex++} {typeName}");
 
                         if (typeof(MulticastDelegate).IsAssignableFrom(type))
                             continue;

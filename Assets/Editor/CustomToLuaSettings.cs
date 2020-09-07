@@ -24,8 +24,7 @@ public class CustomToLuaSettings : ToLuaSettings
     public string baseLuaDir => Application.dataPath + "/ToLua/Lua/";
     public string injectionFilesPath => Application.dataPath + "/ToLua/Injection/";
 
-    public string ExcludeAssemblyCsv => "exclude_assembly";
-    public LuaAssembly[] ExcludedAssemblies => LuaSettingsUtility.LoadCsv<LuaAssembly>("exclude_assembly");
+    public string IncludedAssemblyCsv => "included_assembly";
 
     public Type[] dynamicList => new[]
     {

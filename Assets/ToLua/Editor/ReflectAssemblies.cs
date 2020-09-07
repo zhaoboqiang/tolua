@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,70 +25,98 @@ namespace LuaInterface.Editor
             File.WriteAllText("d:/assemblies.txt", text);
         }
 
-        [MenuItem("Reflect/Print types")]
-        public static void PrintTypes()
+        private static string GetCsvFilepath(string filename)
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            var lines = new List<string>();
-
-            foreach (var assembly in assemblies)
-            {
-                lines.Add(assembly.GetName().Name);
-
-                foreach (var type in assembly.GetTypes())
-                {
-                    var typeName = type.Name;
-                    if (typeName.Contains("`"))
-                        Debug.Log($"{typeName} Contains`");
-                    else if (typeName.Contains("<") && typeName.Contains(">"))
-                        Debug.Log($"{type.Name} Contains<>");
-
-                    lines.Add(
-                        $"\t\"{type.Name}\", {type.IsGenericType}, {type.IsAbstract}, {type.IsVisible}, {type.IsPublic}");
-                }
-            }
-
-            var text = string.Join("\n", lines);
-            File.WriteAllText("d:/types.txt", text);
+            return Application.dataPath + "/Editor/" + filename + ".csv";
         }
 
-        [MenuItem("Reflect/Print exported types")]
-        public static void PrintExportedTypes()
+        private static void SaveCsv(List<string> lines, string filename)
+        {
+            var filepath = GetCsvFilepath(filename);
+            File.WriteAllText(filepath, string.Join("\n", lines));
+        }
+
+        [MenuItem("Reflect/Print all")]
+        public static void PrintAll()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var lines = new List<string>();
+            var allAssemblies = new List<LuaIncludedAssembly>();
+
+            var interfaces = new List<string> { "AssemblyName,Interface" };
+            var enums = new List<string> { "AssemblyName,EnumName" };
+            var classes = new List<string> { "AssemblyName,ClassName" };
+            var methods = new List<string> { "AssemblyName,ClassName,MethodName" };
+
             foreach (var assembly in assemblies)
             {
-                lines.Add(assembly.GetName().Name);
+                var assemblyName = assembly.GetName().Name;
+
+                allAssemblies.Add(new LuaIncludedAssembly { Name = assemblyName, Android = true, iOS = true });
+
+                /*
+                if (!ToLuaSettingsUtility.IsAssemblyIncluded(assemblyName))
+                    continue;
+                */
 
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (type.IsGenericType)
-                        continue;
-                    
-                    var typeName = type.Name;
                     /*
-                    if (typeName.Contains("`"))
+                    if (ToLuaSettingsUtility.IsTypeExcluded(type))
                         continue;
                     */
 
-                    if (!type.IsVisible)
-                        continue;
+                    var typeName = type.Name;
+                    if (type.IsEnum)
+                    {
+                        enums.Add($"{assemblyName},{typeName}");
+                    }
+                    else if (type.IsInterface)
+                    {
+                        interfaces.Add($"{assemblyName},{typeName}");
+                    }
+                    else
+                    {
+                        classes.Add(
+                            $"{assemblyName},{typeName}");
 
-                    if (!type.IsPublic)
-                        continue;
-
-                    if (ToLuaMenu.BindType.IsObsolete(type))
-                        continue;
-                    
-                    lines.Add($"\t{type.Name}");
+                        methods.Add(
+                            $"{assemblyName},{typeName}");
+                    }
                 }
             }
 
-            var text = string.Join("\n", lines);
-            File.WriteAllText("d:/exported_types.txt", text);
+            interfaces.Sort();
+            enums.Sort();
+            classes.Sort();
+            methods.Sort();
+
+            // Load previous configurations
+            var oldAssemblies = ToLuaSettingsUtility.IncludedAssemblies.ToDictionary(key => key.Name);
+
+            // merge previous configurations
+            for (int index = 0, count = allAssemblies.Count; index < count; ++index)
+            {
+                var newAssembly = allAssemblies[index];
+
+                if (oldAssemblies.TryGetValue(newAssembly.Name, out var oldAssembly))
+                {
+                    allAssemblies[index] = oldAssembly;
+                }
+            }
+
+            // save configurations
+            {
+                var lines = new List<string> { "Name,Android,iOS" };
+                foreach (var assembly in allAssemblies)
+                    lines.Add($"{assembly.Name},{assembly.Android},{assembly.iOS}");
+                SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
+            }
+
+            File.WriteAllText("d:/interface.csv", string.Join("\n", interfaces));
+            File.WriteAllText("d:/enum.csv", string.Join("\n", enums));
+            File.WriteAllText("d:/classes.csv", string.Join("\n", classes));
+            File.WriteAllText("d:/method.csv", string.Join("\n", methods));
         }
     }
 }
