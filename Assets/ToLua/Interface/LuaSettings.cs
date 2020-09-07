@@ -17,4 +17,23 @@ namespace LuaInterface
         public bool Android;
         public bool iOS;
     }
+
+    [Serializable]
+    public struct LuaIncludedNamespace
+    {
+        public string Name;
+        public bool Android;
+        public bool iOS;
+    }
+
+    [Serializable]
+    public struct LuaIncludedType
+    {
+        public string Namespace;
+        public string Name;
+        public string FullName;
+        public bool Android;
+        public bool iOS;
+    }
+
 }

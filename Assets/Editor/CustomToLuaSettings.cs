@@ -25,6 +25,8 @@ public class CustomToLuaSettings : ToLuaSettings
     public string injectionFilesPath => Application.dataPath + "/ToLua/Injection/";
 
     public string IncludedAssemblyCsv => "included_assembly";
+    public string IncludedNamespaceCsv => "included_namespace";
+    public string IncludedTypeCsv => "included_type";
 
     public Type[] dynamicList => new[]
     {

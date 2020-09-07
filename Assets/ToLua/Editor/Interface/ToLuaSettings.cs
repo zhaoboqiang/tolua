@@ -12,6 +12,8 @@ namespace LuaInterface
         string injectionFilesPath { get; }
 
         string IncludedAssemblyCsv { get; } 
+        string IncludedNamespaceCsv { get; } 
+        string IncludedTypeCsv { get; } 
 
         Type[] dynamicList { get; }
 
