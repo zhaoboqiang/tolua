@@ -1,8 +1,8 @@
 FullName,Namespace,Name,Android,iOS
 CSVSerializer,,CSVSerializer,True,True
-LuaBinder,,LuaBinder,True,True
+LuaBinder,,LuaBinder,False,False
 LuaClient,,LuaClient,True,True
-LuaDelegates,,LuaDelegates,True,True
+LuaDelegates,,LuaDelegates,False,False
 TMPro._HorizontalAlignmentOptions,TMPro,_HorizontalAlignmentOptions,True,True
 TMPro._VerticalAlignmentOptions,TMPro,_VerticalAlignmentOptions,True,True
 TMPro.AtlasPopulationMode,TMPro,AtlasPopulationMode,True,True
