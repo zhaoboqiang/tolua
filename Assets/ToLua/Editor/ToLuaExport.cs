@@ -4079,7 +4079,7 @@ public static class ToLuaExport
             var t = list[i].type;
             var strType = list[i].strType;
             var name = list[i].name;
-            MethodInfo mi = t.GetMethod("Invoke");
+            var mi = t.GetMethod("Invoke");
             var args = GetDelegateParams(mi);
 
             //生成委托类
@@ -4105,15 +4105,15 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\t}\r\n");
             sb.AppendLineEx("\t\tif(!flag)");
             sb.AppendLineEx("\t\t{");
-            sb.AppendFormat("\t\t\t{0}_Event target = new {0}_Event(func);\r\n", name);
-            sb.AppendFormat("\t\t\t{0} d = target.Call;\r\n", strType);
+            sb.AppendFormat("\t\t\tvar target = new {0}_Event(func);\r\n", name);
+            sb.AppendLineEx("\t\t\tvar d = target.Call;");
             sb.AppendLineEx("\t\t\ttarget.method = d.Method;");
             sb.AppendLineEx("\t\t\treturn d;");
             sb.AppendLineEx("\t\t}");
             sb.AppendLineEx("\t\telse");
             sb.AppendLineEx("\t\t{");
-            sb.AppendFormat("\t\t\t{0}_Event target = new {0}_Event(func, self);\r\n", name);
-            sb.AppendFormat("\t\t\t{0} d = target.CallWithSelf;\r\n", strType);
+            sb.AppendFormat("\t\t\tvar target = new {0}_Event(func, self);\r\n", name);
+            sb.AppendLineEx("\t\t\tvar d = target.CallWithSelf;");
             sb.AppendLineEx("\t\t\ttarget.method = d.Method;");
             sb.AppendLineEx("\t\t\treturn d;");
             sb.AppendLineEx("\t\t}");
@@ -4283,7 +4283,7 @@ public static class ToLuaExport
 
             for (int i = list2.Count - 1; i >= 0; i--)
             {
-                MethodInfo md = list2[i];
+                var md = list2[i];
 
                 if (!md.IsDefined(typeof(ExtensionAttribute), false))
                 {
@@ -4291,14 +4291,14 @@ public static class ToLuaExport
                 }
 
                 var plist = md.GetParameters();
-                Type t = plist[0].ParameterType;
+                var t = plist[0].ParameterType;
 
                 if (t == type || t.IsAssignableFrom(type) ||
                     (IsGenericType(md, t) && (type == t.BaseType || type.IsSubclassOf(t.BaseType))))
                 {
                     if (!IsObsolete(list2[i]))
                     {
-                        _MethodBase mb = new _MethodBase(md);
+                        var mb = new _MethodBase(md);
                         mb.BeExtend = true;
                         list.Add(mb);
                     }
@@ -4333,11 +4333,11 @@ public static class ToLuaExport
             return;
         }
 
-        ParameterInfo[] pifs = m.GetParameters();
+        var pifs = m.GetParameters();
 
         for (int k = 0; k < pifs.Length; k++)
         {
-            Type t = pifs[k].ParameterType;
+            var t = pifs[k].ParameterType;
 
             if (IsDelegateType(t))
             {
@@ -4362,13 +4362,13 @@ public static class ToLuaExport
         sb.AppendLineEx();
         sb.AppendLineEx("\t\t\tif (count == 1)");
         sb.AppendLineEx("\t\t\t{");
-        sb.AppendFormat("\t\t\t\tDelegate arg1 = DelegateTraits<{0}>.Create(func);\r\n", GetTypeStr(t));
+        sb.AppendFormat("\t\t\t\tvar arg1 = DelegateTraits<{0}>.Create(func);\r\n", GetTypeStr(t));
         sb.AppendLineEx("\t\t\t\tToLua.Push(L, arg1);");
         sb.AppendLineEx("\t\t\t}");
         sb.AppendLineEx("\t\t\telse");
         sb.AppendLineEx("\t\t\t{");
-        sb.AppendLineEx("\t\t\t\tLuaTable self = ToLua.CheckLuaTable(L, 2);");
-        sb.AppendFormat("\t\t\t\tDelegate arg1 = DelegateTraits<{0}>.Create(func, self);\r\n", GetTypeStr(t));
+        sb.AppendLineEx("\t\t\t\tvar self = ToLua.CheckLuaTable(L, 2);");
+        sb.AppendFormat("\t\t\t\tvar arg1 = DelegateTraits<{0}>.Create(func, self);\r\n", GetTypeStr(t));
         sb.AppendFormat("\t\t\t\tToLua.Push(L, arg1);\r\n");
         sb.AppendLineEx("\t\t\t}");
 
