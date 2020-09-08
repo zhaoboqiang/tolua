@@ -127,7 +127,7 @@ namespace LuaInterface.Editor
         {
             if (string.IsNullOrEmpty(ns))
                 return true;
-                
+
             if (IncludedNamespaces.TryGetValue(ns, out var value))
             {
 #if UNITY_IOS
@@ -164,7 +164,6 @@ namespace LuaInterface.Editor
                 return false;
             }
             return true;
-
         }
 
         public static ToLuaMenu.BindType[] customTypeList
@@ -176,12 +175,12 @@ namespace LuaInterface.Editor
                 var bindTypes = new List<ToLuaMenu.BindType>();
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                // var typeIndex = 0;
+                var typeIndex = 0;
 
                 foreach (var assembly in assemblies)
                 {
                     var assemblyName = assembly.GetName().Name;
-                    //Debug.Log($"[Assembly] {assemblyName}");
+                    Debug.Log($"[Assembly] {assemblyName}");
 
                     if (!IsAssemblyIncluded(assemblyName))
                         continue;
@@ -193,7 +192,7 @@ namespace LuaInterface.Editor
                         if (!IsTypeIncluded(type))
                             continue;
 
-                        //Debug.Log($"\t[{typeIndex++} {typeName}");
+                        Debug.Log($"\t[{typeIndex++} {typeName}");
 
                         if (typeof(MulticastDelegate).IsAssignableFrom(type))
                             continue;

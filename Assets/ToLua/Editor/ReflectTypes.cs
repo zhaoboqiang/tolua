@@ -20,9 +20,6 @@ namespace LuaInterface.Editor
             if (ToLuaMenu.BindType.IsObsolete(type))
                 return false;
 
-            if (!ToLuaSettingsUtility.IsNamespaceIncluded(type.Namespace))
-                return false;
-                
             return true;
         }
 
@@ -66,15 +63,19 @@ namespace LuaInterface.Editor
 
                 foreach (var type in assembly.GetTypes())
                 {
-                    var included = IsTypeIncluded(type);
+                    if (!ToLuaSettingsUtility.IsNamespaceIncluded(type.Namespace))
+                        continue;
+
+                    if (!IsTypeIncluded(type))
+                        continue;
 
                     newTypes.Add(new LuaIncludedType
                     {
                         Namespace = type.Namespace,
                         Name = type.Name,
                         FullName = type.FullName,
-                        Android = included,
-                        iOS = included
+                        Android = true,
+                        iOS = true
                     });
                 }
             }
