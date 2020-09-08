@@ -127,32 +127,7 @@ public static class LuaCoroutine
         mb = behaviour;
     }
 
-    //另一种方式，非脚本回调方式(用脚本方式更好，可避免lua_yield异常出现在c#函数中)
-    /*[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-    static int WaitForSeconds(IntPtr L)
-    {
-        try
-        {
-            LuaState state = LuaState.Get(L);
-            LuaDLL.lua_pushthread(L);
-            LuaThread thread = ToLua.ToLuaThread(L, -1);
-            float sec = (float)LuaDLL.luaL_checknumber(L, 1);
-            mb.StartCoroutine(CoWaitForSeconds(sec, thread));
-            return LuaDLL.lua_yield(L, 0);
-        }
-        catch (Exception e)
-        {
-            return LuaDLL.toluaL_exception(L, e);
-        }
-    }
-
-    static IEnumerator CoWaitForSeconds(float sec, LuaThread thread)
-    {
-        yield return new WaitForSeconds(sec);
-        thread.Resume();
-    }*/
-
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
 	private static int _WaitForSeconds(IntPtr L)
     {
         try
@@ -175,7 +150,7 @@ public static class LuaCoroutine
         func.Call();
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
 	private static int WaitForFixedUpdate(IntPtr L)
     {
         try
@@ -197,7 +172,7 @@ public static class LuaCoroutine
         func.Call();
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
 	private static int WaitForEndOfFrame(IntPtr L)
     {
         try
@@ -219,7 +194,7 @@ public static class LuaCoroutine
         func.Call();
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
 	private static int Yield(IntPtr L)
     {
         try
@@ -250,7 +225,7 @@ public static class LuaCoroutine
         func.Call();
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
 	private static int StopCoroutine(IntPtr L)
     {
         try
@@ -265,7 +240,7 @@ public static class LuaCoroutine
         }
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
     private static int WrapLuaCoroutine(IntPtr L)
     {
         LuaFunction func = ToLua.ToLuaFunction(L, 1);
