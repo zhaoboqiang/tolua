@@ -28,8 +28,9 @@ namespace LuaInterface.Editor
             var lines = new List<string> { "Namespace,Android,iOS" };
             var values = newNamespaces.Values.ToList();
             values.Sort((lhs, rhs) => lhs.Namespace.CompareTo(rhs.Namespace));
-            foreach (var ns in values)
-                lines.Add($"{ns.Namespace},{ns.Android},{ns.iOS}");
+            lines.AddRange(from ns in values
+                           where ns.Android && ns.iOS
+                           select $"{ns.Namespace},{ns.Android},{ns.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
         }
 

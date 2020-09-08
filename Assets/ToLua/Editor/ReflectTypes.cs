@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using System.Linq;
 
 namespace LuaInterface.Editor
 {
@@ -22,7 +23,7 @@ namespace LuaInterface.Editor
 
             if (type.IsInterface)
                 return false;
-                
+
             if (ToLuaMenu.BindType.IsObsolete(type))
                 return false;
 
@@ -49,8 +50,9 @@ namespace LuaInterface.Editor
 
             // save configurations
             var lines = new List<string> { "FullName,Namespace,Name,Android,iOS" };
-            foreach (var type in newTypes)
-                lines.Add($"{type.FullName},{type.Namespace},{type.Name},{type.Android},{type.iOS}");
+            lines.AddRange(from type in newTypes
+                           where type.Android && type.iOS
+                           select $"{type.FullName},{type.Namespace},{type.Name},{type.Android},{type.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
         }
 

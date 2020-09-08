@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
+using System.Linq;
 
 namespace LuaInterface.Editor
 {
@@ -26,8 +27,9 @@ namespace LuaInterface.Editor
 
             // save configurations
             var lines = new List<string> { "Name,Android,iOS" };
-            foreach (var assembly in newAssemblies)
-                lines.Add($"{assembly.Name},{assembly.Android},{assembly.iOS}");
+            lines.AddRange(from assembly in newAssemblies
+                           where assembly.Android && assembly.iOS
+                           select $"{assembly.Name},{assembly.Android},{assembly.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
         }
 
