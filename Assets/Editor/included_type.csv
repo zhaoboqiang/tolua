@@ -500,7 +500,7 @@ UnityEngine.GUIUtility,UnityEngine,GUIUtility,True,True
 UnityEngine.Gyroscope,UnityEngine,Gyroscope,True,True
 UnityEngine.Handheld,UnityEngine,Handheld,True,True
 UnityEngine.Hash128,UnityEngine,Hash128,True,True
-UnityEngine.HashUnsafeUtilities,UnityEngine,HashUnsafeUtilities,False,False
+UnityEngine.HashUnsafeUtilities,UnityEngine,HashUnsafeUtilities,True,True
 UnityEngine.HashUtilities,UnityEngine,HashUtilities,True,True
 UnityEngine.HDROutputSettings,UnityEngine,HDROutputSettings,True,True
 UnityEngine.HeadDof,UnityEngine,HeadDof,True,True
@@ -686,7 +686,7 @@ UnityEngine.Playables.PlayableAsset,UnityEngine.Playables,PlayableAsset,True,Tru
 UnityEngine.Playables.PlayableBehaviour,UnityEngine.Playables,PlayableBehaviour,True,True
 UnityEngine.Playables.PlayableBinding,UnityEngine.Playables,PlayableBinding,True,True
 UnityEngine.Playables.PlayableDirector,UnityEngine.Playables,PlayableDirector,True,True
-UnityEngine.Playables.PlayableExtensions,UnityEngine.Playables,PlayableExtensions,False,False
+UnityEngine.Playables.PlayableExtensions,UnityEngine.Playables,PlayableExtensions,True,True
 UnityEngine.Playables.PlayableGraph,UnityEngine.Playables,PlayableGraph,True,True
 UnityEngine.Playables.PlayableHandle,UnityEngine.Playables,PlayableHandle,True,True
 UnityEngine.Playables.PlayableOutput,UnityEngine.Playables,PlayableOutput,True,True
