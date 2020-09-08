@@ -85,13 +85,13 @@ public class LuaClient : MonoBehaviour
         luaState.LuaDoString($"DebugServerIp = '{ip}'", "@LuaClient.cs");
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
     static int LuaOpen_Socket_Core(IntPtr L)
     {
         return LuaDLL.luaopen_socket_core(L);
     }
 
-    [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+    [MonoPInvokeCallback(typeof(LuaCSFunction))]
     static int LuaOpen_Mime_Core(IntPtr L)
     {
         return LuaDLL.luaopen_mime_core(L);
