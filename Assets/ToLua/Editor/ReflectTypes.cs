@@ -17,6 +17,12 @@ namespace LuaInterface.Editor
             if (!type.IsPublic)
                 return false;
 
+            if (type.IsNotPublic)
+                return false;
+
+            if (type.IsInterface)
+                return false;
+                
             if (ToLuaMenu.BindType.IsObsolete(type))
                 return false;
 

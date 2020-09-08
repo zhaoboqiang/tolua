@@ -120,7 +120,7 @@ namespace LuaInterface.Editor
 #endif
                 return false;
             }
-            return true;
+            return false;
         }
 
         public static bool IsNamespaceIncluded(string ns)
@@ -142,7 +142,7 @@ namespace LuaInterface.Editor
 #endif
                 return false;
             }
-            return true;
+            return false;
         }
 
         private static bool IsTypeIncluded(Type type)
@@ -163,7 +163,7 @@ namespace LuaInterface.Editor
 #endif
                 return false;
             }
-            return true;
+            return false;
         }
 
         public static ToLuaMenu.BindType[] customTypeList

@@ -9,10 +9,10 @@ Unity.Baselib,False,False
 Unity.Baselib.LowLevel,False,False
 Unity.Burst,False,False
 Unity.Burst.LowLevel,False,False
-Unity.Collections,True,True
+Unity.Collections,False,False
 Unity.Collections.LowLevel.Unsafe,False,False
 Unity.IO.LowLevel.Unsafe,False,False
-Unity.Jobs,True,True
+Unity.Jobs,False,False
 Unity.Jobs.LowLevel.Unsafe,False,False
 Unity.Profiling,True,True
 Unity.Profiling.LowLevel,False,False
