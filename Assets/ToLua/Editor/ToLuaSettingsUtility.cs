@@ -123,6 +123,28 @@ namespace LuaInterface.Editor
             return true;
         }
 
+        public static bool IsNamespaceIncluded(string ns)
+        {
+            if (string.IsNullOrEmpty(ns))
+                return true;
+                
+            if (IncludedNamespaces.TryGetValue(ns, out var value))
+            {
+#if UNITY_IOS
+                if (value.iOS)
+                    return true;
+#elif UNITY_ANDROID
+                if (value.Android)
+                    return true;
+#else
+                if (value.iOS || value.Android)
+                    return true;
+#endif
+                return false;
+            }
+            return true;
+        }
+
         private static bool IsTypeIncluded(Type type)
         {
             var typeName = type.FullName;

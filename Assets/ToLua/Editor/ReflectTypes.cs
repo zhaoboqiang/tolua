@@ -20,6 +20,9 @@ namespace LuaInterface.Editor
             if (ToLuaMenu.BindType.IsObsolete(type))
                 return false;
 
+            if (!ToLuaSettingsUtility.IsNamespaceIncluded(type.Namespace))
+                return false;
+                
             return true;
         }
 
