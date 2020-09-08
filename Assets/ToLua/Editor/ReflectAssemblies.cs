@@ -28,7 +28,7 @@ namespace LuaInterface.Editor
             // save configurations
             var lines = new List<string> { "Name,Android,iOS" };
             lines.AddRange(from assembly in newAssemblies
-                           where assembly.Android && assembly.iOS
+                           where !assembly.Android || !assembly.iOS
                            select $"{assembly.Name},{assembly.Android},{assembly.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
         }
