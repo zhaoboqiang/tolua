@@ -7,7 +7,7 @@ namespace LuaInterface.Editor
 {
     public static class ReflectTypes
     {
-        private static bool IsTypeIncluded(Type type)
+        public static bool IsTypeIncluded(Type type)
         {
             if (type.IsGenericType)
                 return false;

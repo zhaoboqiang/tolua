@@ -163,7 +163,9 @@ namespace LuaInterface.Editor
 #endif
                 return false;
             }
-            return true;
+
+            // default rule
+            return ReflectTypes.IsTypeIncluded(type);
         }
 
         public static ToLuaMenu.BindType[] customTypeList
@@ -187,6 +189,9 @@ namespace LuaInterface.Editor
 
                     foreach (var type in assembly.GetTypes())
                     {
+                        if (!IsNamespaceIncluded(type.Namespace))
+                            continue;
+
                         var typeName = type.Name;
 
                         if (!IsTypeIncluded(type))
