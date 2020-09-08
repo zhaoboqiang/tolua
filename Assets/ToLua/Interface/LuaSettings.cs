@@ -21,7 +21,7 @@ namespace LuaInterface
     [Serializable]
     public struct LuaIncludedNamespace
     {
-        public string Name;
+        public string Namespace;
         public bool Android;
         public bool iOS;
     }

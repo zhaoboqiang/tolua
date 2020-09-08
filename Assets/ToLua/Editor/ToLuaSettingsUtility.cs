@@ -80,7 +80,7 @@ namespace LuaInterface.Editor
                     if (namespaces == null)
                         includedNamespaces = new Dictionary<string, LuaIncludedNamespace>();
                     else
-                        includedNamespaces = namespaces.ToDictionary(key => key.Name);
+                        includedNamespaces = namespaces.ToDictionary(key => key.Namespace);
                 }
                 return includedNamespaces;
             }

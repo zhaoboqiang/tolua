@@ -1,33 +1,35 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 
 namespace LuaInterface.Editor
 {
     public static class ReflectNamespaces
     {
-        private static void UpdateCsv(List<LuaIncludedNamespace> newNamespaces)
+        private static void UpdateCsv(Dictionary<string, LuaIncludedNamespace> newNamespaces)
         {
-            newNamespaces.Sort((lhs, rhs) => lhs.Name.CompareTo(rhs.Name));
-
             // Load previous configurations
             var oldNamespaces = ToLuaSettingsUtility.IncludedNamespaces;
 
             // merge previous configurations
-            for (int index = 0, count = newNamespaces.Count; index < count; ++index)
+            var keys = newNamespaces.Keys.ToArray<string>();
+            for (int index = 0, count = keys.Length; index < count; ++index)
             {
-                var newNamespace = newNamespaces[index];
+                var key = keys[index];
 
-                if (oldNamespaces.TryGetValue(newNamespace.Name, out var oldNamespace))
+                if (oldNamespaces.TryGetValue(key, out var oldNamespace))
                 {
-                    newNamespaces[index] = oldNamespace;
+                    newNamespaces[key] = oldNamespace;
                 }
             }
 
             // save configurations
-            var lines = new List<string> { "Name,Android,iOS" };
-            foreach (var ns in newNamespaces)
-                lines.Add($"{ns.Name},{ns.Android},{ns.iOS}");
+            var lines = new List<string> { "Namespace,Android,iOS" };
+            var values = newNamespaces.Values.ToList();
+            values.Sort((lhs, rhs) => lhs.Namespace.CompareTo(rhs.Namespace));
+            foreach (var ns in values)
+                lines.Add($"{ns.Namespace},{ns.Android},{ns.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
         }
 
@@ -37,13 +39,25 @@ namespace LuaInterface.Editor
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var newNamespaces = new List<LuaIncludedNamespace>();
+            var newNamespaces = new Dictionary<string, LuaIncludedNamespace>();
 
             foreach (var assembly in assemblies)
             {
                 var assemblyName = assembly.GetName().Name;
+                if (!ToLuaSettingsUtility.IsAssemblyIncluded(assemblyName))
+                    continue;
 
-                newNamespaces.Add(new LuaIncludedNamespace { Name = assemblyName, Android = true, iOS = true });
+                foreach (var type in assembly.GetTypes())
+                {
+                    var ns = type.Namespace;
+                    if (string.IsNullOrEmpty(ns))
+                        continue;
+
+                    if (newNamespaces.ContainsKey(ns))
+                        continue;
+
+                    newNamespaces.Add(ns, new LuaIncludedNamespace { Namespace = ns, Android = true, iOS = true });
+                }
             }
 
             UpdateCsv(newNamespaces);
