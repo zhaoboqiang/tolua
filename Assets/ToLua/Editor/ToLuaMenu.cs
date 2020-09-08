@@ -232,9 +232,11 @@ public static class ToLuaMenu
             foreach (var attribute in attrs)
             {
                 var t = attribute.GetType();
-
-                if (t == typeof(System.ObsoleteAttribute) || t == typeof(NoToLuaAttribute) ||
-                    t.Name == "MonoNotSupportedAttribute" || t.Name == "MonoTODOAttribute")
+                if (t == typeof(System.ObsoleteAttribute) ||
+                    t == typeof(NoToLuaAttribute) ||
+                    t.Name == "MonoNotSupportedAttribute" ||
+                    t.Name == "MonoTODOAttribute" ||
+                    t.Name == "RequiredByNativeCodeAttribute")
                 {
                     return true;
                 }
@@ -506,7 +508,7 @@ public static class ToLuaMenu
         if (string.IsNullOrEmpty(space))
             return;
 
-        var ns = space.Split(new char[] {'.'});
+        var ns = space.Split(new char[] { '.' });
 
         for (int j = 0; j < ns.Length; j++)
         {

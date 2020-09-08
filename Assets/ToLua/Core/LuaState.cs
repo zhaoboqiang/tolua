@@ -329,7 +329,7 @@ namespace LuaInterface
             return t;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         public static int Collect(IntPtr L)
         {
             int udata = LuaDLL.tolua_rawnetobj(L, 1);

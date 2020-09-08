@@ -138,14 +138,14 @@ namespace LuaInterface
             LuaDLL.lua_pop(L, 2);
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int Panic(IntPtr L)
         {
             var reason = $"PANIC: unprotected error in call to Lua API ({LuaDLL.lua_tostring(L, -1)})";
             throw new LuaException(reason);
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int Print(IntPtr L)
         {
             try
@@ -215,7 +215,7 @@ namespace LuaInterface
             }
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int Loader(IntPtr L)
         {
             try
@@ -250,7 +250,7 @@ namespace LuaInterface
             }
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         public static int DoFile(IntPtr L)
         {
             try
@@ -288,7 +288,7 @@ namespace LuaInterface
             }
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         public static int LoadFile(IntPtr L)
         {
             try
@@ -319,7 +319,7 @@ namespace LuaInterface
         }
 
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int IsNull(IntPtr L)
         {
             LuaTypes t = LuaDLL.lua_type(L, 1);
@@ -345,7 +345,7 @@ namespace LuaInterface
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int BufferToString(IntPtr L)
         {
             try
@@ -379,7 +379,7 @@ namespace LuaInterface
             }
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetClassType(IntPtr L)
         {
             int reference = LuaDLL.tolua_getmetatableref(L, 1);
@@ -408,7 +408,7 @@ namespace LuaInterface
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int TableToArray(IntPtr L)
         {
             try
@@ -431,7 +431,7 @@ namespace LuaInterface
             }
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         public static int op_ToString(IntPtr L)
         {
             object obj = ToLua.ToObject(L, 1);

@@ -82,7 +82,7 @@ namespace LuaInterface
             LuaDLL.lua_pop(L, 1);
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int PerlinNoise(IntPtr L)
         {
             try
@@ -108,70 +108,70 @@ namespace LuaInterface
             LuaDLL.lua_pop(L, 1);
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutVector3(IntPtr L)
         {            
             ToLua.PushOut<Vector3>(L, new LuaOut<Vector3>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutVector2(IntPtr L)
         {            
             ToLua.PushOut<Vector2>(L, new LuaOut<Vector2>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutVector4(IntPtr L)
         {            
             ToLua.PushOut<Vector4>(L, new LuaOut<Vector4>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutColor(IntPtr L)
         {            
             ToLua.PushOut<Color>(L, new LuaOut<Color>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutQuaternion(IntPtr L)
         {            
             ToLua.PushOut<Quaternion>(L, new LuaOut<Quaternion>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutRay(IntPtr L)
         {
             ToLua.PushOut<Ray>(L, new LuaOut<Ray>());
             return 1;            
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutBounds(IntPtr L)
         {
             ToLua.PushOut<Bounds>(L, new LuaOut<Bounds>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutRaycastHit(IntPtr L)
         {
             ToLua.PushOut<RaycastHit>(L, new LuaOut<RaycastHit>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutTouch(IntPtr L)
         {            
             ToLua.PushOut<Touch>(L, new LuaOut<Touch>());
             return 1;
         }
 
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallback(typeof(LuaCSFunction))]
         static int GetOutLayerMask(IntPtr L)
         {
             ToLua.PushOut<LayerMask>(L, new LuaOut<LayerMask>());
