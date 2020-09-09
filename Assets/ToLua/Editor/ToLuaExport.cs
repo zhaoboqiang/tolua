@@ -1410,11 +1410,6 @@ public static class ToLuaExport
 
         if (!isStaticClass)
         {
-            if (ToLuaSettingsUtility.Settings.outList.IndexOf(type) >= 0)
-            {
-                sb.AppendLineEx("\t\tL.RegVar(\"out\", get_out, null);");
-            }
-
             sb.AppendFormat("\t\tL.EndClass();\r\n");
         }
         else
@@ -1596,7 +1591,7 @@ public static class ToLuaExport
 
     static bool IsSealedType(Type t)
     {
-        if (t.IsSealed || ToLuaSettingsUtility.Settings.sealedList.Contains(t))
+        if (t.IsSealed)
         {
             return true;
         }
@@ -1699,7 +1694,7 @@ public static class ToLuaExport
 
     static void GenOutFunction()
     {
-        if (isStaticClass || ToLuaSettingsUtility.Settings.outList.IndexOf(type) < 0)
+        if (isStaticClass)
             return;
 
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");

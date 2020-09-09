@@ -253,12 +253,6 @@ public static class ToLuaMenu
         if (t == null)
             return;
 
-        if (ToLuaSettingsUtility.Settings.sealedList.Contains(t))
-        {
-            ToLuaSettingsUtility.Settings.sealedList.Remove(t);
-            Debugger.LogError("{0} not a sealed class, it is parent of {1}", LuaMisc.GetTypeName(t), bt.name);
-        }
-
         if (t.IsInterface)
         {
             Debugger.LogWarning("{0} has a base type {1} is Interface, use SetBaseType to jump it", bt.name,
@@ -664,36 +658,12 @@ public static class ToLuaMenu
         tree.DepthFirstTraversal(begin, end, tree.GetRoot());
         sb.AppendLineEx("\t\tL.EndModule();");
 
-        if (ToLuaSettingsUtility.Settings.dynamicList.Length > 0)
-        {
-            sb.AppendLineEx("\t\tL.BeginPreLoad();");
-
-            for (int i = 0; i < ToLuaSettingsUtility.Settings.dynamicList.Length; i++)
-            {
-                var t1 = ToLuaSettingsUtility.Settings.dynamicList[i];
-                var bt = backupList.Find((p) => p.type == t1);
-                if (bt != null)
-                    sb.AppendFormat("\t\tL.AddPreLoad(\"{0}\", LuaOpen_{1}, typeof({0}));\r\n", bt.name, bt.wrapName);
-            }
-
-            sb.AppendLineEx("\t\tL.EndPreLoad();");
-        }
-
         sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
         sb.AppendLineEx("\t}");
 
         foreach (var dt in dtList)
         {
             ToLuaExport.GenEventFunction(dt.type, sb);
-        }
-
-        foreach (var t in ToLuaSettingsUtility.Settings.dynamicList)
-        {
-            var bt = backupList.Find((p) => p.type == t);
-            if (bt != null)
-            {
-                GenPreLoadFunction(bt, sb);
-            }
         }
 
         sb.AppendLineEx("}\r\n");
@@ -716,9 +686,7 @@ public static class ToLuaMenu
     {
         for (int i = 0; i < allTypes.Count; i++)
         {
-            var dt = Array.Find(ToLuaSettingsUtility.Settings.dynamicList, (p) => allTypes[i].type == p);
-
-            if (dt == null && allTypes[i].nameSpace == nameSpace)
+            if (allTypes[i].nameSpace == nameSpace)
             {
                 var str = "\t\t" + allTypes[i].wrapName + "Wrap.Register(L);\r\n";
                 sb.Append(str);
