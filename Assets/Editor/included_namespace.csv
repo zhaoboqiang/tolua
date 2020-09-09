@@ -24,6 +24,19 @@ UnityEngine.Assertions.Comparers,False,False
 UnityEngine.Assertions.Must,False,False
 UnityEngine.Connect,False,False
 UnityEngine.CrashReportHandler,False,False
+UnityEngine.Experimental.AI,False,False
+UnityEngine.Experimental.Animations,False,False
+UnityEngine.Experimental.AssetBundlePatching,False,False
+UnityEngine.Experimental.Audio,False,False
+UnityEngine.Experimental.GlobalIllumination,False,False
+UnityEngine.Experimental.Networking.PlayerConnection,False,False
+UnityEngine.Experimental.Playables,False,False
+UnityEngine.Experimental.Rendering,False,False
+UnityEngine.Experimental.TerrainAPI,False,False
+UnityEngine.Experimental.U2D,False,False
+UnityEngine.Experimental.VFX,False,False
+UnityEngine.Experimental.Video,False,False
+UnityEngine.Experimental.XR,False,False
 UnityEngine.Internal,False,False
 UnityEngine.Internal.VR,False,False
 UnityEngine.iOS,False,True
@@ -43,6 +56,7 @@ UnityEngine.Serialization,False,False
 UnityEngine.SocialPlatforms,False,False
 UnityEngine.SocialPlatforms.GameCenter,False,False
 UnityEngine.SocialPlatforms.Impl,False,False
+UnityEngine.TextCore.LowLevel,False,False
 UnityEngine.tvOS,False,False
 UnityEngine.UIElements,False,False
 UnityEngine.UIElements.Experimental,False,False
