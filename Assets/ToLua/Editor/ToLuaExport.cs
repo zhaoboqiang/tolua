@@ -625,7 +625,7 @@ public static class ToLuaExport
 
             if (genericType == typeof(Dictionary<,>) && mi.Name == "Remove")
             {
-                MethodBase mb = (MethodBase) mi;
+                MethodBase mb = (MethodBase)mi;
                 return mb.GetParameters().Length == 2;
             }
 
@@ -873,7 +873,7 @@ public static class ToLuaExport
             }
         }
 
-        PropertyInfo[] ps = type.GetProperties();
+        var ps = type.GetProperties();
 
         for (int i = 0; i < ps.Length; i++)
         {
@@ -988,7 +988,7 @@ public static class ToLuaExport
                                 BindingFlags.Static);
         eventList.AddRange(type.GetEvents(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public));
 
-        List<FieldInfo> fieldList = new List<FieldInfo>();
+        var fieldList = new List<FieldInfo>();
         fieldList.AddRange(fields);
 
         for (int i = fieldList.Count - 1; i >= 0; i--)
@@ -1005,7 +1005,7 @@ public static class ToLuaExport
 
         fields = fieldList.ToArray();
 
-        List<PropertyInfo> piList = new List<PropertyInfo>();
+        var piList = new List<PropertyInfo>();
         piList.AddRange(props);
 
         for (int i = piList.Count - 1; i >= 0; i--)
@@ -1045,7 +1045,7 @@ public static class ToLuaExport
         allProps.AddRange(props);
         allProps.AddRange(propList);
 
-        List<EventInfo> evList = new List<EventInfo>();
+        var evList = new List<EventInfo>();
         evList.AddRange(events);
 
         for (int i = evList.Count - 1; i >= 0; i--)
@@ -1406,7 +1406,7 @@ public static class ToLuaExport
         GenRegisterFuncItems();
         GenRegisterOpItems();
         GenRegisterVariables();
-        GenRegisterEventTypes(); //注册事件类型
+        //GenRegisterEventTypes(); //注册事件类型
 
         if (!isStaticClass)
         {
@@ -3759,15 +3759,9 @@ public static class ToLuaExport
     static void GenEnum()
     {
         fields = type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static);
-        List<FieldInfo> list = new List<FieldInfo>(fields);
-
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            if (IsObsolete(list[i]))
-            {
-                list.RemoveAt(i);
-            }
-        }
+        var list = from field in fields
+                   where !IsObsolete(field)
+                   select field;
 
         fields = list.ToArray();
 
@@ -3977,7 +3971,7 @@ public static class ToLuaExport
     {
         var str = "\r\n\t\t\t{\r\n";
         bool flag = false;
-        ParameterInfo[] pis = md.GetParameters();
+        var pis = md.GetParameters();
 
         for (int i = 0; i < pis.Length; i++)
         {
@@ -4106,14 +4100,14 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\tif(!flag)");
             sb.AppendLineEx("\t\t{");
             sb.AppendFormat("\t\t\tvar target = new {0}_Event(func);\r\n", name);
-            sb.AppendLineEx("\t\t\tvar d = target.Call;");
+            sb.AppendFormat("\t\t\t{0} d = target.Call;\r\n", strType);
             sb.AppendLineEx("\t\t\ttarget.method = d.Method;");
             sb.AppendLineEx("\t\t\treturn d;");
             sb.AppendLineEx("\t\t}");
             sb.AppendLineEx("\t\telse");
             sb.AppendLineEx("\t\t{");
             sb.AppendFormat("\t\t\tvar target = new {0}_Event(func, self);\r\n", name);
-            sb.AppendLineEx("\t\t\tvar d = target.CallWithSelf;");
+            sb.AppendFormat("\t\t\t{0} d = target.CallWithSelf;\r\n", strType);
             sb.AppendLineEx("\t\t\ttarget.method = d.Method;");
             sb.AppendLineEx("\t\t\treturn d;");
             sb.AppendLineEx("\t\t}");
@@ -4463,7 +4457,7 @@ public static class ToLuaExport
 
             if (pos > 0)
             {
-                count = (int) (str[pos + 1] - '0');
+                count = (int)(str[pos + 1] - '0');
                 str = str.Substring(0, pos);
                 str += "<" + string.Join(",", LuaMisc.GetGenericName(gArgs, offset, count)) + ">";
                 offset += count;
@@ -4479,7 +4473,7 @@ public static class ToLuaExport
         if (offset < gArgs.Length)
         {
             pos = str.IndexOf('`');
-            count = (int) (str[pos + 1] - '0');
+            count = (int)(str[pos + 1] - '0');
             str = str.Substring(0, pos);
             str += "<" + string.Join(",", LuaMisc.GetGenericName(gArgs, offset, count)) + ">";
         }
