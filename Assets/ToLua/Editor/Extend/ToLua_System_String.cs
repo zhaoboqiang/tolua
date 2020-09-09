@@ -26,7 +26,7 @@ public class ToLua_System_String
             return LuaDLL.toluaL_exception(L, e);
         }";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public ToLua_System_String()
     {
 

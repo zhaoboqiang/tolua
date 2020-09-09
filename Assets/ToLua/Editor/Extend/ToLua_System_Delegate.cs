@@ -5,7 +5,7 @@ public class ToLua_System_Delegate
 {    
     public static string AdditionNameSpace = "System.Collections.Generic";
 
-    [NoToLuaAttribute]
+    [NoToLua]
     public static string op_AdditionDefined =
 @"        try
         {                        
@@ -40,7 +40,7 @@ public class ToLua_System_Delegate
             return LuaDLL.toluaL_exception(L, e);
         }";
 
-    [NoToLuaAttribute]
+    [NoToLua]
     public static string op_SubtractionDefined =
 @"        try
         {            
@@ -92,13 +92,13 @@ public class ToLua_System_Delegate
         return false;
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static ToLua_System_Delegate operator +(ToLua_System_Delegate a, ToLua_System_Delegate b)
     {
         return null;
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static ToLua_System_Delegate operator -(ToLua_System_Delegate a, ToLua_System_Delegate b)
     {
         return null;
@@ -131,7 +131,7 @@ public class ToLua_System_Delegate
 
         return 0;";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static void Destroy(object obj)
     {
     }

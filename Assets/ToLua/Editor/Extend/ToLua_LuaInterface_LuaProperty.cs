@@ -26,13 +26,13 @@ public class ToLua_LuaInterface_LuaProperty
 		}";
 
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public int Set(IntPtr L)
     {
         return 0;
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public int Get(IntPtr L)
     {
         return 0;

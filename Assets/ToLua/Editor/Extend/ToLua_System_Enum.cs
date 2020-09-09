@@ -79,18 +79,18 @@ public class ToLua_System_Enum
 			return LuaDLL.toluaL_exception(L, e);
 		}";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static void ToInt(System.Enum obj)
     {
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static object ToObject(Type enumType, int value)
     {
         return null;
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static object Parse(Type enumType, string value)
     {
         return null;

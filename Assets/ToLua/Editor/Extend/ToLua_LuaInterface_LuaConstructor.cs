@@ -28,13 +28,13 @@ public class ToLua_LuaInterface_LuaConstructor
 			return LuaDLL.toluaL_exception(L, e);
 		}";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public void Destroy()
     {
 
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public int Call(IntPtr L)
     {
         return 0;

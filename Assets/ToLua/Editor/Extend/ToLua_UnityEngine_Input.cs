@@ -17,7 +17,7 @@ public class ToLua_UnityEngine_Input
 			return LuaDLL.toluaL_exception(L, e);			
 		}";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static Touch GetTouch(int index, int flag)
     {        
         return new Touch();

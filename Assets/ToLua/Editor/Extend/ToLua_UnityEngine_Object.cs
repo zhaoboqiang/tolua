@@ -200,31 +200,31 @@ public class ToLua_UnityEngine_Object
         }";
 
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static void Destroy(Object obj)
     {
         
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static void DestroyImmediate(Object obj)
     {
 
     }
 
-    [NoToLuaAttribute]
+    [NoToLua]
     public static void DestroyObject(Object obj)
     {
 
     }
 
-    [NoToLuaAttribute]
+    [NoToLua]
     public static void DestroyObject(Object obj, float t)
     {
 
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static void Instantiate(Object original)
     {
 

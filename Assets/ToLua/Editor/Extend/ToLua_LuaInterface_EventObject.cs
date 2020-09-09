@@ -3,7 +3,7 @@ using LuaInterface;
 
 public class ToLua_LuaInterface_EventObject
 {
-    [NoToLuaAttribute]
+    [NoToLua]
     public static string op_AdditionDefined =
 @"        try
         {
@@ -18,7 +18,7 @@ public class ToLua_LuaInterface_EventObject
             return LuaDLL.toluaL_exception(L, e);
         }";
 
-    [NoToLuaAttribute]
+    [NoToLua]
     public static string op_SubtractionDefined =
 @"        try
         {
@@ -33,13 +33,13 @@ public class ToLua_LuaInterface_EventObject
             return LuaDLL.toluaL_exception(L, e);
         }";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static ToLua_LuaInterface_EventObject operator +(ToLua_LuaInterface_EventObject a, ToLua_LuaInterface_EventObject b)
     {
         return null;
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static ToLua_LuaInterface_EventObject operator -(ToLua_LuaInterface_EventObject a, ToLua_LuaInterface_EventObject b)
     {
         return null;

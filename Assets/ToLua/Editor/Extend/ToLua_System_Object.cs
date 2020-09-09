@@ -5,7 +5,7 @@ public class ToLua_System_Object
 {
     public static string DestroyDefined = "\t\treturn ToLua.Destroy(L);";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public static void Destroy(object obj)
     {
     }

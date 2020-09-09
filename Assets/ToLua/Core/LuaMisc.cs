@@ -185,7 +185,7 @@ namespace LuaInterface
         }
     }
 
-    [NoToLuaAttribute]
+    [NoToLua]
     public static class LuaMisc
     {
         public static string GetArrayRank(Type t)
@@ -473,37 +473,6 @@ namespace LuaInterface
         }
     }       
 
-    /*[NoToLuaAttribute]
-    public struct LuaInteger64
-    {
-        public long i64;
-
-        public LuaInteger64(long i64)
-        {
-            this.i64 = i64;
-        }
-
-        public static implicit operator LuaInteger64(long i64)
-        {
-            return new LuaInteger64(i64);
-        }
-
-        public static implicit operator long(LuaInteger64 self)
-        {
-            return self.i64;
-        }
-
-        public ulong ToUInt64()
-        {
-            return (ulong)i64;
-        }
-
-        public override string ToString()
-        {
-            return Convert.ToString(i64);
-        }
-    }*/
-
     public class TouchBits
     {
         public const int DeltaPosition = 1;
@@ -531,14 +500,14 @@ namespace LuaInterface
 
     public class EventObject
     {
-        [NoToLuaAttribute]
+        [NoToLua]
         public EventOp op = EventOp.None;
-        [NoToLuaAttribute]
+        [NoToLua]
         public Delegate func = null;
-        [NoToLuaAttribute]
+        [NoToLua]
         public Type type;
 
-        [NoToLuaAttribute]
+        [NoToLua]
         public EventObject(Type t)
         {
             type = t;

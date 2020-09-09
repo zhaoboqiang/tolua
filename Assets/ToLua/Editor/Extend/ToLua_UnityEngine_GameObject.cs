@@ -321,23 +321,23 @@ public class ToLua_UnityEngine_GameObject
             --LuaException.InstantiateCount;
             return LuaDLL.toluaL_exception(L, e);
 		}";
-    [UseDefinedAttribute]
+    [UseDefined]
     public void SendMessage(string methodName)
     {
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public void SendMessageUpwards(string methodName)
     {
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public void BroadcastMessage(string methodName)
     {
 
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public void AddComponent(Type t)
     {
 

@@ -25,13 +25,13 @@ public class ToLua_LuaInterface_LuaField
 			return LuaDLL.toluaL_exception(L, e);
 		}";
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public int Set(IntPtr L)
     {
         return 0;
     }
 
-    [UseDefinedAttribute]
+    [UseDefined]
     public int Get(IntPtr L)
     {
         return 0;
