@@ -8,7 +8,7 @@ public class ToLua_UnityEngine_RectTransform
 @"            if (count == 1)
             {
                 UnityEngine.RectTransform obj = (UnityEngine.RectTransform)ToLua.CheckObject(L, 1, typeof(UnityEngine.RectTransform));
-                UnityEngine.Vector3[] arg0 = new UnityEngine.Vector3[4];
+                var arg0 = new UnityEngine.Vector3[4];
                 obj.GetLocalCorners(arg0);
                 ToLua.Push(L, arg0);
                 return 1;
@@ -17,20 +17,20 @@ public class ToLua_UnityEngine_RectTransform
     public static string GetWorldCornersDefined =
 @"            if (count == 1)
             {
-                UnityEngine.RectTransform obj = (UnityEngine.RectTransform)ToLua.CheckObject(L, 1, typeof(UnityEngine.RectTransform));
-                UnityEngine.Vector3[] arg0 = new UnityEngine.Vector3[4];
+                var obj = (UnityEngine.RectTransform)ToLua.CheckObject(L, 1, typeof(UnityEngine.RectTransform));
+                var arg0 = new UnityEngine.Vector3[4];
                 obj.GetWorldCorners(arg0);
                 ToLua.Push(L, arg0);
                 return 1;
             }";
 
-    [OverrideDefinedAttribute]
+    [OverrideDefined]
     public Vector3[] GetLocalCorners()
     {
         return null;
     }
 
-    [OverrideDefinedAttribute]
+    [OverrideDefined]
     public Vector3[] GetWorldCorners()
     {
         return null;

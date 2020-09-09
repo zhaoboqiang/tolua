@@ -3257,12 +3257,12 @@ public static class ToLuaExport
 
         sb.AppendLineEx("\t\t\tif (arg0.op == EventOp.Add)");
         sb.AppendLineEx("\t\t\t{");
-        sb.AppendFormat("\t\t\t\t{0} ev = ({0})arg0.func;\r\n", strVarType);
+        sb.AppendFormat("\t\t\t\tvar ev = ({0})arg0.func;\r\n", strVarType);
         sb.AppendFormat("\t\t\t\t{0}.{1} += ev;\r\n", objStr, varName);
         sb.AppendLineEx("\t\t\t}");
         sb.AppendLineEx("\t\t\telse if (arg0.op == EventOp.Sub)");
         sb.AppendLineEx("\t\t\t{");
-        sb.AppendFormat("\t\t\t\t{0} ev = ({0})arg0.func;\r\n", strVarType);
+        sb.AppendFormat("\t\t\t\tvar ev = ({0})arg0.func;\r\n", strVarType);
         sb.AppendFormat("\t\t\t\t{0}.{1} -= ev;\r\n", objStr, varName);
         sb.AppendLineEx("\t\t\t}\r\n");
 

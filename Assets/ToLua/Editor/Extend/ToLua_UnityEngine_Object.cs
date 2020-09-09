@@ -11,7 +11,7 @@ public class ToLua_UnityEngine_Object
 
             if (count == 1)
             {
-                UnityEngine.Object arg0 = (UnityEngine.Object)ToLua.CheckObject<UnityEngine.Object>(L, 1);
+                var arg0 = (UnityEngine.Object)ToLua.CheckObject<UnityEngine.Object>(L, 1);
                 ToLua.Destroy(L);
                 UnityEngine.Object.Destroy(arg0);
                 return 0;
