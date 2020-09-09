@@ -1708,7 +1708,7 @@ public static class ToLuaExport
     static int GetDefalutParamCount(MethodBase md)
     {
         int count = 0;
-        ParameterInfo[] infos = md.GetParameters();
+        var infos = md.GetParameters();
 
         for (int i = 0; i < infos.Length; i++)
         {
@@ -1726,11 +1726,11 @@ public static class ToLuaExport
         if (isStaticClass || type.IsAbstract || typeof(MonoBehaviour).IsAssignableFrom(type))
             return;
 
-        ConstructorInfo[] constructors = type.GetConstructors(BindingFlags.Instance | binding);
+        var constructors = type.GetConstructors(BindingFlags.Instance | binding);
 
         if (extendType != null)
         {
-            ConstructorInfo[] ctorExtends = extendType.GetConstructors(BindingFlags.Instance | binding);
+            var ctorExtends = extendType.GetConstructors(BindingFlags.Instance | binding);
 
             if (HasAttribute(ctorExtends[0], typeof(UseDefinedAttribute)))
             {
@@ -1827,14 +1827,14 @@ public static class ToLuaExport
         sb.AppendLineEx("\t\t\tint count = LuaDLL.lua_gettop(L);");
         sb.AppendLineEx();
 
-        _MethodBase md = ctorList[0];
+        var md = ctorList[0];
         bool hasEmptyCon = ctorList[0].GetParameters().Length == 0 ? true : false;
 
         //处理重载构造函数
         if (HasOptionalParam(md.GetParameters()))
         {
-            ParameterInfo[] paramInfos = md.GetParameters();
-            ParameterInfo param = paramInfos[paramInfos.Length - 1];
+            var paramInfos = md.GetParameters();
+            var param = paramInfos[paramInfos.Length - 1];
             string str = GetTypeStr(param.ParameterType.GetElementType());
 
             if (paramInfos.Length > 1)
@@ -1852,7 +1852,7 @@ public static class ToLuaExport
         }
         else
         {
-            ParameterInfo[] paramInfos = md.GetParameters();
+            var paramInfos = md.GetParameters();
 
             if (ctorList.Count == 1 || paramInfos.Length == 0 || paramInfos.Length + 1 <= checkTypeMap[0])
             {
@@ -1875,7 +1875,7 @@ public static class ToLuaExport
         {
             hasEmptyCon = ctorList[i].GetParameters().Length == 0 ? true : hasEmptyCon;
             md = ctorList[i];
-            ParameterInfo[] paramInfos = md.GetParameters();
+            var paramInfos = md.GetParameters();
 
             if (!HasOptionalParam(md.GetParameters()))
             {
@@ -1893,7 +1893,7 @@ public static class ToLuaExport
             }
             else
             {
-                ParameterInfo param = paramInfos[paramInfos.Length - 1];
+                var param = paramInfos[paramInfos.Length - 1];
                 string str = GetTypeStr(param.ParameterType.GetElementType());
 
                 if (paramInfos.Length > 1)
@@ -1951,7 +1951,7 @@ public static class ToLuaExport
 
             if (getItems.Count == 1)
             {
-                _MethodBase m = getItems[0];
+                var m = getItems[0];
                 int count = m.GetParameters().Length + 1;
                 sb.AppendFormat("\t\t\tToLua.CheckArgsCount(L, {0});\r\n", count);
                 m.ProcessParams(3, false, int.MaxValue);
@@ -1992,7 +1992,7 @@ public static class ToLuaExport
 
             if (setItems.Count == 1)
             {
-                _MethodBase m = setItems[0];
+                var m = setItems[0];
                 int count = m.GetParameters().Length + 1;
                 sb.AppendFormat("\t\t\tToLua.CheckArgsCount(L, {0});\r\n", count);
                 m.ProcessParams(3, false, int.MaxValue);
@@ -2063,8 +2063,8 @@ public static class ToLuaExport
         int off1 = lhs.IsStatic ? 0 : 1;
         int off2 = rhs.IsStatic ? 0 : 1;
 
-        ParameterInfo[] lp = lhs.GetParameters();
-        ParameterInfo[] rp = rhs.GetParameters();
+        var lp = lhs.GetParameters();
+        var rp = rhs.GetParameters();
 
         int pos1 = GetOptionalParamPos(lp);
         int pos2 = GetOptionalParamPos(rp);
@@ -2113,8 +2113,8 @@ public static class ToLuaExport
         }
         else if (c1 == c2)
         {
-            List<ParameterInfo> list1 = new List<ParameterInfo>(lp);
-            List<ParameterInfo> list2 = new List<ParameterInfo>(rp);
+            var list1 = new List<ParameterInfo>(lp);
+            var list2 = new List<ParameterInfo>(rp);
 
             if (list1.Count > list2.Count)
             {
@@ -2613,7 +2613,7 @@ public static class ToLuaExport
             return t;
         }
 
-        List<Type> list = new List<Type>(md.GetGenericArguments());
+        var list = new List<Type>(md.GetGenericArguments());
 
         if (list.Contains(t))
         {
@@ -2721,11 +2721,11 @@ public static class ToLuaExport
         }
         else
         {
-            ParameterInfo[] lp = l.GetParameters();
-            ParameterInfo[] rp = r.GetParameters();
+            var lp = l.GetParameters();
+            var rp = r.GetParameters();
 
-            List<Type> ll = new List<Type>();
-            List<Type> lr = new List<Type>();
+            var ll = new List<Type>();
+            var lr = new List<Type>();
 
             if (!l.IsStatic)
             {
@@ -2813,8 +2813,8 @@ public static class ToLuaExport
 
         if (HasOptionalParam(md.GetParameters()))
         {
-            ParameterInfo[] paramInfos = md.GetParameters();
-            ParameterInfo param = paramInfos[paramInfos.Length - 1];
+            var paramInfos = md.GetParameters();
+            var param = paramInfos[paramInfos.Length - 1];
             string str = GetTypeStr(param.ParameterType.GetElementType());
 
             if (paramInfos.Length + offset > 1)
@@ -2832,7 +2832,7 @@ public static class ToLuaExport
         }
         else
         {
-            ParameterInfo[] paramInfos = md.GetParameters();
+            var paramInfos = md.GetParameters();
 
             if (paramInfos.Length + offset > checkTypeOffset)
             {
@@ -2854,7 +2854,7 @@ public static class ToLuaExport
 
     static int[] CheckCheckTypePos<T>(List<T> list) where T : _MethodBase
     {
-        int[] map = new int[list.Count];
+        var map = new int[list.Count];
 
         for (int i = 0; i < list.Count;)
         {
@@ -2909,7 +2909,7 @@ public static class ToLuaExport
     static void GenOverrideDefinedFunc(MethodBase method)
     {
         string name = GetMethodName(method);
-        FieldInfo field = extendType.GetField(name + "Defined");
+        var field = extendType.GetField(name + "Defined");
         string strfun = field.GetValue(null) as string;
         sb.AppendLineEx(strfun);
         return;
@@ -2939,7 +2939,7 @@ public static class ToLuaExport
         }
 
         list.Sort(Compare);
-        int[] checkTypeMap = CheckCheckTypePos(list);
+        var checkTypeMap = CheckCheckTypePos(list);
 
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", name == "Register" ? "_Register" : name);
@@ -3050,8 +3050,8 @@ public static class ToLuaExport
 
     static string GenParamTypes(ParameterInfo[] p, MethodBase mb, int offset = 0)
     {
-        StringBuilder sb = new StringBuilder();
-        List<Type> list = new List<Type>();
+        var sb = new StringBuilder();
+        var list = new List<Type>();
 
         if (!mb.IsStatic)
         {
@@ -4020,9 +4020,7 @@ public static class ToLuaExport
     static bool IsMethodEqualExtend(MethodBase a, MethodBase b)
     {
         if (a.Name != b.Name)
-        {
             return false;
-        }
 
         int c1 = a.IsStatic ? 0 : 1;
         int c2 = b.IsStatic ? 0 : 1;
@@ -4039,24 +4037,16 @@ public static class ToLuaExport
         var lr = new List<Type>();
 
         if (!a.IsStatic)
-        {
             ll.Add(type);
-        }
 
         if (!b.IsStatic)
-        {
             lr.Add(type);
-        }
 
         for (int i = 0; i < lp.Length; i++)
-        {
             ll.Add(GetParameterType(lp[i]));
-        }
 
         for (int i = 0; i < rp.Length; i++)
-        {
             lr.Add(GetParameterType(rp[i]));
-        }
 
         for (int i = 0; i < ll.Count; i++)
         {
@@ -4124,7 +4114,7 @@ public static class ToLuaExport
 
     static bool IsGenericType(MethodInfo md, Type t)
     {
-        Type[] list = md.GetGenericArguments();
+        var list = md.GetGenericArguments();
 
         for (int i = 0; i < list.Length; i++)
         {
@@ -4176,12 +4166,11 @@ public static class ToLuaExport
         extendName = "ToLua_" + className.Replace(".", "_");
         extendType = Type.GetType(extendName + ", Assembly-CSharp-Editor");
         ProcessEditorExtend(extendType, list);
-        string temp = null;
 
         for (int i = 0; i < extendList.Count; i++)
         {
             ProcessExtendType(extendList[i], list);
-            string nameSpace = GetNameSpace(extendList[i], out temp);
+            string nameSpace = GetNameSpace(extendList[i], out var temp);
 
             if (!string.IsNullOrEmpty(nameSpace))
             {
