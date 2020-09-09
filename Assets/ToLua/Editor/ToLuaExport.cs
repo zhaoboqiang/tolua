@@ -375,7 +375,7 @@ public static class ToLuaExport
 
         public int ProcessParams(int tab, bool beConstruct, int checkTypePos)
         {
-            ParameterInfo[] paramInfos = args;
+            var paramInfos = args;
 
             if (BeExtend)
             {
@@ -415,7 +415,7 @@ public static class ToLuaExport
                         }
                         else
                         {
-                            sb.AppendFormat("{0}{1} obj = ({1})ToLua.ToObject(L, 1);\r\n", head, className);
+                            sb.AppendFormat("{0}var obj = ({1})ToLua.ToObject(L, 1);\r\n", head, className);
                         }
                     }
                     else if (checkTypePos > 0) // && methodType == 0)
@@ -478,7 +478,7 @@ public static class ToLuaExport
 
             if (beConstruct)
             {
-                sb.AppendFormat("{2}{0} obj = new {0}({1});\r\n", className, sbArgs.ToString(), head);
+                sb.AppendFormat("{2}var obj = new {0}({1});\r\n", className, sbArgs.ToString(), head);
                 string str = GetPushFunction(type);
                 sb.AppendFormat("{0}ToLua.{1}(L, obj);\r\n", head, str);
 
@@ -1676,7 +1676,7 @@ public static class ToLuaExport
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendFormat("\tstatic int _Create{0}(IntPtr L)\r\n", wrapClassName);
         sb.AppendLineEx("\t{");
-        sb.AppendFormat("\t\t{0} obj = new {0}();\r\n", className);
+        sb.AppendFormat("\t\tvar obj = new {0}();\r\n", className);
         GenPushStr(type, "obj", "\t\t");
         sb.AppendLineEx("\t\treturn 1;");
         sb.AppendLineEx("\t}");
@@ -1920,7 +1920,7 @@ public static class ToLuaExport
         {
             sb.AppendLineEx("\t\t\telse if (count == 0)");
             sb.AppendLineEx("\t\t\t{");
-            sb.AppendFormat("\t\t\t\t{0} obj = new {0}();\r\n", className);
+            sb.AppendFormat("\t\t\t\tvar obj = new {0}();\r\n", className);
             GenPushStr(type, "obj", "\t\t\t\t");
             sb.AppendLineEx("\t\t\t\treturn 1;");
             sb.AppendLineEx("\t\t\t}");
@@ -2223,11 +2223,11 @@ public static class ToLuaExport
         {
             if (IsSealedType(type))
             {
-                sb.AppendFormat("{0}{1} obj = ({1})ToLua.CheckObject(L, {2}, typeof({1}));\r\n", head, className, pos);
+                sb.AppendFormat("{0}var obj = ({1})ToLua.CheckObject(L, {2}, typeof({1}));\r\n", head, className, pos);
             }
             else
             {
-                sb.AppendFormat("{0}{1} obj = ({1})ToLua.CheckObject<{1}>(L, {2});\r\n", head, className, pos);
+                sb.AppendFormat("{0}var obj = ({1})ToLua.CheckObject<{1}>(L, {2});\r\n", head, className, pos);
             }
         }
     }
@@ -2240,7 +2240,7 @@ public static class ToLuaExport
         }
         else
         {
-            sb.AppendFormat("{0}{1} obj = ({1})ToLua.ToObject(L, {2});\r\n", head, className, pos);
+            sb.AppendFormat("{0}var obj = ({1})ToLua.ToObject(L, {2});\r\n", head, className, pos);
         }
     }
 
@@ -3121,7 +3121,7 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\tobject o = null;\r\n");
             BeginTry();
             sb.AppendLineEx("\t\t\to = ToLua.ToObject(L, 1);");
-            sb.AppendFormat("\t\t\t{0} obj = ({0})o;\r\n", className);
+            sb.AppendFormat("\t\t\tvar obj = ({0})o;\r\n", className);
             sb.AppendFormat("\t\t\t{0} ret = obj.{1};\r\n", GetTypeStr(varType), varName);
             GenPushStr(varType, "ret", "\t\t\t", isByteBuffer);
             sb.AppendLineEx("\t\t\treturn 1;");
@@ -3676,7 +3676,7 @@ public static class ToLuaExport
         sb.AppendLineEx("\tstatic int IntToEnum(IntPtr L)");
         sb.AppendLineEx("\t{");
         sb.AppendLineEx("\t\tint arg0 = (int)LuaDLL.lua_tonumber(L, 1);");
-        sb.AppendFormat("\t\t{0} o = ({0})arg0;\r\n", className);
+        sb.AppendFormat("\t\tvar o = ({0})arg0;\r\n", className);
         sb.AppendLineEx("\t\tToLua.Push(L, o);");
         sb.AppendLineEx("\t\treturn 1;");
         sb.AppendLineEx("\t}");
