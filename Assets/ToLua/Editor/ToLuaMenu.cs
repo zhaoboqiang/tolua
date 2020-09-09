@@ -1192,7 +1192,7 @@ public static class ToLuaMenu
 
         allTypes.Clear();
         ToLuaExport.allTypes.AddRange(baseType);
-        List<BindType> btList = new List<BindType>();
+        var btList = new List<BindType>();
 
         for (int i = 0; i < baseType.Count; i++)
         {
@@ -1200,7 +1200,7 @@ public static class ToLuaMenu
         }
 
         GenBindTypes(btList.ToArray(), false);
-        BindType[] list = allTypes.ToArray();
+        var list = allTypes.ToArray();
 
         for (int i = 0; i < list.Length; i++)
         {

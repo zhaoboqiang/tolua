@@ -925,7 +925,7 @@ public static class ToLuaExport
 
         if (flag && !isStaticClass)
         {
-            List<MethodInfo> baseList = new List<MethodInfo>(type.GetMethods(
+            var baseList = new List<MethodInfo>(type.GetMethods(
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase));
 
             for (int i = baseList.Count - 1; i >= 0; i--)
@@ -936,11 +936,11 @@ public static class ToLuaExport
                 }
             }
 
-            HashSet<MethodInfo> addList = new HashSet<MethodInfo>();
+            var addList = new HashSet<MethodInfo>();
 
             for (int i = 0; i < list.Count; i++)
             {
-                List<MethodInfo> mds = baseList.FindAll((p) => { return p.Name == list[i].Name; });
+                var mds = baseList.FindAll((p) => { return p.Name == list[i].Name; });
 
                 for (int j = 0; j < mds.Count; j++)
                 {
@@ -970,7 +970,7 @@ public static class ToLuaExport
 
             for (int j = 0; j < count + 1; j++)
             {
-                _MethodBase r = new _MethodBase(list[i].Method, length - j);
+                var r = new _MethodBase(list[i].Method, length - j);
                 r.BeExtend = list[i].BeExtend;
                 methods.Add(r);
             }
@@ -1478,11 +1478,11 @@ public static class ToLuaExport
             return t.IsGenericParameter || t == typeof(System.ValueType);
         }
 
-        Type[] types = t.GetGenericArguments();
+        var types = t.GetGenericArguments();
 
         for (int i = 0; i < types.Length; i++)
         {
-            Type t1 = types[i];
+            var t1 = types[i];
 
             if (t1.IsGenericParameter || t1 == typeof(System.ValueType))
             {
@@ -1513,6 +1513,9 @@ public static class ToLuaExport
 
     static bool IsGenericMethod(MethodBase md)
     {
+        return md.IsGenericMethod;
+
+        /*
         if (md.IsGenericMethod)
         {
             var gts = md.GetGenericArguments();
@@ -1521,14 +1524,12 @@ public static class ToLuaExport
             for (int i = 0; i < gts.Length; i++)
             {
                 var ts = gts[i].GetGenericParameterConstraints();
-
                 if (ts == null || ts.Length == 0 || IsGenericConstraints(ts))
                 {
                     return true;
                 }
 
                 var p = list.Find((iter) => iter.ParameterType == gts[i]);
-
                 if (p == null)
                 {
                     return true;
@@ -1540,7 +1541,6 @@ public static class ToLuaExport
             for (int i = 0; i < list.Count; i++)
             {
                 var t = list[i].ParameterType;
-
                 if (IsGenericConstraintType(t))
                 {
                     return true;
@@ -1549,6 +1549,7 @@ public static class ToLuaExport
         }
 
         return false;
+        */
     }
 
     static void GenFunctions()
@@ -1557,7 +1558,7 @@ public static class ToLuaExport
 
         for (int i = 0; i < methods.Count; i++)
         {
-            _MethodBase m = methods[i];
+            var m = methods[i];
 
             if (IsGenericMethod(m.Method))
             {
@@ -3446,105 +3447,10 @@ public static class ToLuaExport
         return false;
     }
 
-    /*static void LuaFuncToDelegate(Type t, string head)
-    {        
-        MethodInfo mi = t.GetMethod("Invoke");
-        ParameterInfo[] pi = mi.GetParameters();            
-        int n = pi.Length;
-
-        if (n == 0)
-        {
-            sb.AppendLineEx("() =>");
-
-            if (mi.ReturnType == typeof(void))
-            {
-                sb.AppendFormat("{0}{{\r\n{0}\tfunc.Call();\r\n{0}}};\r\n", head);
-            }
-            else
-            {
-                sb.AppendFormat("{0}{{\r\n{0}\tfunc.BeginPCall();\r\n", head);
-                sb.AppendFormat("{0}\tfunc.PCall();\r\n", head);
-                GenLuaFunctionRetValue(sb, mi.ReturnType, head + "\t", "ret");
-                sb.AppendFormat("{0}\tfunc.EndPCall();\r\n", head);
-                sb.AppendLineEx(head + "\treturn ret;");            
-                sb.AppendFormat("{0}}};\r\n", head);
-            }
-
-            return;
-        }
-
-        sb.AppendFormat("(param0");
-
-        for (int i = 1; i < n; i++)
-        {
-            sb.AppendFormat(", param{0}", i);
-        }
-
-        sb.AppendFormat(") =>\r\n{0}{{\r\n{0}", head);
-        sb.AppendLineEx("\tfunc.BeginPCall();");
-
-        for (int i = 0; i < n; i++)
-        {
-            string push = GetPushFunction(pi[i].ParameterType);
-
-            if (!IsParams(pi[i]))
-            {
-                if (pi[i].ParameterType == typeof(byte[]) && IsByteBuffer(t))
-                {
-                    sb.AppendFormat("{0}\tfunc.PushByteBuffer(param{1});\r\n", head, i);
-                }
-                else
-                {
-                    sb.AppendFormat("{0}\tfunc.{1}(param{2});\r\n", head, push, i);
-                }
-            }
-            else
-            {
-                sb.AppendLineEx();
-                sb.AppendFormat("{0}\tfor (int i = 0; i < param{1}.Length; i++)\r\n", head, i);
-                sb.AppendLineEx(head + "\t{");
-                sb.AppendFormat("{0}\t\tfunc.{1}(param{2}[i]);\r\n", head, push, i);
-                sb.AppendLineEx(head + "\t}\r\n");
-            }
-        }
-
-        sb.AppendFormat("{0}\tfunc.PCall();\r\n", head);
-
-        if (mi.ReturnType == typeof(void))
-        {
-            for (int i = 0; i < pi.Length; i++)
-            {
-                if ((pi[i].Attributes & ParameterAttributes.Out) != ParameterAttributes.None)
-                {
-                    GenLuaFunctionRetValue(sb, pi[i].ParameterType, head + "\t", "param" + i, true);
-                }
-            }
-
-            sb.AppendFormat("{0}\tfunc.EndPCall();\r\n", head);
-        }
-        else
-        {
-            GenLuaFunctionRetValue(sb, mi.ReturnType, head + "\t", "ret");
-
-            for (int i = 0; i < pi.Length; i++)
-            {
-                if ((pi[i].Attributes & ParameterAttributes.Out) != ParameterAttributes.None)
-                {
-                    GenLuaFunctionRetValue(sb, pi[i].ParameterType, head + "\t", "param" + i, true);
-                }
-            }
-
-            sb.AppendFormat("{0}\tfunc.EndPCall();\r\n", head);
-            sb.AppendLineEx(head + "\treturn ret;");            
-        }
-
-        sb.AppendFormat("{0}}};\r\n", head);
-    }*/
-
     static void GenDelegateBody(StringBuilder sb, Type t, string head, bool hasSelf = false)
     {
-        MethodInfo mi = t.GetMethod("Invoke");
-        ParameterInfo[] pi = mi.GetParameters();
+        var mi = t.GetMethod("Invoke");
+        var pi = mi.GetParameters();
         int n = pi.Length;
 
         if (n == 0)
@@ -3643,38 +3549,21 @@ public static class ToLuaExport
     static bool IsNeedOp(string name)
     {
         if (name == "op_Addition")
-        {
             op |= MetaOp.Add;
-        }
         else if (name == "op_Subtraction")
-        {
             op |= MetaOp.Sub;
-        }
         else if (name == "op_Equality")
-        {
             op |= MetaOp.Eq;
-        }
         else if (name == "op_Multiply")
-        {
             op |= MetaOp.Mul;
-        }
         else if (name == "op_Division")
-        {
             op |= MetaOp.Div;
-        }
         else if (name == "op_UnaryNegation")
-        {
             op |= MetaOp.Neg;
-        }
         else if (name == "ToString" && !isStaticClass)
-        {
             op |= MetaOp.ToStr;
-        }
         else
-        {
             return false;
-        }
-
 
         return true;
     }
@@ -3684,34 +3573,20 @@ public static class ToLuaExport
         var head = string.Empty;
 
         for (int i = 0; i < count; i++)
-        {
             head += "\t";
-        }
 
         if (name == "op_Addition")
-        {
             sb.AppendFormat("{0}{1} o = arg0 + arg1;\r\n", head, ret);
-        }
         else if (name == "op_Subtraction")
-        {
             sb.AppendFormat("{0}{1} o = arg0 - arg1;\r\n", head, ret);
-        }
         else if (name == "op_Equality")
-        {
             sb.AppendFormat("{0}{1} o = arg0 == arg1;\r\n", head, ret);
-        }
         else if (name == "op_Multiply")
-        {
             sb.AppendFormat("{0}{1} o = arg0 * arg1;\r\n", head, ret);
-        }
         else if (name == "op_Division")
-        {
             sb.AppendFormat("{0}{1} o = arg0 / arg1;\r\n", head, ret);
-        }
         else if (name == "op_UnaryNegation")
-        {
             sb.AppendFormat("{0}{1} o = -arg0;\r\n", head, ret);
-        }
     }
 
     public static bool IsObsolete(MemberInfo mb)
