@@ -149,11 +149,6 @@ public static class ToLuaMenu
                     $"\nDon't export Delegate {LuaMisc.GetTypeName(t)} as a class, register it in customDelegateList");
             }
 
-            //if (IsObsolete(t))
-            //{
-            //    throw new Exception(string.Format("\n{0} is obsolete, don't export it!", LuaMisc.GetTypeName(t)));
-            //}
-
             type = t;
             nameSpace = ToLuaExport.GetNameSpace(t, out libName);
             name = ToLuaExport.CombineTypeStr(nameSpace, libName);
@@ -1059,7 +1054,6 @@ public static class ToLuaMenu
         List<string> dirs = new List<string>();
         GetAllDirs(tempDir, dirs);
 
-#if UNITY_5 || UNITY_5_3_OR_NEWER
         for (int i = 0; i < dirs.Count; i++)
         {
             string str = dirs[i].Remove(0, tempDir.Length);
@@ -1073,17 +1067,6 @@ public static class ToLuaMenu
         BuildPipeline.BuildAssetBundles(output, BuildAssetBundleOptions.DeterministicAssetBundle,
             EditorUserBuildSettings.activeBuildTarget);
 
-        //Directory.Delete(Application.dataPath + "/temp/", true);
-#else
-        for (int i = 0; i < dirs.Count; i++)
-        {
-            string str = dirs[i].Remove(0, tempDir.Length);
-            BuildLuaBundle(str.Replace('\\', '/'), "Assets/StreamingAssets/Lua");
-        }
-
-        BuildLuaBundle(null, "Assets/StreamingAssets/Lua");
-        Directory.Delete(Application.streamingAssetsPath + "/Lua/", true);
-#endif
         AssetDatabase.Refresh();
     }
 

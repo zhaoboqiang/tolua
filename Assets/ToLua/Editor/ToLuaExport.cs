@@ -27,10 +27,8 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using LuaInterface;
-using Object = UnityEngine.Object;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using LuaInterface.Editor;
 
@@ -115,63 +113,6 @@ public static class ToLuaExport
     public static HashSet<Type> eventSet = new HashSet<Type>();
     public static List<Type> extendList = new List<Type>();
 
-    public static List<string> memberFilter = new List<string>
-    {
-        "String.Chars",
-        "Directory.SetAccessControl",
-        "File.GetAccessControl",
-        "File.SetAccessControl",
-        //UnityEngine
-        "AnimationClip.averageDuration",
-        "AnimationClip.averageAngularSpeed",
-        "AnimationClip.averageSpeed",
-        "AnimationClip.apparentSpeed",
-        "AnimationClip.isLooping",
-        "AnimationClip.isAnimatorMotion",
-        "AnimationClip.isHumanMotion",
-        "AnimatorOverrideController.PerformOverrideClipListCleanup",
-        "AnimatorControllerParameter.name",
-        "Caching.SetNoBackupFlag",
-        "Caching.ResetNoBackupFlag",
-        "Light.areaSize",
-        "Light.lightmappingMode",
-        "Light.lightmapBakeType",
-        "Light.shadowAngle",
-        "Light.shadowRadius",
-        "Light.SetLightDirty",
-        "Security.GetChainOfTrustValue",
-        "Texture2D.alphaIsTransparency",
-        "WWW.movie",
-        "WWW.GetMovieTexture",
-        "WebCamTexture.MarkNonReadable",
-        "WebCamTexture.isReadable",
-        "Graphic.OnRebuildRequested",
-        "Text.OnRebuildRequested",
-        "Resources.LoadAssetAtPath",
-        "Application.ExternalEval",
-        "Handheld.SetActivityIndicatorStyle",
-        "CanvasRenderer.OnRequestRebuild",
-        "CanvasRenderer.onRequestRebuild",
-        "Terrain.bakeLightProbesForTrees",
-        "MonoBehaviour.runInEditMode",
-        "TextureFormat.DXT1Crunched",
-        "TextureFormat.DXT5Crunched",
-        "Texture.imageContentsHash",
-        "QualitySettings.streamingMipmapsMaxLevelReduction",
-        "QualitySettings.streamingMipmapsRenderersPerFrame",
-        //NGUI
-        "UIInput.ProcessEvent",
-        "UIWidget.showHandlesWithMoveTool",
-        "UIWidget.showHandles",
-        "Input.IsJoystickPreconfigured",
-        "UIDrawCall.isActive",
-        "Dictionary.TryAdd",
-        "KeyValuePair.Deconstruct",
-        "ParticleSystem.SetJob",
-        "ParticleSystem.subEmitters", /*2019.09 ios编译出错，也可能是unity版本问题*/
-        "Type.IsSZArray"
-    };
-
     class _MethodBase
     {
         public bool IsStatic => method.IsStatic;
@@ -183,7 +124,6 @@ public static class ToLuaExport
         public MethodBase Method => method;
 
         public bool IsGenericMethod => method.IsGenericMethod;
-
 
         MethodBase method;
         ParameterInfo[] args;
@@ -611,41 +551,6 @@ public static class ToLuaExport
         }
     }
 
-    public static List<MemberInfo> memberInfoFilter = new List<MemberInfo>
-    {
-        //可精确查找一个函数
-        //Type.GetMethod(string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers);		
-    };
-
-    public static bool IsMemberFilter(MemberInfo mi)
-    {
-        if (type.IsGenericType)
-        {
-            Type genericType = type.GetGenericTypeDefinition();
-
-            if (genericType == typeof(Dictionary<,>) && mi.Name == "Remove")
-            {
-                MethodBase mb = (MethodBase)mi;
-                return mb.GetParameters().Length == 2;
-            }
-
-            if (genericType == typeof(Dictionary<,>) || genericType == typeof(KeyValuePair<,>))
-            {
-                string str = genericType.Name;
-                str = str.Substring(0, str.IndexOf("`"));
-                return memberFilter.Contains(str + "." + mi.Name);
-            }
-        }
-
-        return memberInfoFilter.Contains(mi) || memberFilter.Contains(type.Name + "." + mi.Name);
-    }
-
-    public static bool IsMemberFilter(Type t)
-    {
-        string name = LuaMisc.GetTypeName(t);
-        return memberInfoFilter.Contains(t) || memberFilter.Find((p) => { return name.Contains(p); }) != null;
-    }
-
     static ToLuaExport()
     {
         Debugger.useLog = true;
@@ -812,14 +717,7 @@ public static class ToLuaExport
     public static bool IsDelegateType(Type t)
     {
         if (!typeof(System.MulticastDelegate).IsAssignableFrom(t) || t == typeof(System.MulticastDelegate))
-        {
             return false;
-        }
-
-        if (IsMemberFilter(t))
-        {
-            return false;
-        }
 
         return true;
     }
@@ -3591,11 +3489,6 @@ public static class ToLuaExport
             {
                 return true;
             }
-        }
-
-        if (IsMemberFilter(mb))
-        {
-            return true;
         }
 
         return false;
