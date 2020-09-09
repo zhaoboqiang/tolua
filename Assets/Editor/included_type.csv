@@ -3,6 +3,7 @@ LuaBinder,,LuaBinder,False,False
 LuaDelegates,,LuaDelegates,False,False
 TMPro.TMP_EditorResourceManager,TMPro,TMP_EditorResourceManager,False,False
 TMPro.TMP_FontAssetUtilities,TMPro,TMP_FontAssetUtilities,False,False
+UnityEngine.Animations.AnimationPlayableExtensions,UnityEngine.Animations,AnimationPlayableExtensions,False,False
 UnityEngine.HashUnsafeUtilities,UnityEngine,HashUnsafeUtilities,False,False
 UnityEngine.Playables.PlayableExtensions,UnityEngine.Playables,PlayableExtensions,False,False
 UnityEngine.Playables.PlayableOutputExtensions.SetReferenceObject,UnityEngine.Playables.PlayableOutputExtensions,SetReferenceObject,False,False
