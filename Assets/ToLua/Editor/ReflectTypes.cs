@@ -32,7 +32,6 @@ namespace LuaInterface.Editor
 
         private static void UpdateCsv(List<LuaIncludedType> newTypes)
         {
-            newTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // Load previous configurations
             var oldTypes = ToLuaSettingsUtility.IncludedTypes;
@@ -42,15 +41,29 @@ namespace LuaInterface.Editor
             {
                 var newType = newTypes[index];
 
-                if (oldTypes.TryGetValue(newType.Name, out var oldType))
+                if (oldTypes.TryGetValue(newType.FullName, out var oldType))
                 {
                     newTypes[index] = oldType;
                 }
             }
 
+            // merge not exist previous configurations
+            var mergedTypes = newTypes.ToDictionary(key => key.FullName);
+            foreach (var kv in oldTypes)
+            {
+                if (mergedTypes.TryGetValue(kv.Key, out var type))
+                    continue;
+
+                mergedTypes.Add(kv.Key, kv.Value);
+            }
+
+            // Sort
+            var resultTypes = mergedTypes.Values.ToList();
+            resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
+
             // save configurations
             var lines = new List<string> { "FullName,Namespace,Name,Android,iOS" };
-            lines.AddRange(from type in newTypes
+            lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS
                            select $"{type.FullName},{type.Namespace},{type.Name},{type.Android},{type.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
