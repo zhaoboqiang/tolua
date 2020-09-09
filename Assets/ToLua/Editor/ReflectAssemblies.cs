@@ -9,8 +9,6 @@ namespace LuaInterface.Editor
     {
         private static void UpdateCsv(List<LuaIncludedAssembly> newAssemblies)
         {
-            newAssemblies.Sort((lhs, rhs) => lhs.Name.CompareTo(rhs.Name));
-
             // Load previous configurations
             var oldAssemblies = ToLuaSettingsUtility.IncludedAssemblies;
 
@@ -25,9 +23,23 @@ namespace LuaInterface.Editor
                 }
             }
 
+            // merge not exist previous configurations
+            var mergedAssemblies = newAssemblies.ToDictionary(key => key.Name);
+            foreach (var kv in oldAssemblies)
+            {
+                if (mergedAssemblies.ContainsKey(kv.Key))
+                    continue;
+
+                mergedAssemblies.Add(kv.Key, kv.Value);
+            }
+
+            // Sort
+            var resultAssemblies = mergedAssemblies.Values.ToList();
+            resultAssemblies.Sort((lhs, rhs) => lhs.Name.CompareTo(rhs.Name));
+
             // save configurations
             var lines = new List<string> { "Name,Android,iOS" };
-            lines.AddRange(from assembly in newAssemblies
+            lines.AddRange(from assembly in resultAssemblies
                            where !assembly.Android || !assembly.iOS
                            select $"{assembly.Name},{assembly.Android},{assembly.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);

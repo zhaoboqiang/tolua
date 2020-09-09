@@ -24,6 +24,15 @@ namespace LuaInterface.Editor
                 }
             }
 
+            // merge not exist previous configurations
+            foreach (var kv in oldNamespaces)
+            {
+                if (newNamespaces.ContainsKey(kv.Key))
+                    continue;
+
+                newNamespaces.Add(kv.Key, kv.Value);
+            }
+
             // save configurations
             var lines = new List<string> { "Namespace,Android,iOS" };
             var values = newNamespaces.Values.ToList();

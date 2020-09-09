@@ -51,7 +51,7 @@ namespace LuaInterface.Editor
             var mergedTypes = newTypes.ToDictionary(key => key.FullName);
             foreach (var kv in oldTypes)
             {
-                if (mergedTypes.TryGetValue(kv.Key, out var type))
+                if (mergedTypes.ContainsKey(kv.Key))
                     continue;
 
                 mergedTypes.Add(kv.Key, kv.Value);
