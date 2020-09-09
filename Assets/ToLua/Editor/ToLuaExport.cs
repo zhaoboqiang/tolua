@@ -2527,19 +2527,19 @@ public static class ToLuaExport
 
             if (beCheckTypes)
             {
-                sb.AppendFormat("{0}{1} {2} = ToLua.ToNullable<{3}>(L, {4});\r\n", head, str, arg, GetTypeStr(t),
+                sb.AppendFormat("{0}var {2} = ToLua.ToNullable<{3}>(L, {4});\r\n", head, str, arg, GetTypeStr(t),
                     stackPos);
             }
             else
             {
-                sb.AppendFormat("{0}{1} {2} = ToLua.CheckNullable<{3}>(L, {4});\r\n", head, str, arg, GetTypeStr(t),
+                sb.AppendFormat("{0}var {2} = ToLua.CheckNullable<{3}>(L, {4});\r\n", head, str, arg, GetTypeStr(t),
                     stackPos);
             }
         }
         else if (varType.IsValueType && !varType.IsEnum)
         {
             string func = beCheckTypes ? "To" : "Check";
-            sb.AppendFormat("{0}{1} {2} = StackTraits<{1}>.{3}(L, {4});\r\n", head, str, arg, func, stackPos);
+            sb.AppendFormat("{0}var {2} = StackTraits<{1}>.{3}(L, {4});\r\n", head, str, arg, func, stackPos);
         }
         else //从object派生但不是object
         {

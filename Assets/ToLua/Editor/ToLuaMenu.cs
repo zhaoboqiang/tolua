@@ -133,7 +133,7 @@ public static class ToLuaMenu
     {
         public string name; //类名称
         public Type type;
-        public bool IsStatic;
+        public bool IsStatic => type.IsClass && type.IsAbstract && type.IsSealed;
         public string wrapName = ""; //产生的wrap文件名字
         public string libName = ""; //注册到lua的名字
         public Type baseType = null;
@@ -173,12 +173,6 @@ public static class ToLuaMenu
                     wrapName = name.Replace('.', '_');
                     wrapName = ToLuaExport.ConvertToLibSign(wrapName);
                     break;
-            }
-
-            var index = Array.IndexOf(ToLuaSettingsUtility.staticClassTypes, type);
-            if (index >= 0 || (type.IsAbstract && type.IsSealed))
-            {
-                IsStatic = true;
             }
 
             baseType = LuaMisc.GetExportBaseType(type);
