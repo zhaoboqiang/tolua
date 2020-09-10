@@ -173,7 +173,7 @@ namespace LuaInterface
 
         public IntPtr CheckIntPtr(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
+            var luaType = LuaDLL.lua_type(L, stackPos);
 
             switch(luaType)
             {

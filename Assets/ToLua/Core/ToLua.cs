@@ -621,8 +621,7 @@ namespace LuaInterface
 
         public static string ToString(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TSTRING:
@@ -637,7 +636,6 @@ namespace LuaInterface
         public static object ToObject(IntPtr L, int stackPos)
         {
             int udata = LuaDLL.tolua_rawnetobj(L, stackPos);
-
             if (udata != -1)
             {
                 ObjectTranslator translator = ObjectTranslator.Get(L);
@@ -650,11 +648,8 @@ namespace LuaInterface
         public static LuaFunction ToLuaFunction(IntPtr L, int stackPos)
         {
             var type = LuaDLL.lua_type(L, stackPos);
-
             if (type == LuaTypes.LUA_TNIL)
-            {
                 return null;
-            }
 
             stackPos = LuaDLL.abs_index(L, stackPos);
             LuaDLL.lua_pushvalue(L, stackPos);
@@ -665,11 +660,8 @@ namespace LuaInterface
         public static LuaTable ToLuaTable(IntPtr L, int stackPos)
         {
             var type = LuaDLL.lua_type(L, stackPos);
-
             if (type == LuaTypes.LUA_TNIL)
-            {
                 return null;
-            }
 
             stackPos = LuaDLL.abs_index(L, stackPos);
             LuaDLL.lua_pushvalue(L, stackPos);
@@ -679,12 +671,9 @@ namespace LuaInterface
 
         public static LuaThread ToLuaThread(IntPtr L, int stackPos)
         {
-            LuaTypes type = LuaDLL.lua_type(L, stackPos);
-
+            var type = LuaDLL.lua_type(L, stackPos);
             if (type == LuaTypes.LUA_TNIL)
-            {
                 return null;
-            }
 
             stackPos = LuaDLL.abs_index(L, stackPos);
             LuaDLL.lua_pushvalue(L, stackPos);
@@ -694,8 +683,7 @@ namespace LuaInterface
 
         public static Vector3 ToVector3(IntPtr L, int stackPos)
         {
-            float y = 0, z = 0;
-            LuaDLL.tolua_getvec3(L, stackPos, out var x, out y, out z);
+            LuaDLL.tolua_getvec3(L, stackPos, out var x, out var y, out var z);
             return new Vector3(x, y, z);
         }
 
@@ -707,15 +695,13 @@ namespace LuaInterface
 
         public static Vector2 ToVector2(IntPtr L, int stackPos)
         {
-            float x, y;
-            LuaDLL.tolua_getvec2(L, stackPos, out x, out y);
+            LuaDLL.tolua_getvec2(L, stackPos, out var x, out var y);
             return new Vector2(x, y);
         }
 
         public static Quaternion ToQuaternion(IntPtr L, int stackPos)
         {
-            float x, y, z, w;
-            LuaDLL.tolua_getquat(L, stackPos, out x, out y, out z, out w);
+            LuaDLL.tolua_getquat(L, stackPos, out var x, out var y, out var z, out var w);
             return new Quaternion(x, y, z, w);
         }
 
@@ -734,12 +720,12 @@ namespace LuaInterface
 
             if (LuaDLL.lua_pcall(L, 1, 6, 0) == 0)
             {
-                float ox = (float) LuaDLL.lua_tonumber(L, top + 1);
-                float oy = (float) LuaDLL.lua_tonumber(L, top + 2);
-                float oz = (float) LuaDLL.lua_tonumber(L, top + 3);
-                float dx = (float) LuaDLL.lua_tonumber(L, top + 4);
-                float dy = (float) LuaDLL.lua_tonumber(L, top + 5);
-                float dz = (float) LuaDLL.lua_tonumber(L, top + 6);
+                float ox = (float)LuaDLL.lua_tonumber(L, top + 1);
+                float oy = (float)LuaDLL.lua_tonumber(L, top + 2);
+                float oz = (float)LuaDLL.lua_tonumber(L, top + 3);
+                float dx = (float)LuaDLL.lua_tonumber(L, top + 4);
+                float dy = (float)LuaDLL.lua_tonumber(L, top + 5);
+                float dz = (float)LuaDLL.lua_tonumber(L, top + 6);
                 LuaDLL.lua_settop(L, top);
                 return new Ray(new Vector3(ox, oy, oz), new Vector3(dx, dy, dz));
             }
@@ -780,8 +766,7 @@ namespace LuaInterface
 
         public static object ToVarObject(IntPtr L, int stackPos)
         {
-            LuaTypes type = LuaDLL.lua_type(L, stackPos);
-
+            var type = LuaDLL.lua_type(L, stackPos);
             switch (type)
             {
                 case LuaTypes.LUA_TNUMBER:
@@ -818,8 +803,7 @@ namespace LuaInterface
         //for Generic Array and List, 转换double为指定type在存入object
         public static object ToVarObject(IntPtr L, int stackPos, Type t)
         {
-            LuaTypes type = LuaDLL.lua_type(L, stackPos);
-
+            var type = LuaDLL.lua_type(L, stackPos);
             if (type == LuaTypes.LUA_TNUMBER)
             {
                 object o = LuaDLL.lua_tonumber(L, stackPos);
@@ -834,7 +818,7 @@ namespace LuaInterface
         {
             stackPos = LuaDLL.abs_index(L, stackPos);
             int ret = LuaDLL.tolua_getvaluetype(L, stackPos);
-            LuaTableToVar _ToObject = ToVarMap[ret];
+            var _ToObject = ToVarMap[ret];
 
             if (_ToObject != null)
             {
@@ -851,9 +835,7 @@ namespace LuaInterface
         public static Nullable<T> ToNullable<T>(IntPtr L, int stackPos) where T : struct
         {
             if (LuaDLL.lua_type(L, stackPos) == LuaTypes.LUA_TNIL)
-            {
                 return null;
-            }
 
             return StackTraits<T>.To(L, stackPos);
         }
@@ -900,8 +882,7 @@ namespace LuaInterface
 
         public static LuaFunction CheckLuaFunction(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -919,8 +900,7 @@ namespace LuaInterface
 
         public static LuaTable CheckLuaTable(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -938,8 +918,7 @@ namespace LuaInterface
 
         public static LuaThread CheckLuaThread(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -957,8 +936,7 @@ namespace LuaInterface
 
         public static LuaBaseRef CheckLuaBaseRef(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -986,8 +964,7 @@ namespace LuaInterface
 
         public static string CheckString(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -1027,8 +1004,7 @@ namespace LuaInterface
 
         public static IntPtr CheckIntPtr(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -1044,7 +1020,6 @@ namespace LuaInterface
         static public Type CheckMonoType(IntPtr L, int stackPos)
         {
             int udata = LuaDLL.tolua_rawnetobj(L, stackPos);
-
             if (udata != -1)
             {
                 ObjectTranslator translator = ObjectTranslator.Get(L);
@@ -1318,12 +1293,10 @@ namespace LuaInterface
         public static object CheckVarObject(IntPtr L, int stackPos, Type t)
         {
             bool beValue = TypeChecker.IsValueType(t);
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
+            var luaType = LuaDLL.lua_type(L, stackPos);
 
             if (!beValue && luaType == LuaTypes.LUA_TNIL)
-            {
                 return null;
-            }
 
             if (beValue)
             {
@@ -1617,8 +1590,7 @@ namespace LuaInterface
 
         public static char[] CheckCharBuffer(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -1637,8 +1609,7 @@ namespace LuaInterface
 
         public static byte[] CheckByteBuffer(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -2001,8 +1972,7 @@ namespace LuaInterface
 
         static public char[] ToCharBuffer(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
@@ -2019,8 +1989,7 @@ namespace LuaInterface
 
         static public byte[] ToByteBuffer(IntPtr L, int stackPos)
         {
-            LuaTypes luaType = LuaDLL.lua_type(L, stackPos);
-
+            var luaType = LuaDLL.lua_type(L, stackPos);
             switch (luaType)
             {
                 case LuaTypes.LUA_TNIL:
