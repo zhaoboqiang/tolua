@@ -31,4 +31,4 @@ UnityEngine.Vector4,UnityEngine,Vector4,ToLua内部支持,False,False
 UnityEngine.WaitForEndOfFrame,UnityEngine,WaitForEndOfFrame,ToLua内部支持,False,False
 UnityEngine.WaitForFixedUpdate,UnityEngine,WaitForFixedUpdate,ToLua内部支持,False,False
 UnityEngine.WaitForSeconds,UnityEngine,WaitForSeconds,ToLua内部支持,False,False
-UnityEngine.YieldInstruction,UnityEngine,YieldInstruction,,False,False
+UnityEngine.YieldInstruction,UnityEngine,YieldInstruction,ToLua内部支持,False,False
