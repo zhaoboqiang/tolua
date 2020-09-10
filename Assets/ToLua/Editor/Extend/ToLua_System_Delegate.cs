@@ -44,18 +44,18 @@ public class ToLua_System_Delegate
     public static string op_SubtractionDefined =
 @"        try
         {            
-            Delegate arg0 = (Delegate)ToLua.CheckObject<Delegate>(L, 1);
+            var arg0 = (Delegate)ToLua.CheckObject<Delegate>(L, 1);
             LuaTypes type = LuaDLL.lua_type(L, 2);
 
             if (type == LuaTypes.LUA_TFUNCTION)
             {
-                LuaState state = LuaState.Get(L);
-                LuaFunction func = ToLua.ToLuaFunction(L, 2);
-                Delegate[] ds = arg0.GetInvocationList();
+                var state = LuaState.Get(L);
+                var func = ToLua.ToLuaFunction(L, 2);
+                var ds = arg0.GetInvocationList();
 
                 for (int i = 0; i < ds.Length; i++)
                 {
-                    LuaDelegate ld = ds[i].Target as LuaDelegate;
+                    var ld = ds[i].Target as LuaDelegate;
 
                     if (ld != null && ld.func == func && ld.self == null)
                     {
@@ -71,7 +71,7 @@ public class ToLua_System_Delegate
             }
             else
             {
-                Delegate arg1 = (Delegate)ToLua.CheckObject<Delegate>(L, 2);
+                var arg1 = (Delegate)ToLua.CheckObject<Delegate>(L, 2);
                 arg0 = DelegateFactory.RemoveDelegate(arg0, arg1);                
                 ToLua.Push(L, arg0);
                 return 1;

@@ -23,18 +23,18 @@ public class ToLua_System_Enum
 
 			if (count == 2 && TypeChecker.CheckTypes<System.Type, string>(L, 1))
 			{
-				System.Type arg0 = (System.Type)ToLua.ToObject(L, 1);
-				string arg1 = ToLua.ToString(L, 2);
-				object o = System.Enum.Parse(arg0, arg1);
+				var arg0 = (System.Type)ToLua.ToObject(L, 1);
+				var arg1 = ToLua.ToString(L, 2);
+				var o = System.Enum.Parse(arg0, arg1);
 				ToLua.Push(L, (Enum)o);
 				return 1;
 			}
 			else if (count == 3 && TypeChecker.CheckTypes<System.Type, string, bool>(L, 1))
 			{
-				System.Type arg0 = (System.Type)ToLua.ToObject(L, 1);
-				string arg1 = ToLua.ToString(L, 2);
-				bool arg2 = LuaDLL.lua_toboolean(L, 3);
-				object o = System.Enum.Parse(arg0, arg1, arg2);
+				var arg0 = (System.Type)ToLua.ToObject(L, 1);
+				var arg1 = ToLua.ToString(L, 2);
+				var arg2 = LuaDLL.lua_toboolean(L, 3);
+				var o = System.Enum.Parse(arg0, arg1, arg2);
 				ToLua.Push(L, (Enum)o);
 				return 1;
 			}
@@ -55,17 +55,17 @@ public class ToLua_System_Enum
 
 			if (count == 2 && TypeChecker.CheckTypes<System.Type, int>(L, 1))
 			{
-				System.Type arg0 = (System.Type)ToLua.ToObject(L, 1);
-				int arg1 = (int)LuaDLL.lua_tonumber(L, 2);
-				object o = System.Enum.ToObject(arg0, arg1);
+				var arg0 = (System.Type)ToLua.ToObject(L, 1);
+				var arg1 = (int)LuaDLL.lua_tonumber(L, 2);
+				var o = System.Enum.ToObject(arg0, arg1);
 				ToLua.Push(L, (Enum)o);
 				return 1;
 			}
 			else if (count == 2 && TypeChecker.CheckTypes<System.Type, object>(L, 1))
 			{
-				System.Type arg0 = (System.Type)ToLua.ToObject(L, 1);
-				object arg1 = ToLua.ToVarObject(L, 2);
-				object o = System.Enum.ToObject(arg0, arg1);
+				var arg0 = (System.Type)ToLua.ToObject(L, 1);
+				var arg1 = ToLua.ToVarObject(L, 2);
+				var o = System.Enum.ToObject(arg0, arg1);
 				ToLua.Push(L, (Enum)o);
 				return 1;
 			}

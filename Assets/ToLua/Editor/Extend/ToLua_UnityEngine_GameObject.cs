@@ -17,12 +17,12 @@ public class ToLua_UnityEngine_GameObject
 			if (count == 2 && TypeChecker.CheckTypes<string>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
+				var arg0 = ToLua.ToString(L, 2);
 				obj.SendMessage(arg0);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -34,13 +34,13 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 3 && TypeChecker.CheckTypes<string, UnityEngine.SendMessageOptions>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				UnityEngine.SendMessageOptions arg1 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 3);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 3);
 				obj.SendMessage(arg0, arg1);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -52,13 +52,13 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 3 && TypeChecker.CheckTypes<string, object>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				object arg1 = ToLua.ToVarObject(L, 3);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = ToLua.ToVarObject(L, 3);
 				obj.SendMessage(arg0, arg1);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -70,14 +70,14 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 4 && TypeChecker.CheckTypes<string, object, UnityEngine.SendMessageOptions>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				object arg1 = ToLua.ToVarObject(L, 3);
-				UnityEngine.SendMessageOptions arg2 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 4);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = ToLua.ToVarObject(L, 3);
+				var arg2 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 4);
 				obj.SendMessage(arg0, arg1, arg2);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -112,12 +112,12 @@ public class ToLua_UnityEngine_GameObject
 			if (count == 2 && TypeChecker.CheckTypes<string>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
+				var arg0 = ToLua.ToString(L, 2);
 				obj.SendMessageUpwards(arg0);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -129,13 +129,13 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 3 && TypeChecker.CheckTypes<string, UnityEngine.SendMessageOptions>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				UnityEngine.SendMessageOptions arg1 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 3);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 3);
 				obj.SendMessageUpwards(arg0, arg1);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -147,13 +147,13 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 3 && TypeChecker.CheckTypes<string, object>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				object arg1 = ToLua.ToVarObject(L, 3);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = ToLua.ToVarObject(L, 3);
 				obj.SendMessageUpwards(arg0, arg1);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -165,9 +165,9 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 4 && TypeChecker.CheckTypes<string, object, UnityEngine.SendMessageOptions>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				object arg1 = ToLua.ToVarObject(L, 3);
-				UnityEngine.SendMessageOptions arg2 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 4);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = ToLua.ToVarObject(L, 3);
+				var arg2 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 4);
 				obj.SendMessageUpwards(arg0, arg1, arg2);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
@@ -207,12 +207,12 @@ public class ToLua_UnityEngine_GameObject
 			if (count == 2 && TypeChecker.CheckTypes<string>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
+				var arg0 = ToLua.ToString(L, 2);
 				obj.BroadcastMessage(arg0);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -224,8 +224,8 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 3 && TypeChecker.CheckTypes<string, UnityEngine.SendMessageOptions>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				UnityEngine.SendMessageOptions arg1 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 3);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 3);
 				obj.BroadcastMessage(arg0, arg1);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
@@ -242,13 +242,13 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 3 && TypeChecker.CheckTypes<string, object>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				object arg1 = ToLua.ToVarObject(L, 3);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = ToLua.ToVarObject(L, 3);
 				obj.BroadcastMessage(arg0, arg1);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
                 {
-                    string error = LuaDLL.lua_tostring(L, -1);
+                    var error = LuaDLL.lua_tostring(L, -1);
                     LuaDLL.lua_pop(L, 1);
                     throw new LuaException(error, LuaException.GetLastError());
                 }
@@ -260,9 +260,9 @@ public class ToLua_UnityEngine_GameObject
 			else if (count == 4 && TypeChecker.CheckTypes<string, object, UnityEngine.SendMessageOptions>(L, 2))
 			{
 				var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-				string arg0 = ToLua.ToString(L, 2);
-				object arg1 = ToLua.ToVarObject(L, 3);
-				UnityEngine.SendMessageOptions arg2 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 4);
+				var arg0 = ToLua.ToString(L, 2);
+				var arg1 = ToLua.ToVarObject(L, 3);
+				var arg2 = (UnityEngine.SendMessageOptions)ToLua.ToObject(L, 4);
 				obj.BroadcastMessage(arg0, arg1, arg2);                
 
                 if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
@@ -300,12 +300,12 @@ public class ToLua_UnityEngine_GameObject
             LuaException.L = L;
             ToLua.CheckArgsCount(L, 2);
 			var obj = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-			System.Type arg0 = ToLua.CheckMonoType(L, 2);
-			UnityEngine.Component o = obj.AddComponent(arg0);
+			var arg0 = ToLua.CheckMonoType(L, 2);
+			var o = obj.AddComponent(arg0);
 
             if (LuaDLL.lua_toboolean(L, LuaDLL.lua_upvalueindex(1)))
             {
-                string error = LuaDLL.lua_tostring(L, -1);
+                var error = LuaDLL.lua_tostring(L, -1);
                 LuaDLL.lua_pop(L, 1);
                 throw new LuaException(error, LuaException.GetLastError());
             }

@@ -8,11 +8,11 @@ public class ToLua_System_String
     public static string ToLua_System_StringDefined =
 @"        try
         {
-            LuaTypes luatype = LuaDLL.lua_type(L, 1);
+            var luatype = LuaDLL.lua_type(L, 1);
 
             if (luatype == LuaTypes.LUA_TSTRING)
             {
-                string arg0 = LuaDLL.lua_tostring(L, 1);
+                var arg0 = LuaDLL.lua_tostring(L, 1);
                 ToLua.PushSealed(L, arg0);
                 return 1;
             }

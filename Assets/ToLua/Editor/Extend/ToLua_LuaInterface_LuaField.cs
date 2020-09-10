@@ -6,7 +6,7 @@ public class ToLua_LuaInterface_LuaField
     public static string GetDefined =
 @"		try
 		{			
-			LuaField obj = (LuaField)ToLua.CheckObject(L, 1, typeof(LuaField));            
+			var obj = (LuaField)ToLua.CheckObject(L, 1, typeof(LuaField));            
             return obj.Get(L);						
 		}
 		catch (Exception e)
