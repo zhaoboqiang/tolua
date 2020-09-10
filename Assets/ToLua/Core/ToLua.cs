@@ -804,7 +804,6 @@ namespace LuaInterface
             return new Color(r, g, b, a);
         }
 
-
         public static Ray ToRay(IntPtr L, int stackPos)
         {
             int top = LuaDLL.lua_gettop(L);
@@ -1078,9 +1077,7 @@ namespace LuaInterface
                         if (obj != null)
                         {
                             if (obj is string)
-                            {
                                 return (string)obj;
-                            }
 
                             LuaDLL.luaL_argerror(L, stackPos,
                                 string.Format("string expected, got {0}", obj.GetType().FullName));
@@ -2509,16 +2506,218 @@ namespace LuaInterface
             LuaDLL.tolua_pushlstring(L, buffer, buffer.Length);
         }
 
-        public static void Push(IntPtr L, Array array)
+        public static void Push(IntPtr L, Array obj)
         {
-            if (array == null)
+            if (obj == null)
             {
                 LuaDLL.lua_pushnil(L);
             }
             else
             {
-                int arrayMetaTable = LuaStatic.GetArrayMetatable(L);
-                PushUserData(L, array, arrayMetaTable);
+                Type t = obj.GetType().GetElementType();
+                if (t == typeof(float))
+                {
+                    float[] array = obj as float[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(int))
+                {
+                    int[] array = obj as int[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushinteger(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(double))
+                {
+                    double[] array = obj as double[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(bool))
+                {
+                    bool[] array = obj as bool[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushboolean(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(long))
+                {
+                    long[] array = obj as long[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.tolua_pushint64(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(ulong))
+                {
+                    ulong[] array = obj as ulong[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.tolua_pushuint64(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(byte))
+                {
+                    byte[] array = obj as byte[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(sbyte))
+                {
+                    sbyte[] array = obj as sbyte[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(char))
+                {
+                    char[] array = obj as char[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(uint))
+                {
+                    uint[] array = obj as uint[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(short))
+                {
+                    short[] array = obj as short[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(ushort))
+                {
+                    ushort[] array = obj as ushort[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushnumber(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(string))
+                {
+                    string[] array = obj as string[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        LuaDLL.lua_pushstring(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(Vector3))
+                {
+                    Vector3[] array = obj as Vector3[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        Push(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(Quaternion))
+                {
+                    Quaternion[] array = obj as Quaternion[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        Push(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(Vector2))
+                {
+                    Vector2[] array = obj as Vector2[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        Push(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(Vector4))
+                {
+                    Vector4[] array = obj as Vector4[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        Push(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else if (t == typeof(Color))
+                {
+                    Color[] array = obj as Color[];
+
+                    LuaDLL.lua_createtable(L, obj.Length, 0);
+                    for (int i = 0; i < array.Length; ++i)
+                    {
+                        Push(L, array[i]);
+                        LuaDLL.lua_rawseti(L, -2, i + 1);
+                    }
+                }
+                else
+                {
+                    int arrayMetaTable = LuaStatic.GetArrayMetatable(L);
+                    PushUserData(L, obj, arrayMetaTable);
+                }
             }
         }
 
@@ -2701,7 +2900,7 @@ namespace LuaInterface
             }
             else
             {
-                //类型未Wrap                            
+                //类型未Wrap
                 reference = LuaStatic.GetMissMetaReference(L, type);
             }
 

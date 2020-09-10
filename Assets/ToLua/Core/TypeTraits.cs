@@ -27,16 +27,16 @@ namespace LuaInterface
 {
     public static class TypeTraits<T>
     {        
-        public static Func<IntPtr, int, bool> Check = DefaultCheck;
-        public static Type type = typeof(T);
-        public static bool IsValueType = type.IsValueType;
-        public static bool IsArray = type.IsArray;
+        static public Func<IntPtr, int, bool> Check = DefaultCheck;
+        static public Type type = typeof(T);
+        static public bool IsValueType = type.IsValueType;
+        static public bool IsArray = type.IsArray;
 
         static string typeName = string.Empty;                
         static int nilType = -1;
         static int metaref = -1;
 
-        public static void Init(Func<IntPtr, int, bool> check)
+        static public void Init(Func<IntPtr, int, bool> check)
         {            
             if (check != null)
             {
@@ -44,7 +44,7 @@ namespace LuaInterface
             }
         }
 
-        public static string GetTypeName()
+        static public string GetTypeName()
         {
             if (typeName == string.Empty)
             {
@@ -54,7 +54,7 @@ namespace LuaInterface
             return typeName;
         }
 
-        public static int GetLuaReference(IntPtr L)
+        static public int GetLuaReference(IntPtr L)
         {
 #if MULTI_STATE
             return LuaStatic.GetMetaReference(L, type);
