@@ -32,7 +32,6 @@ namespace LuaInterface.Editor
 
         private static void UpdateCsv(List<LuaIncludedType> newTypes)
         {
-
             // Load previous configurations
             var oldTypes = ToLuaSettingsUtility.IncludedTypes;
 
