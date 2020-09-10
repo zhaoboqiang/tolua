@@ -1128,7 +1128,6 @@ namespace LuaInterface
         public static object CheckObject<T>(IntPtr L, int stackPos) where T : class
         {
             int udata = LuaDLL.tolua_rawnetobj(L, stackPos);
-
             if (udata != -1)
             {
                 var translator = ObjectTranslator.Get(L);
@@ -1160,7 +1159,6 @@ namespace LuaInterface
         static public Vector3 CheckVector3(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Vector3)
             {
                 var luaTypes = LuaDLL.lua_type(L, -1);
@@ -1171,18 +1169,16 @@ namespace LuaInterface
                 }
                 else
                 {
-                    float x, y, z;
-
                     LuaDLL.lua_getfield(L, -1, "x");
-                    x = (float)LuaDLL.lua_tonumber(L, -1);
+                    var x = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "y");
-                    y = (float)LuaDLL.lua_tonumber(L, -1);
+                    var y = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "z");
-                    z = (float)LuaDLL.lua_tonumber(L, -1);
+                    var z = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     return new Vector3(x, y, z);
@@ -1190,8 +1186,7 @@ namespace LuaInterface
             }
             else
             {
-                float x, y, z;
-                LuaDLL.tolua_getvec3(L, stackPos, out x, out y, out z);
+                LuaDLL.tolua_getvec3(L, stackPos, out var x, out var y, out var z);
                 return new Vector3(x, y, z);
             }
         }
@@ -1199,7 +1194,6 @@ namespace LuaInterface
         static public Quaternion CheckQuaternion(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Quaternion)
             {
                 var luaTypes = LuaDLL.lua_type(L, -1);
@@ -1210,22 +1204,20 @@ namespace LuaInterface
                 }
                 else
                 {
-                    float x, y, z, w;
-
                     LuaDLL.lua_getfield(L, -1, "x");
-                    x = (float)LuaDLL.lua_tonumber(L, -1);
+                    var x = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "y");
-                    y = (float)LuaDLL.lua_tonumber(L, -1);
+                    var y = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "z");
-                    z = (float)LuaDLL.lua_tonumber(L, -1);
+                    var z = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "w");
-                    w = (float)LuaDLL.lua_tonumber(L, -1);
+                    var w = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     return new Quaternion(x, y, z, w);
@@ -1233,8 +1225,7 @@ namespace LuaInterface
             }
             else
             {
-                float x, y, z, w;
-                LuaDLL.tolua_getquat(L, stackPos, out x, out y, out z, out w);
+                LuaDLL.tolua_getquat(L, stackPos, out var x, out var y, out var z, out var w);
                 return new Quaternion(x, y, z, w);
             }
         }
@@ -1242,7 +1233,6 @@ namespace LuaInterface
         static public Vector2 CheckVector2(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Vector2)
             {
                 var luaTypes = LuaDLL.lua_type(L, -1);
@@ -1253,14 +1243,12 @@ namespace LuaInterface
                 }
                 else
                 {
-                    float x, y;
-
                     LuaDLL.lua_getfield(L, -1, "x");
-                    x = (float)LuaDLL.lua_tonumber(L, -1);
+                    var x = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "y");
-                    y = (float)LuaDLL.lua_tonumber(L, -1);
+                    var y = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     return new Vector2(x, y);
@@ -1268,8 +1256,7 @@ namespace LuaInterface
             }
             else
             {
-                float x, y;
-                LuaDLL.tolua_getvec2(L, stackPos, out x, out y);
+                LuaDLL.tolua_getvec2(L, stackPos, out var x, out var y);
                 return new Vector2(x, y);
             }
         }
@@ -1277,7 +1264,6 @@ namespace LuaInterface
         static public Vector4 CheckVector4(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Vector4)
             {
                 var luaTypes = LuaDLL.lua_type(L, -1);
@@ -1288,22 +1274,20 @@ namespace LuaInterface
                 }
                 else
                 {
-                    float x, y, z, w;
-
                     LuaDLL.lua_getfield(L, -1, "x");
-                    x = (float)LuaDLL.lua_tonumber(L, -1);
+                    var x = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "y");
-                    y = (float)LuaDLL.lua_tonumber(L, -1);
+                    var y = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "z");
-                    z = (float)LuaDLL.lua_tonumber(L, -1);
+                    var z = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "w");
-                    w = (float)LuaDLL.lua_tonumber(L, -1);
+                    var w = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     return new Vector4(x, y, z, w);
@@ -1311,8 +1295,7 @@ namespace LuaInterface
             }
             else
             {
-                float x, y, z, w;
-                LuaDLL.tolua_getvec4(L, stackPos, out x, out y, out z, out w);
+                LuaDLL.tolua_getvec4(L, stackPos, out var x, out var y, out var z, out var w);
                 return new Vector4(x, y, z, w);
             }
         }
@@ -1320,7 +1303,6 @@ namespace LuaInterface
         static public Color CheckColor(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Color)
             {
                 var luaTypes = LuaDLL.lua_type(L, -1);
@@ -1331,22 +1313,20 @@ namespace LuaInterface
                 }
                 else
                 {
-                    float r, g, b, a;
-
                     LuaDLL.lua_getfield(L, -1, "r");
-                    r = (float)LuaDLL.lua_tonumber(L, -1);
+                    var r = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "g");
-                    g = (float)LuaDLL.lua_tonumber(L, -1);
+                    var g = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "b");
-                    b = (float)LuaDLL.lua_tonumber(L, -1);
+                    var b = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     LuaDLL.lua_getfield(L, -1, "a");
-                    a = (float)LuaDLL.lua_tonumber(L, -1);
+                    var a = (float)LuaDLL.lua_tonumber(L, -1);
                     LuaDLL.lua_pop(L, 1);
 
                     return new Color(r, g, b, a);
@@ -1354,8 +1334,7 @@ namespace LuaInterface
             }
             else
             {
-                float r, g, b, a;
-                LuaDLL.tolua_getclr(L, stackPos, out r, out g, out b, out a);
+                LuaDLL.tolua_getclr(L, stackPos, out var r, out var g, out var b, out var a);
                 return new Color(r, g, b, a);
             }
         }
@@ -1363,7 +1342,6 @@ namespace LuaInterface
         static public Ray CheckRay(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Ray)
             {
                 LuaDLL.luaL_typerror(L, stackPos, "Ray", LuaValueTypeName.Get(type));
@@ -1376,7 +1354,6 @@ namespace LuaInterface
         static public Bounds CheckBounds(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.Bounds)
             {
                 LuaDLL.luaL_typerror(L, stackPos, "Bounds", LuaValueTypeName.Get(type));
@@ -1389,7 +1366,6 @@ namespace LuaInterface
         static public LayerMask CheckLayerMask(IntPtr L, int stackPos)
         {
             int type = LuaDLL.tolua_getvaluetype(L, stackPos);
-
             if (type != LuaValueType.LayerMask)
             {
                 LuaDLL.luaL_typerror(L, stackPos, "LayerMask", LuaValueTypeName.Get(type));
@@ -1436,19 +1412,13 @@ namespace LuaInterface
                 }
 
                 if (t == typeof(bool))
-                {
                     return LuaDLL.luaL_checkboolean(L, stackPos);
-                }
 
                 if (t == typeof(long))
-                {
                     return LuaDLL.tolua_checkint64(L, stackPos);
-                }
 
                 if (t == typeof(ulong))
-                {
                     return LuaDLL.tolua_checkuint64(L, stackPos);
-                }
 
                 if (t.IsPrimitive)
                 {
@@ -1458,59 +1428,40 @@ namespace LuaInterface
 
                 if (t == typeof(LuaByteBuffer))
                 {
-                    int len = 0;
-                    IntPtr source = LuaDLL.tolua_tolstring(L, stackPos, out len);
-                    return new LuaByteBuffer(source, len);
+                    IntPtr source = LuaDLL.tolua_tolstring(L, stackPos, out var len);
+                    return new LuaByteBuffer(source, 0);
                 }
 
                 if (t == typeof(Vector3))
-                {
                     return CheckVector3(L, stackPos);
-                }
 
                 if (t == typeof(Quaternion))
-                {
                     return CheckQuaternion(L, stackPos);
-                }
 
                 if (t == typeof(Vector2))
-                {
                     return CheckVector2(L, stackPos);
-                }
 
                 if (t == typeof(Vector4))
-                {
                     return CheckVector4(L, stackPos);
-                }
 
                 if (t == typeof(Color))
-                {
                     return CheckColor(L, stackPos);
-                }
 
                 if (t == typeof(Ray))
-                {
                     return CheckRay(L, stackPos);
-                }
 
                 if (t == typeof(Bounds))
-                {
                     return CheckBounds(L, stackPos);
-                }
 
                 if (t == typeof(LayerMask))
-                {
                     return CheckLayerMask(L, stackPos);
-                }
 
                 if (luaType == LuaTypes.LUA_TTABLE)
                 {
                     object o = ToVarTable(L, stackPos);
 
                     if (o.GetType() != t)
-                    {
                         LuaDLL.luaL_typerror(L, stackPos, LuaMisc.GetTypeName(t));
-                    }
 
                     return o;
                 }
