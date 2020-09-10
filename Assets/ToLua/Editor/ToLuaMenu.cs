@@ -39,40 +39,6 @@ using LuaInterface.Editor;
 [InitializeOnLoad]
 public static class ToLuaMenu
 {
-    //不需要导出或者无法导出的类型
-    private static List<Type> dropType = new List<Type>
-    {
-        typeof(ValueType), //不需要
-        typeof(CustomYieldInstruction),
-        typeof(YieldInstruction), //无需导出的类      
-        typeof(WaitForEndOfFrame), //内部支持
-        typeof(WaitForFixedUpdate),
-        typeof(WaitForSeconds),
-        typeof(Mathf), //lua层支持                
-        typeof(Plane),
-        typeof(LayerMask),
-        typeof(Vector3),
-        typeof(Vector4),
-        typeof(Vector2),
-        typeof(Quaternion),
-        typeof(Ray),
-        typeof(Bounds),
-        typeof(Color),
-        typeof(Touch),
-        typeof(RaycastHit),
-        typeof(TouchPhase),
-        //typeof(LuaInterface.LuaOutMetatable),               //手写支持
-        typeof(NullObject),
-        typeof(Array),
-        typeof(MemberInfo),
-        typeof(BindingFlags),
-        typeof(LuaFunction),
-        typeof(LuaTable),
-        typeof(LuaThread),
-        typeof(LuaByteBuffer), //只是类型标识符
-        typeof(DelegateFactory), //无需导出，导出类支持lua函数转换为委托。如UIEventListener.OnClick(luafunc)
-    };
-
     //可以导出的内部支持类型
     public static List<Type> baseType = new List<Type>
     {
@@ -248,11 +214,6 @@ public static class ToLuaMenu
                 t.FullName);
             bt.baseType = t.BaseType;
         }
-        else if (dropType.IndexOf(t) >= 0)
-        {
-            Debugger.LogWarning("{0} has a base type {1} is a drop type", bt.name, t.FullName);
-            bt.baseType = t.BaseType;
-        }
         else if (!beDropBaseType || baseType.IndexOf(t) < 0)
         {
             int index = allTypes.FindIndex((iter) => iter.type == t);
@@ -301,13 +262,6 @@ public static class ToLuaMenu
             {
                 if (list[i].type == list[j].type)
                     throw new NotSupportedException("Repeat BindType:" + list[i].type);
-            }
-
-            if (dropType.IndexOf(list[i].type) >= 0)
-            {
-                Debug.LogWarning(list[i].type.FullName + " in dropType table, not need to export");
-                allTypes.Remove(list[i]);
-                continue;
             }
 
             if (beDropBaseType && baseType.IndexOf(list[i].type) >= 0)
