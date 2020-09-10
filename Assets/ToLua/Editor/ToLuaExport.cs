@@ -3831,7 +3831,7 @@ public static class ToLuaExport
         }
 
         sb.AppendLineEx("}\r\n");
-        SaveFile(ToLuaSettingsUtility.Settings.saveDir + "LuaDelegates.cs");
+        SaveFile(ToLuaSettingsUtility.Settings.SaveDir + "LuaDelegates.cs");
 
         Clear();
     }

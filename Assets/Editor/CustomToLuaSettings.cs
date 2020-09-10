@@ -19,8 +19,10 @@ public class CustomToLuaSettings : ToLuaSettings
         });
     }
 
-    public string saveDir => Application.dataPath + "/Source/Generate/";
-    public string toluaBaseType => Application.dataPath + "/ToLua/BaseType/";
+    public string SaveDir => Application.dataPath + "/Source/Generate/";
+    public string WrapperSaveDir => SaveDir + "/Wrappers/";
+
+    public string ToluaBaseType => Application.dataPath + "/ToLua/BaseType/";
     public string baseLuaDir => Application.dataPath + "/ToLua/Lua/";
     public string injectionFilesPath => Application.dataPath + "/ToLua/Injection/";
 

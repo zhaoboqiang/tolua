@@ -53,7 +53,7 @@ public static class ToLuaMenu
         if (ToLuaSettingsUtility.Settings == null)
             return;
 
-        var dir = ToLuaSettingsUtility.Settings.saveDir;
+        var dir = ToLuaSettingsUtility.Settings.SaveDir;
         var files = Directory.GetFiles(dir, "*.cs", SearchOption.TopDirectoryOnly);
 
         if (files.Length < 3 && beCheck)
@@ -196,11 +196,14 @@ public static class ToLuaMenu
             EditorUtility.DisplayDialog("警告", "请等待编辑器完成编译再执行此功能", "确定");
             return;
         }
+        
+        var saveDir = ToLuaSettingsUtility.Settings.SaveDir;
+        if (!File.Exists(saveDir))
+            Directory.CreateDirectory(saveDir);
 
-        if (!File.Exists(ToLuaSettingsUtility.Settings.saveDir))
-        {
-            Directory.CreateDirectory(ToLuaSettingsUtility.Settings.saveDir);
-        }
+        var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
+        if (!File.Exists(wrapperSaveDir))
+            Directory.CreateDirectory(wrapperSaveDir);
 
         ToLuaExport.allTypes.Clear();
 
@@ -217,7 +220,7 @@ public static class ToLuaMenu
             ToLuaExport.wrapClassName = bindType.wrapName;
             ToLuaExport.libClassName = bindType.libName;
             ToLuaExport.extendList = bindType.extendList;
-            ToLuaExport.Generate(ToLuaSettingsUtility.Settings.saveDir);
+            ToLuaExport.Generate(wrapperSaveDir);
         }
 
         Debug.Log("Generate lua binding files over");
@@ -506,7 +509,7 @@ public static class ToLuaMenu
 
         sb.AppendLineEx("}\r\n");
         allTypes.Clear();
-        var file = ToLuaSettingsUtility.Settings.saveDir + "LuaBinder.cs";
+        var file = ToLuaSettingsUtility.Settings.SaveDir + "LuaBinder.cs";
 
         using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
         {
@@ -693,12 +696,11 @@ public static class ToLuaMenu
     [MenuItem("Lua/Clear wrap files", false, 6)]
     static void ClearLuaWraps()
     {
-        var files = Directory.GetFiles(ToLuaSettingsUtility.Settings.saveDir, "*.cs", SearchOption.TopDirectoryOnly);
+        var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
+        var files = Directory.GetFiles(wrapperSaveDir, "*.cs", SearchOption.TopDirectoryOnly);
 
         for (int i = 0; i < files.Length; i++)
-        {
             File.Delete(files[i]);
-        }
 
         ToLuaExport.Clear();
         var list = new List<DelegateType>();
@@ -717,7 +719,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t}");
         sb.AppendLineEx("}");
 
-        var file = ToLuaSettingsUtility.Settings.saveDir + "LuaBinder.cs";
+        var file = ToLuaSettingsUtility.Settings.SaveDir + "LuaBinder.cs";
 
         using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
         {
@@ -993,7 +995,7 @@ public static class ToLuaMenu
     [MenuItem("Lua/Clear BaseType Wrap", false, 102)]
     static void ClearBaseTypeLuaWrap()
     {
-        var toluaBaseType = ToLuaSettingsUtility.Settings.toluaBaseType;
+        var toluaBaseType = ToLuaSettingsUtility.Settings.ToluaBaseType;
 
         CreateDefaultWrapFile(toluaBaseType, "System_ObjectWrap");
         CreateDefaultWrapFile(toluaBaseType, "System_DelegateWrap");

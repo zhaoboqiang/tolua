@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace LuaInterface
 {
-
     public interface ToLuaSettings
     {
-        string saveDir { get; }
-        string toluaBaseType { get; }
+        string SaveDir { get; }
+        string WrapperSaveDir { get; }
+        string ToluaBaseType { get; }
         string baseLuaDir { get; }
         string injectionFilesPath { get; }
 

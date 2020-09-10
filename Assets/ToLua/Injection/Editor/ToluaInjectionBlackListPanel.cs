@@ -357,8 +357,8 @@ public class InjectionBlackListGenerator : EditorWindow
             paths.Add(toluaPath + "Injection/");
             paths.Add(toluaPath + "Misc/");
             paths.Add(Application.dataPath + "/Plugins/");
-            paths.Add(ToLuaSettingsUtility.Settings.toluaBaseType);
-            paths.Add(GetRelativePath(ToLuaSettingsUtility.Settings.saveDir));
+            paths.Add(ToLuaSettingsUtility.Settings.ToluaBaseType);
+            paths.Add(GetRelativePath(ToLuaSettingsUtility.Settings.SaveDir));
         }
     }
 
