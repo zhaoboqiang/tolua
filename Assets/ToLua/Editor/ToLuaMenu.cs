@@ -263,14 +263,10 @@ public static class ToLuaMenu
             for (int j = 0; j < methods.Length; j++)
             {
                 var m = methods[j];
-
                 if (m.IsGenericMethod)
-                {
                     continue;
-                }
 
                 var pifs = m.GetParameters();
-
                 for (int k = 0; k < pifs.Length; k++)
                 {
                     var t = pifs[k].ParameterType;
@@ -986,7 +982,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t}");
         sb.AppendLineEx("}");
 
-        using (StreamWriter textWriter = new StreamWriter(path, false, Encoding.UTF8))
+        using (var textWriter = new StreamWriter(path, false, Encoding.UTF8))
         {
             textWriter.Write(sb.ToString());
             textWriter.Flush();
