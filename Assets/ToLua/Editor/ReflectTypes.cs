@@ -7,29 +7,6 @@ namespace LuaInterface.Editor
 {
     public static class ReflectTypes
     {
-        public static bool IsTypeIncluded(Type type)
-        {
-            if (type.IsGenericType)
-                return false;
-
-            if (!type.IsVisible)
-                return false;
-
-            if (!type.IsPublic)
-                return false;
-
-            if (type.IsNotPublic)
-                return false;
-
-            if (type.IsInterface)
-                return false;
-
-            if (ToLuaMenu.BindType.IsObsolete(type))
-                return false;
-
-            return true;
-        }
-
         private static void UpdateCsv(List<LuaIncludedType> newTypes)
         {
             // Load previous configurations
@@ -83,10 +60,7 @@ namespace LuaInterface.Editor
 
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (!ToLuaSettingsUtility.IsNamespaceIncluded(type.Namespace))
-                        continue;
-
-                    if (!IsTypeIncluded(type))
+                    if (!ToLuaSettingsUtility.IsIncluded(type))
                         continue;
 
                     newTypes.Add(new LuaIncludedType

@@ -130,6 +130,29 @@ namespace LuaInterface.Editor
 
         private static bool IsTypeIncluded(Type type)
         {
+            if (type.IsGenericType)
+                return false;
+
+            if (!type.IsVisible)
+                return false;
+
+            if (!type.IsPublic)
+                return false;
+
+            if (type.IsNotPublic)
+                return false;
+
+            if (type.IsInterface)
+                return false;
+
+            if (ToLuaMenu.BindType.IsObsolete(type))
+                return false;
+
+            return true;
+        }
+
+        private static bool IsTypeIncludedFromCsv(Type type)
+        {
             var typeName = type.FullName;
 
             if (IncludedTypes.TryGetValue(typeName, out var value))
@@ -148,7 +171,19 @@ namespace LuaInterface.Editor
             }
 
             // default rule
-            return ReflectTypes.IsTypeIncluded(type);
+            return IsTypeIncluded(type);
+        }
+
+        public static bool IsIncluded(Type type)
+        {
+            if (!IsNamespaceIncluded(type.Namespace))
+            {
+                if (IsTypeIncludedFromCsv(type))
+                    return true;
+                return false;
+            }
+
+            return IsTypeIncluded(type);
         }
 
         public static ToLuaMenu.BindType[] customTypeList
@@ -160,8 +195,6 @@ namespace LuaInterface.Editor
                 var bindTypes = new List<ToLuaMenu.BindType>();
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                var typeIndex = 0;
-
                 foreach (var assembly in assemblies)
                 {
                     var assemblyName = assembly.GetName().Name;
@@ -172,15 +205,8 @@ namespace LuaInterface.Editor
 
                     foreach (var type in assembly.GetTypes())
                     {
-                        if (!IsNamespaceIncluded(type.Namespace))
+                        if (!IsIncluded(type))
                             continue;
-
-                        var typeName = type.Name;
-
-                        if (!IsTypeIncluded(type))
-                            continue;
-
-                        Debug.Log($"\t[{typeIndex++} {typeName}");
 
                         if (typeof(MulticastDelegate).IsAssignableFrom(type))
                             continue;
