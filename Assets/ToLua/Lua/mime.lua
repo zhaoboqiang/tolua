@@ -15,11 +15,11 @@ local string = require("string")
 local _M = mime
 
 -- encode, decode and wrap algorithm tables
-local encodet, decodet, wrapt = {},{},{}
+local encodet, decodet, wrapt = {}, {}, {}
 
 _M.encodet = encodet
 _M.decodet = decodet
-_M.wrapt   = wrapt  
+_M.wrapt = wrapt
 
 -- creates a function that chooses a filter by name from a given table
 local function choose(table)
@@ -28,47 +28,53 @@ local function choose(table)
             name, opt1, opt2 = "default", name, opt1
         end
         local f = table[name or "nil"]
-        if not f then 
+        if not f then
             base.error("unknown key (" .. base.tostring(name) .. ")", 3)
-        else return f(opt1, opt2) end
+        else
+            return f(opt1, opt2)
+        end
     end
 end
 
 -- define the encoding filters
-encodet['base64'] = function()
+encodet["base64"] = function()
     return ltn12.filter.cycle(_M.b64, "")
 end
 
-encodet['quoted-printable'] = function(mode)
-    return ltn12.filter.cycle(_M.qp, "",
-        (mode == "binary") and "=0D=0A" or "\r\n")
+encodet["quoted-printable"] = function(mode)
+    return ltn12.filter.cycle(_M.qp, "", (mode == "binary") and "=0D=0A" or "\r\n")
 end
 
 -- define the decoding filters
-decodet['base64'] = function()
+decodet["base64"] = function()
     return ltn12.filter.cycle(_M.unb64, "")
 end
 
-decodet['quoted-printable'] = function()
+decodet["quoted-printable"] = function()
     return ltn12.filter.cycle(_M.unqp, "")
 end
 
 local function format(chunk)
     if chunk then
-        if chunk == "" then return "''"
-        else return string.len(chunk) end
-    else return "nil" end
+        if chunk == "" then
+            return "''"
+        else
+            return string.len(chunk)
+        end
+    else
+        return "nil"
+    end
 end
 
 -- define the line-wrap filters
-wrapt['text'] = function(length)
+wrapt["text"] = function(length)
     length = length or 76
     return ltn12.filter.cycle(_M.wrp, length, length)
 end
-wrapt['base64'] = wrapt['text']
-wrapt['default'] = wrapt['text']
+wrapt["base64"] = wrapt["text"]
+wrapt["default"] = wrapt["text"]
 
-wrapt['quoted-printable'] = function()
+wrapt["quoted-printable"] = function()
     return ltn12.filter.cycle(_M.qpwrp, 76, 76)
 end
 

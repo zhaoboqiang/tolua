@@ -15,7 +15,7 @@ local _M = {}
 if module then -- heuristic for exporting a global package table
     ltn12 = _M
 end
-local filter,source,sink,pump = {},{},{},{}
+local filter, source, sink, pump = {}, {}, {}, {}
 
 _M.filter = filter
 _M.source = source
@@ -46,7 +46,7 @@ end
 -- (thanks to Wim Couwenberg)
 function filter.chain(...)
     local arg = {...}
-    local n = base.select('#',...)
+    local n = base.select("#", ...)
     local top, index = 1, 1
     local retry = ""
     return function(chunk)
@@ -54,10 +54,12 @@ function filter.chain(...)
         while true do
             if index == top then
                 chunk = arg[index](chunk)
-                if chunk == "" or top == n then return chunk
-                elseif chunk then index = index + 1
+                if chunk == "" or top == n then
+                    return chunk
+                elseif chunk then
+                    index = index + 1
                 else
-                    top = top+1
+                    top = top + 1
                     index = top
                 end
             else
@@ -66,9 +68,14 @@ function filter.chain(...)
                     index = index - 1
                     chunk = retry
                 elseif chunk then
-                    if index == n then return chunk
-                    else index = index + 1 end
-                else base.error("filter returned inappropriate nil") end
+                    if index == n then
+                        return chunk
+                    else
+                        index = index + 1
+                    end
+                else
+                    base.error("filter returned inappropriate nil")
+                end
             end
         end
     end
@@ -98,10 +105,14 @@ function source.file(handle, io_err)
     if handle then
         return function()
             local chunk = handle:read(_M.BLOCKSIZE)
-            if not chunk then handle:close() end
+            if not chunk then
+                handle:close()
+            end
             return chunk
         end
-    else return source.error(io_err or "unable to open file") end
+    else
+        return source.error(io_err or "unable to open file")
+    end
 end
 
 -- turns a fancy source into a simple source
@@ -110,8 +121,11 @@ function source.simplify(src)
     return function()
         local chunk, err_or_new = src()
         src = err_or_new or src
-        if not chunk then return nil, err_or_new
-        else return chunk end
+        if not chunk then
+            return nil, err_or_new
+        else
+            return chunk
+        end
     end
 end
 
@@ -120,12 +134,17 @@ function source.string(s)
     if s then
         local i = 1
         return function()
-            local chunk = string.sub(s, i, i+_M.BLOCKSIZE-1)
+            local chunk = string.sub(s, i, i + _M.BLOCKSIZE - 1)
             i = i + _M.BLOCKSIZE
-            if chunk ~= "" then return chunk
-            else return nil end
+            if chunk ~= "" then
+                return chunk
+            else
+                return nil
+            end
         end
-    else return source.empty() end
+    else
+        return source.empty()
+    end
 end
 
 -- creates rewindable source
@@ -135,8 +154,11 @@ function source.rewind(src)
     return function(chunk)
         if not chunk then
             chunk = table.remove(t)
-            if not chunk then return src()
-            else return chunk end
+            if not chunk then
+                return src()
+            else
+                return chunk
+            end
         else
             table.insert(t, chunk)
         end
@@ -145,29 +167,35 @@ end
 
 -- chains a source with one or several filter(s)
 function source.chain(src, f, ...)
-    if ... then f=filter.chain(f, ...) end
+    if ... then
+        f = filter.chain(f, ...)
+    end
     base.assert(src and f)
     local last_in, last_out = "", ""
     local state = "feeding"
     local err
     return function()
         if not last_out then
-            base.error('source is empty!', 2)
+            base.error("source is empty!", 2)
         end
         while true do
             if state == "feeding" then
                 last_in, err = src()
-                if err then return nil, err end
+                if err then
+                    return nil, err
+                end
                 last_out = f(last_in)
                 if not last_out then
                     if last_in then
-                        base.error('filter returned inappropriate nil')
+                        base.error("filter returned inappropriate nil")
                     else
                         return nil
                     end
                 elseif last_out ~= "" then
                     state = "eating"
-                    if last_in then last_in = "" end
+                    if last_in then
+                        last_in = ""
+                    end
                     return last_out
                 end
             else
@@ -180,7 +208,7 @@ function source.chain(src, f, ...)
                     end
                 elseif not last_out then
                     if last_in then
-                        base.error('filter returned inappropriate nil')
+                        base.error("filter returned inappropriate nil")
                     else
                         return nil
                     end
@@ -201,8 +229,12 @@ function source.cat(...)
     return function()
         while src do
             local chunk, err = src()
-            if chunk then return chunk end
-            if err then return nil, err end
+            if chunk then
+                return chunk
+            end
+            if err then
+                return nil, err
+            end
             src = table.remove(arg, 1)
         end
     end
@@ -215,7 +247,9 @@ end
 function sink.table(t)
     t = t or {}
     local f = function(chunk, err)
-        if chunk then table.insert(t, chunk) end
+        if chunk then
+            table.insert(t, chunk)
+        end
         return 1
     end
     return f, t
@@ -226,7 +260,9 @@ function sink.simplify(snk)
     base.assert(snk)
     return function(chunk, err)
         local ret, err_or_new = snk(chunk, err)
-        if not ret then return nil, err_or_new end
+        if not ret then
+            return nil, err_or_new
+        end
         snk = err_or_new or snk
         return 1
     end
@@ -239,9 +275,13 @@ function sink.file(handle, io_err)
             if not chunk then
                 handle:close()
                 return 1
-            else return handle:write(chunk) end
+            else
+                return handle:write(chunk)
+            end
         end
-    else return sink.error(io_err or "unable to open file") end
+    else
+        return sink.error(io_err or "unable to open file")
+    end
 end
 
 -- creates a sink that discards data
@@ -263,7 +303,7 @@ end
 -- chains a sink with one or several filter(s)
 function sink.chain(f, snk, ...)
     if ... then
-        local args = { f, snk, ... }
+        local args = {f, snk, ...}
         snk = table.remove(args, #args)
         f = filter.chain(unpack(args))
     end
@@ -274,11 +314,17 @@ function sink.chain(f, snk, ...)
             local done = chunk and ""
             while true do
                 local ret, snkerr = snk(filtered, err)
-                if not ret then return nil, snkerr end
-                if filtered == done then return 1 end
+                if not ret then
+                    return nil, snkerr
+                end
+                if filtered == done then
+                    return 1
+                end
                 filtered = f(done)
             end
-        else return 1 end
+        else
+            return 1
+        end
     end
 end
 
@@ -289,8 +335,11 @@ end
 function pump.step(src, snk)
     local chunk, src_err = src()
     local ret, snk_err = snk(chunk, src_err)
-    if chunk and ret then return 1
-    else return nil, src_err or snk_err end
+    if chunk and ret then
+        return 1
+    else
+        return nil, src_err or snk_err
+    end
 end
 
 -- pumps all data from a source to a sink, using a step function
@@ -300,8 +349,11 @@ function pump.all(src, snk, step)
     while true do
         local ret, err = step(src, snk)
         if not ret then
-            if err then return nil, err
-            else return 1 end
+            if err then
+                return nil, err
+            else
+                return 1
+            end
         end
     end
 end
