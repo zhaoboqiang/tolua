@@ -1028,9 +1028,7 @@ namespace LuaInterface
                 if (obj != null)
                 {
                     if (obj is Type)
-                    {
                         return (Type) obj;
-                    }
 
                     LuaDLL.luaL_argerror(L, stackPos, string.Format("Type expected, got {0}", obj.GetType().FullName));
                 }
@@ -1058,9 +1056,7 @@ namespace LuaInterface
                 if (obj != null)
                 {
                     if (obj is IEnumerator)
-                    {
                         return (IEnumerator) obj;
-                    }
 
                     LuaDLL.luaL_argerror(L, stackPos, string.Format("Type expected, got {0}", obj.GetType().FullName));
                 }
