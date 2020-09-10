@@ -14,23 +14,6 @@ namespace LuaInterface.Editor
 
         public static ToLuaSettings Settings { get; private set; }
 
-        //导出时强制做为静态类的类型(注意customTypeList 还要添加这个类型才能导出)
-        //unity 有些类作为sealed class, 其实完全等价于静态类
-        public static Type[] staticClassTypes => new[]
-        {
-            typeof(Application),
-            typeof(Time),
-            typeof(Screen),
-            typeof(SleepTimeout),
-            typeof(Input),
-            typeof(Resources),
-            typeof(Physics),
-            typeof(RenderSettings),
-            typeof(QualitySettings),
-            typeof(GL),
-            typeof(Graphics),
-        };
-
         //附加导出委托类型(在导出委托时, customTypeList 中牵扯的委托类型都会导出， 无需写在这里)
         public static DelegateType[] customDelegateList => new[]
         {
