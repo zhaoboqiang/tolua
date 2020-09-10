@@ -32,3 +32,10 @@ UnityEngine.WaitForEndOfFrame,UnityEngine,WaitForEndOfFrame,ToLua内部支持,Fa
 UnityEngine.WaitForFixedUpdate,UnityEngine,WaitForFixedUpdate,ToLua内部支持,False,False
 UnityEngine.WaitForSeconds,UnityEngine,WaitForSeconds,ToLua内部支持,False,False
 UnityEngine.YieldInstruction,UnityEngine,YieldInstruction,ToLua内部支持,False,False
+System.Object,System,Object,可以导出的内部支持类型,True,True
+System.Delegate,System,Delegate,可以导出的内部支持类型,True,True
+System.String,System,String,可以导出的内部支持类型,True,True
+System.Enum,System,Enum,可以导出的内部支持类型,True,True
+System.Type,System,Type,可以导出的内部支持类型,True,True
+System.Collections.IEnumerator,System.Collections,IEnumerator,可以导出的内部支持类型,True,True
+LuaInterface.EventObject,LuaInterface,EventObject,可以导出的内部支持类型,True,True
