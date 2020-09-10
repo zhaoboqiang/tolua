@@ -62,10 +62,10 @@ namespace LuaInterface.Editor
             resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // save configurations
-            var lines = new List<string> { "FullName,Namespace,Name,Android,iOS" };
+            var lines = new List<string> { "FullName,Namespace,Name,Note,Android,iOS" };
             lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS
-                           select $"{type.FullName},{type.Namespace},{type.Name},{type.Android},{type.iOS}");
+                           select $"{type.FullName},{type.Namespace},{type.Name},{type.Note},{type.Android},{type.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
         }
 
