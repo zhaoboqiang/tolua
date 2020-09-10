@@ -63,7 +63,7 @@ namespace LuaInterface.Editor
             // save configurations
             var lines = new List<string> { "FullName,Namespace,Name,Note,Android,iOS" };
             lines.AddRange(from type in resultTypes
-                           where !type.Android || !type.iOS
+                           where !type.Android || !type.iOS || oldTypes.ContainsKey(type.FullName)
                            select $"{type.FullName},{type.Namespace},{type.Name},{type.Note},{type.Android},{type.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
         }
