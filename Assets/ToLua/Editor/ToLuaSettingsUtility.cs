@@ -128,7 +128,7 @@ namespace LuaInterface.Editor
             return true;
         }
 
-        private static bool IsTypeIncluded(Type type)
+        private static bool IsTypeIncludedByType(Type type)
         {
             if (type.IsGenericType)
                 return false;
@@ -151,11 +151,9 @@ namespace LuaInterface.Editor
             return true;
         }
 
-        private static bool IsTypeIncludedFromCsv(Type type)
+        private static bool IsTypeIncluded(Type type)
         {
-            var typeName = type.FullName;
-
-            if (IncludedTypes.TryGetValue(typeName, out var value))
+            if (IncludedTypes.TryGetValue(type.FullName, out var value))
             {
 #if UNITY_IOS
                 if (value.iOS)
@@ -171,19 +169,12 @@ namespace LuaInterface.Editor
             }
 
             // default rule
-            return IsTypeIncluded(type);
+            return IsTypeIncludedByType(type);
         }
 
         public static bool IsIncluded(Type type)
         {
-            if (!IsNamespaceIncluded(type.Namespace))
-            {
-                if (IsTypeIncludedFromCsv(type))
-                    return true;
-                return false;
-            }
-
-            return IsTypeIncluded(type);
+            return (IsNamespaceIncluded(type.Namespace) || IncludedTypes.ContainsKey(type.FullName)) && IsTypeIncluded(type);
         }
 
         public static ToLuaMenu.BindType[] customTypeList
