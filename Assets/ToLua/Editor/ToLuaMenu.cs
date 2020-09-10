@@ -39,19 +39,6 @@ using LuaInterface.Editor;
 [InitializeOnLoad]
 public static class ToLuaMenu
 {
-    //可以导出的内部支持类型
-    public static List<Type> baseType = new List<Type>
-    {
-        typeof(System.Object),
-        typeof(Delegate),
-        typeof(String),
-        typeof(Enum),
-        typeof(Type),
-        typeof(IEnumerator),
-        typeof(UnityEngine.Object),
-        typeof(EventObject)
-    };
-
     private static bool beAutoGen = false;
     private static bool beCheck = true;
     static List<BindType> allTypes = new List<BindType>();
@@ -201,87 +188,6 @@ public static class ToLuaMenu
         }
     }
 
-    static void AutoAddBaseType(BindType bt, bool beDropBaseType)
-    {
-        var t = bt.baseType;
-
-        if (t == null)
-            return;
-
-        if (t.IsInterface)
-        {
-            Debugger.LogWarning("{0} has a base type {1} is Interface, use SetBaseType to jump it", bt.name,
-                t.FullName);
-            bt.baseType = t.BaseType;
-        }
-        else if (!beDropBaseType || baseType.IndexOf(t) < 0)
-        {
-            int index = allTypes.FindIndex((iter) => iter.type == t);
-
-            if (index < 0)
-            {
-#if JUMP_NODEFINED_ABSTRACT
-                if (t.IsAbstract && !t.IsSealed)
-                {
-                    Debugger.LogWarning("not defined bindtype for {0}, it is abstract class, jump it, child class is {1}", LuaMisc.GetTypeName(t), bt.name);
-                    bt.baseType = t.BaseType;
-                }
-                else
-                {
-                    Debugger.LogWarning("not defined bindtype for {0}, autogen it, child class is {1}", LuaMisc.GetTypeName(t), bt.name);
-                    bt = new BindType(t);
-                    allTypes.Add(bt);
-                }
-#else
-                Debugger.LogWarning("not defined bindtype for {0}, autogen it, child class is {1}",
-                    LuaMisc.GetTypeName(t), bt.name);
-                bt = new BindType(t);
-                allTypes.Add(bt);
-#endif
-            }
-            else
-            {
-                return;
-            }
-        }
-        else
-        {
-            return;
-        }
-
-        AutoAddBaseType(bt, beDropBaseType);
-    }
-
-    static BindType[] GenBindTypes(BindType[] list, bool beDropBaseType = true)
-    {
-        allTypes = new List<BindType>(list);
-
-        for (var i = 0; i < list.Length; i++)
-        {
-            for (var j = i + 1; j < list.Length; j++)
-            {
-                if (list[i].type == list[j].type)
-                    throw new NotSupportedException("Repeat BindType:" + list[i].type);
-            }
-
-            if (beDropBaseType && baseType.IndexOf(list[i].type) >= 0)
-            {
-                Debug.LogWarning(list[i].type.FullName + " is Base Type, not need to export");
-                allTypes.Remove(list[i]);
-                continue;
-            }
-
-            if (list[i].type.IsEnum)
-            {
-                continue;
-            }
-
-            AutoAddBaseType(list[i], beDropBaseType);
-        }
-
-        return allTypes.ToArray();
-    }
-
     [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]
     public static void GenerateClassWraps()
     {
@@ -298,26 +204,19 @@ public static class ToLuaMenu
 
         ToLuaExport.allTypes.Clear();
 
-        var typelist = ToLuaSettingsUtility.customTypeList;
+        foreach (var bindType in ToLuaSettingsUtility.customTypeList)
+            ToLuaExport.allTypes.Add(bindType.type);
 
-        var list = GenBindTypes(typelist);
-        ToLuaExport.allTypes.AddRange(baseType);
-
-        for (int i = 0; i < list.Length; i++)
-        {
-            ToLuaExport.allTypes.Add(list[i].type);
-        }
-
-        for (int i = 0; i < list.Length; i++)
+        foreach (var bindType in ToLuaSettingsUtility.customTypeList)
         {
             ToLuaExport.Clear();
-            ToLuaExport.className = list[i].name;
-            ToLuaExport.type = list[i].type;
-            ToLuaExport.isStaticClass = list[i].IsStatic;
-            ToLuaExport.baseType = list[i].baseType;
-            ToLuaExport.wrapClassName = list[i].wrapName;
-            ToLuaExport.libClassName = list[i].libName;
-            ToLuaExport.extendList = list[i].extendList;
+            ToLuaExport.className = bindType.name;
+            ToLuaExport.type = bindType.type;
+            ToLuaExport.isStaticClass = bindType.IsStatic;
+            ToLuaExport.baseType = bindType.baseType;
+            ToLuaExport.wrapClassName = bindType.wrapName;
+            ToLuaExport.libClassName = bindType.libName;
+            ToLuaExport.extendList = bindType.extendList;
             ToLuaExport.Generate(ToLuaSettingsUtility.Settings.saveDir);
         }
 
@@ -420,7 +319,7 @@ public static class ToLuaMenu
     {
         var tree = new ToLuaTree<string>();
         var root = tree.GetRoot();
-        var list = GenBindTypes(ToLuaSettingsUtility.customTypeList);
+        var list = ToLuaSettingsUtility.customTypeList;
 
         for (int i = 0; i < list.Length; i++)
         {
@@ -1070,52 +969,6 @@ public static class ToLuaMenu
     public static void ClearLuaFiles()
     {
         ClearAllLuaFiles();
-    }
-
-
-    [MenuItem("Lua/Gen BaseType Wrap", false, 101)]
-    static void GenBaseTypeLuaWrap()
-    {
-        if (!beAutoGen && EditorApplication.isCompiling)
-        {
-            EditorUtility.DisplayDialog("警告", "请等待编辑器完成编译再执行此功能", "确定");
-            return;
-        }
-
-        var dir = ToLuaSettingsUtility.Settings.toluaBaseType;
-
-        if (!File.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
-
-        allTypes.Clear();
-        ToLuaExport.allTypes.AddRange(baseType);
-        var btList = new List<BindType>();
-
-        for (int i = 0; i < baseType.Count; i++)
-        {
-            btList.Add(new BindType(baseType[i]));
-        }
-
-        GenBindTypes(btList.ToArray(), false);
-        var list = allTypes.ToArray();
-
-        for (int i = 0; i < list.Length; i++)
-        {
-            ToLuaExport.Clear();
-            ToLuaExport.className = list[i].name;
-            ToLuaExport.type = list[i].type;
-            ToLuaExport.isStaticClass = list[i].IsStatic;
-            ToLuaExport.baseType = list[i].baseType;
-            ToLuaExport.wrapClassName = list[i].wrapName;
-            ToLuaExport.libClassName = list[i].libName;
-            ToLuaExport.Generate(dir);
-        }
-
-        Debug.Log("Generate base type files over");
-        allTypes.Clear();
-        AssetDatabase.Refresh();
     }
 
     static void CreateDefaultWrapFile(string path, string name)
