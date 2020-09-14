@@ -50,10 +50,11 @@ public static class ToLuaMenu
 
     private static void AutoGenerateWraps()
     {
-        if (ToLuaSettingsUtility.Settings == null)
+        var settings = ToLuaSettingsUtility.Settings;
+        if (settings == null)
             return;
 
-        var dir = ToLuaSettingsUtility.Settings.SaveDir;
+        var dir = settings.SaveDir;
         var files = Directory.GetFiles(dir, "*.cs", SearchOption.TopDirectoryOnly);
 
         if (files.Length < 3 && beCheck)
