@@ -610,6 +610,14 @@ public static class ToLuaMenu
         }
     }
 
+    private static void DeleteDirectory(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, true);
+        }
+    }
+
     static void ClearAllLuaFiles()
     {
         string osPath = Application.streamingAssetsPath + "/" + GetOS();
@@ -624,40 +632,11 @@ public static class ToLuaMenu
             }
         }
 
-        string path = osPath + "/Lua";
-
-        if (Directory.Exists(path))
-        {
-            Directory.Delete(path, true);
-        }
-
-        path = Application.streamingAssetsPath + "/Lua";
-
-        if (Directory.Exists(path))
-        {
-            Directory.Delete(path, true);
-        }
-
-        path = Application.dataPath + "/temp";
-
-        if (Directory.Exists(path))
-        {
-            Directory.Delete(path, true);
-        }
-
-        path = Application.dataPath + "/Resources/Lua";
-
-        if (Directory.Exists(path))
-        {
-            Directory.Delete(path, true);
-        }
-
-        path = Application.persistentDataPath + "/" + GetOS() + "/Lua";
-
-        if (Directory.Exists(path))
-        {
-            Directory.Delete(path, true);
-        }
+        DeleteDirectory(osPath + "/Lua");
+        DeleteDirectory(Application.streamingAssetsPath + "/Lua");
+        DeleteDirectory(Application.dataPath + "/temp");
+        DeleteDirectory(Application.dataPath + "/Resources/Lua");
+        DeleteDirectory(Application.persistentDataPath + "/" + GetOS() + "/Lua");
     }
 
     [MenuItem("Lua/Gen LuaWrap + Binder", false, 4)]
