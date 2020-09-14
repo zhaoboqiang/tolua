@@ -207,10 +207,10 @@ public static class ToLuaMenu
 
         ToLuaExport.allTypes.Clear();
 
-        foreach (var bindType in ToLuaSettingsUtility.customTypeList)
+        foreach (var bindType in ToLuaSettingsUtility.BindTypes)
             ToLuaExport.allTypes.Add(bindType.type);
 
-        foreach (var bindType in ToLuaSettingsUtility.customTypeList)
+        foreach (var bindType in ToLuaSettingsUtility.BindTypes)
         {
             ToLuaExport.Clear();
             ToLuaExport.className = bindType.name;
@@ -231,7 +231,7 @@ public static class ToLuaMenu
 
     static HashSet<Type> GetCustomTypeDelegates()
     {
-        var list = ToLuaSettingsUtility.customTypeList;
+        var list = ToLuaSettingsUtility.BindTypes;
         var set = new HashSet<Type>();
         var binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase | BindingFlags.Instance;
 
@@ -318,7 +318,7 @@ public static class ToLuaMenu
     {
         var tree = new ToLuaTree<string>();
         var root = tree.GetRoot();
-        var list = ToLuaSettingsUtility.customTypeList;
+        var list = ToLuaSettingsUtility.BindTypes;
 
         for (int i = 0; i < list.Length; i++)
         {

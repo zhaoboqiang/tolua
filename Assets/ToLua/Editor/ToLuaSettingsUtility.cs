@@ -14,7 +14,7 @@ namespace LuaInterface.Editor
 
         public static ToLuaSettings Settings { get; private set; }
 
-        //附加导出委托类型(在导出委托时, customTypeList 中牵扯的委托类型都会导出， 无需写在这里)
+        //附加导出委托类型(在导出委托时, BindTypes 中牵扯的委托类型都会导出， 无需写在这里)
         public static DelegateType[] customDelegateList => new[]
         {
             _DT(typeof(Action)),
@@ -177,7 +177,7 @@ namespace LuaInterface.Editor
             return (IsNamespaceIncluded(type.Namespace) || IncludedTypes.ContainsKey(type.FullName)) && IsTypeIncluded(type);
         }
 
-        public static ToLuaMenu.BindType[] customTypeList
+        public static ToLuaMenu.BindType[] BindTypes
         {
             get
             {
