@@ -1497,9 +1497,9 @@ public static class ToLuaExport
 
     static string GetPushFunction(Type t, bool isByteBuffer = false)
     {
-        if (t.IsEnum || t.IsPrimitive || t == typeof(string) || 
+        if (t.IsEnum || t.IsPrimitive || t == typeof(string) ||
             t == typeof(LuaTable) || t == typeof(LuaCSFunction) || t == typeof(LuaThread) || t == typeof(LuaFunction) ||
-            t == typeof(Type) || t == typeof(IntPtr) || 
+            t == typeof(Type) || t == typeof(IntPtr) ||
             t == typeof(LuaByteBuffer) /* || t == typeof(LuaInteger64) */ ||
             t == typeof(Vector3) || t == typeof(Vector2) || t == typeof(Vector4) ||
             t == typeof(Quaternion) || t == typeof(Color) || t == typeof(RaycastHit) ||
@@ -3736,32 +3736,41 @@ public static class ToLuaExport
         sb.AppendLineEx();
         sb.Append("\t{\r\n");
 
-        for (int i = 0; i < list.Length; i++)
+        if (list.Length > 0)
         {
-            var type = list[i].strType;
-            var name = list[i].name;
-            sb.AppendFormat($"\t\tdelegates.Add(typeof({type}), {name});\r\n");
+            for (int i = 0; i < list.Length; i++)
+            {
+                var type = list[i].strType;
+                var name = list[i].name;
+                sb.AppendFormat($"\t\tdelegates.Add(typeof({type}), {name});\r\n");
+            }
+
+            sb.AppendLineEx();
         }
 
-        sb.AppendLineEx();
-
-        for (int i = 0; i < list.Length; i++)
+        if (list.Length > 0)
         {
-            string type = list[i].strType;
-            string name = list[i].name;
-            sb.AppendFormat("\t\tDelegateTraits<{0}>.Init({1});\r\n", type, name);
+            for (int i = 0; i < list.Length; i++)
+            {
+                string type = list[i].strType;
+                string name = list[i].name;
+                sb.AppendFormat("\t\tDelegateTraits<{0}>.Init({1});\r\n", type, name);
+            }
+
+            sb.AppendLineEx();
         }
 
-        sb.AppendLineEx();
-
-        for (int i = 0; i < list.Length; i++)
+        if (list.Length > 0)
         {
-            string type = list[i].strType;
-            string name = list[i].name;
-            sb.AppendFormat("\t\tTypeTraits<{0}>.Init(Check_{1});\r\n", type, name);
-        }
+            for (int i = 0; i < list.Length; i++)
+            {
+                string type = list[i].strType;
+                string name = list[i].name;
+                sb.AppendFormat("\t\tTypeTraits<{0}>.Init(Check_{1});\r\n", type, name);
+            }
 
-        sb.AppendLineEx();
+            sb.AppendLineEx();
+        }
 
         for (int i = 0; i < list.Length; i++)
         {
