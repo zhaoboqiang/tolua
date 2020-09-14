@@ -13,9 +13,9 @@ namespace LuaInterface
             Settings = settings;
         }
 
-        public static T[] LoadCsv<T>(string fileName)
+        public static T[] LoadCsv<T>(string filepath)
         {
-            var text = System.IO.File.ReadAllText(Application.dataPath + "/Editor/" + fileName + ".csv");
+            var text = System.IO.File.ReadAllText(filepath);
             if (string.IsNullOrEmpty(text))
                 return default;
             return CSVSerializer.Deserialize<T>(text);

@@ -26,7 +26,9 @@ public class CustomToLuaSettings : ToLuaSettings
     public string baseLuaDir => Application.dataPath + "/ToLua/Lua/";
     public string injectionFilesPath => Application.dataPath + "/ToLua/Injection/";
 
-    public string IncludedAssemblyCsv => "included_assembly";
-    public string IncludedNamespaceCsv => "included_namespace";
-    public string IncludedTypeCsv => "included_type";
+    private string GetCsvPath(string filename) => Application.dataPath + "/Editor/" + filename + ".csv";
+
+    public string IncludedAssemblyCsv => GetCsvPath("included_assembly");
+    public string IncludedNamespaceCsv => GetCsvPath("included_namespace");
+    public string IncludedTypeCsv => GetCsvPath("included_type");
 }
