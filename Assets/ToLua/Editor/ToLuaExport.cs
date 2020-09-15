@@ -3521,9 +3521,7 @@ public static class ToLuaExport
     static string CreateDelegate = @"    
     public static Delegate CreateDelegate(Type t, LuaFunction func = null)
     {
-        DelegateCreate Create = null;
-
-        if (!delegates.TryGetValue(t, out Create))
+        if (!delegates.TryGetValue(t, out var Create))
         {
             throw new LuaException(string.Format(""Delegate {0} not register"", LuaMisc.GetTypeName(t)));            
         }
@@ -3551,17 +3549,15 @@ public static class ToLuaExport
     
     public static Delegate CreateDelegate(Type t, LuaFunction func, LuaTable self)
     {
-        DelegateCreate Create = null;
-
-        if (!delegates.TryGetValue(t, out Create))
+        if (!delegates.TryGetValue(t, out var Create))
         {
             throw new LuaException(string.Format(""Delegate {0} not register"", LuaMisc.GetTypeName(t)));
         }
 
         if (func != null)
         {
-            LuaState state = func.GetLuaState();
-            LuaDelegate target = state.GetLuaDelegate(func, self);
+            var state = func.GetLuaState();
+            var target = state.GetLuaDelegate(func, self);
 
             if (target != null)
             {
@@ -3583,12 +3579,12 @@ public static class ToLuaExport
     static string RemoveDelegate = @"    
     public static Delegate RemoveDelegate(Delegate obj, LuaFunction func)
     {
-        LuaState state = func.GetLuaState();
-        Delegate[] ds = obj.GetInvocationList();
+        var state = func.GetLuaState();
+        var ds = obj.GetInvocationList();
 
         for (int i = 0; i < ds.Length; i++)
         {
-            LuaDelegate ld = ds[i].Target as LuaDelegate;
+            var ld = ds[i].Target as LuaDelegate;
 
             if (ld != null && ld.func == func)
             {
@@ -3603,7 +3599,7 @@ public static class ToLuaExport
     
     public static Delegate RemoveDelegate(Delegate obj, Delegate dg)
     {
-        LuaDelegate remove = dg.Target as LuaDelegate;
+        var remove = dg.Target as LuaDelegate;
 
         if (remove == null)
         {
@@ -3611,12 +3607,12 @@ public static class ToLuaExport
             return obj;
         }
 
-        LuaState state = remove.func.GetLuaState();
-        Delegate[] ds = obj.GetInvocationList();        
+        var state = remove.func.GetLuaState();
+        var ds = obj.GetInvocationList();        
 
         for (int i = 0; i < ds.Length; i++)
         {
-            LuaDelegate ld = ds[i].Target as LuaDelegate;
+            var ld = ds[i].Target as LuaDelegate;
 
             if (ld != null && ld == remove)
             {
