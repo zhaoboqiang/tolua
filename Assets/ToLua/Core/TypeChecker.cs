@@ -392,6 +392,76 @@ namespace LuaInterface
                 TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11);
         }
 
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14) &&
+                TypeTraits<T16>.Check(L, pos + 15);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14) &&
+                TypeTraits<T16>.Check(L, pos + 15) && TypeTraits<T17>.Check(L, pos + 16);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14) &&
+                TypeTraits<T16>.Check(L, pos + 15) && TypeTraits<T17>.Check(L, pos + 16) && TypeTraits<T18>.Check(L, pos + 17);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14) &&
+                TypeTraits<T16>.Check(L, pos + 15) && TypeTraits<T17>.Check(L, pos + 16) && TypeTraits<T18>.Check(L, pos + 17) && TypeTraits<T19>.Check(L, pos + 18);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14) &&
+                TypeTraits<T16>.Check(L, pos + 15) && TypeTraits<T17>.Check(L, pos + 16) && TypeTraits<T18>.Check(L, pos + 17) && TypeTraits<T19>.Check(L, pos + 18) && TypeTraits<T20>.Check(L, pos + 19);
+        }
+
+        public static bool CheckTypes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>(IntPtr L, int pos)
+        {
+            return TypeTraits<T1>.Check(L, pos) && TypeTraits<T2>.Check(L, pos + 1) && TypeTraits<T3>.Check(L, pos + 2) && TypeTraits<T4>.Check(L, pos + 3) && TypeTraits<T5>.Check(L, pos + 4) &&
+                TypeTraits<T6>.Check(L, pos + 5) && TypeTraits<T7>.Check(L, pos + 6) && TypeTraits<T8>.Check(L, pos + 7) && TypeTraits<T9>.Check(L, pos + 8) && TypeTraits<T10>.Check(L, pos + 9) &&
+                TypeTraits<T11>.Check(L, pos + 10) && TypeTraits<T12>.Check(L, pos + 11) && TypeTraits<T13>.Check(L, pos + 12) && TypeTraits<T14>.Check(L, pos + 13) && TypeTraits<T15>.Check(L, pos + 14) &&
+                TypeTraits<T16>.Check(L, pos + 15) && TypeTraits<T17>.Check(L, pos + 16) && TypeTraits<T18>.Check(L, pos + 17) && TypeTraits<T19>.Check(L, pos + 18) && TypeTraits<T20>.Check(L, pos + 19) &&
+                TypeTraits<T21>.Check(L, pos + 20);
+        }
+
         public static bool CheckParamsType<T>(IntPtr L, int begin, int count)
         {
             if (typeof(T) == typeof(object))
