@@ -35,7 +35,6 @@ namespace LuaInterface
     {
         public NoToLuaAttribute()
         {
-
         }
     }
 
@@ -43,7 +42,6 @@ namespace LuaInterface
     {
         public UseDefinedAttribute()
         {
-
         }
     }
 
@@ -51,7 +49,6 @@ namespace LuaInterface
     {
         public OverrideDefinedAttribute()
         {
-
         }
     }
     

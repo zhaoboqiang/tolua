@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 using System;
-using LuaInterface;
 
 namespace LuaInterface
 {    
@@ -32,7 +31,6 @@ namespace LuaInterface
         LuaTable self = null;
         LuaFunction _add = null;
         LuaFunction _remove = null;
-        //LuaFunction _call = null;
 
         public LuaEvent(LuaTable table)            
         {
@@ -42,7 +40,6 @@ namespace LuaInterface
             
             _add = self.GetLuaFunction("Add");
             _remove = self.GetLuaFunction("Remove");
-            //_call = self.GetLuaFunction("__call");            
         }
 
         public void Dispose()
@@ -50,13 +47,11 @@ namespace LuaInterface
             self.Dispose();            
             _add.Dispose();
             _remove.Dispose();
-            //_call.Dispose();
             Clear();
         }
 
         void Clear()
         {
-            //_call = null;
             _add = null;
             _remove = null;
             self = null;            
@@ -68,12 +63,6 @@ namespace LuaInterface
             if (!beDisposed)
             {
                 beDisposed = true;
-
-                //if (_call != null)
-                //{
-                //    _call.Dispose(disposeManagedResources);
-                //    _call = null;
-                //}
 
                 if (_add != null)
                 {
