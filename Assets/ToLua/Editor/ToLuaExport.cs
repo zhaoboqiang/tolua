@@ -1162,27 +1162,35 @@ public static class ToLuaExport
     static void GenRegisterVariables()
     {
         if (fields.Length == 0 && props.Length == 0 && events.Length == 0 && isStaticClass && baseType == null)
-        {
             return;
-        }
 
         for (int i = 0; i < fields.Length; i++)
         {
-            if (fields[i].IsLiteral || fields[i].IsPrivate || fields[i].IsInitOnly)
+            var field = fields[i];
+
+            if (field.IsLiteral || field.IsPrivate || field.IsInitOnly)
             {
-                if (fields[i].IsLiteral && fields[i].FieldType.IsPrimitive && !fields[i].FieldType.IsEnum)
+                if (field.IsLiteral && field.FieldType.IsPrimitive && !field.FieldType.IsEnum)
                 {
-                    double d = Convert.ToDouble(fields[i].GetValue(null));
-                    sb.AppendFormat("\t\tL.RegConstant(\"{0}\", {1});\r\n", fields[i].Name, d);
+                    double d = 0.0;
+                    try
+                    {
+                        d = Convert.ToDouble(field.GetValue(null));
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log($"[{field.Name}] {ex.Message}");
+                    }
+                    sb.AppendFormat("\t\tL.RegConstant(\"{0}\", {1});\r\n", field.Name, d);
                 }
                 else
                 {
-                    sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, null);\r\n", fields[i].Name);
+                    sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, null);\r\n", field.Name);
                 }
             }
             else
             {
-                sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, set_{0});\r\n", fields[i].Name);
+                sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, set_{0});\r\n", field.Name);
             }
         }
 

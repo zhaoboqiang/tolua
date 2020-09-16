@@ -22,6 +22,7 @@ namespace LuaInterface
     public struct LuaIncludedNamespace
     {
         public string Namespace;
+        public string Assembly;
         public bool Android;
         public bool iOS;
     }
