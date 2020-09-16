@@ -1216,7 +1216,7 @@ namespace LuaInterface
             return null;
         }
 
-        public static object CheckObject<T>(IntPtr L, int stackPos) where T : class
+        public static T CheckObject<T>(IntPtr L, int stackPos) where T : class
         {
             int udata = LuaDLL.tolua_rawnetobj(L, stackPos);
             if (udata != -1)
@@ -1227,9 +1227,7 @@ namespace LuaInterface
                 if (obj != null)
                 {
                     if (obj is T)
-                    {
-                        return obj;
-                    }
+                        return (T)obj;
 
                     Type objType = obj.GetType();
                     LuaDLL.luaL_argerror(L, stackPos,

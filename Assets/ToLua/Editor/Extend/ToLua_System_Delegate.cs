@@ -9,25 +9,25 @@ public class ToLua_System_Delegate
     public static string op_AdditionDefined =
 @"        try
         {                        
-            LuaTypes type = LuaDLL.lua_type(L, 1);
+            var type = LuaDLL.lua_type(L, 1);
 
             switch (type)
             {
                 case LuaTypes.LUA_TFUNCTION:
-                    Delegate arg0 = ToLua.ToObject(L, 2) as Delegate;
-                    LuaFunction func = ToLua.ToLuaFunction(L, 1);
-                    Type t = arg0.GetType();
-                    Delegate arg1 = DelegateFactory.CreateDelegate(t, func);
-                    Delegate arg2 = Delegate.Combine(arg0, arg1);
+                    var arg0 = ToLua.ToObject(L, 2) as Delegate;
+                    var func = ToLua.ToLuaFunction(L, 1);
+                    var t = arg0.GetType();
+                    var arg1 = DelegateFactory.CreateDelegate(t, func);
+                    var arg2 = Delegate.Combine(arg0, arg1);
                     ToLua.Push(L, arg2);
                     return 1;
                 case LuaTypes.LUA_TNIL:
                     LuaDLL.lua_pushvalue(L, 2);
                     return 1;
                 case LuaTypes.LUA_TUSERDATA:
-                    Delegate a0 = ToLua.ToObject(L, 1) as Delegate;
-                    Delegate a1 = ToLua.CheckDelegate(a0.GetType(), L, 2);
-                    Delegate ret = Delegate.Combine(a0, a1);
+                    var a0 = ToLua.ToObject(L, 1) as Delegate;
+                    var a1 = ToLua.CheckDelegate(a0.GetType(), L, 2);
+                    var ret = Delegate.Combine(a0, a1);
                     ToLua.Push(L, ret);
                     return 1;
                 default:
@@ -44,8 +44,8 @@ public class ToLua_System_Delegate
     public static string op_SubtractionDefined =
 @"        try
         {            
-            var arg0 = (Delegate)ToLua.CheckObject<Delegate>(L, 1);
-            LuaTypes type = LuaDLL.lua_type(L, 2);
+            var arg0 = ToLua.CheckObject<Delegate>(L, 1);
+            var type = LuaDLL.lua_type(L, 2);
 
             if (type == LuaTypes.LUA_TFUNCTION)
             {
@@ -71,7 +71,7 @@ public class ToLua_System_Delegate
             }
             else
             {
-                var arg1 = (Delegate)ToLua.CheckObject<Delegate>(L, 2);
+                var arg1 = ToLua.CheckObject<Delegate>(L, 2);
                 arg0 = DelegateFactory.RemoveDelegate(arg0, arg1);                
                 ToLua.Push(L, arg0);
                 return 1;

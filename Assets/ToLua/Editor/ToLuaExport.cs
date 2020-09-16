@@ -1159,6 +1159,16 @@ public static class ToLuaExport
         return true;
     }
 
+    static private bool CanRead(PropertyInfo propertyInfo)
+    {
+        return propertyInfo.CanRead && propertyInfo.GetGetMethod(true).IsPublic;
+    }
+
+    static private bool CanWrite(PropertyInfo propertyInfo)
+    {
+        return propertyInfo.CanWrite && propertyInfo.GetSetMethod(true).IsPublic;
+    }
+
     static void GenRegisterVariables()
     {
         if (fields.Length == 0 && props.Length == 0 && events.Length == 0 && isStaticClass && baseType == null)
@@ -1197,8 +1207,8 @@ public static class ToLuaExport
         for (int i = 0; i < props.Length; i++)
         {
             var prop = props[i];
-            var canRead = prop.CanRead && prop.GetGetMethod(true).IsPublic;
-            var canWrite = prop.CanWrite && prop.GetSetMethod(true).IsPublic;
+            var canRead = CanRead(prop);
+            var canWrite = CanWrite(prop);
 
             if (canRead && canWrite)
             {
@@ -2091,7 +2101,7 @@ public static class ToLuaExport
             }
             else
             {
-                sb.AppendFormat("{0}var obj = ({1})ToLua.CheckObject<{1}>(L, {2});\r\n", head, className, pos);
+                sb.AppendFormat("{0}var obj = ToLua.CheckObject<{1}>(L, {2});\r\n", head, className, pos);
             }
         }
     }
@@ -2417,7 +2427,7 @@ public static class ToLuaExport
                 }
                 else
                 {
-                    sb.AppendFormat("{0}var {2} = ({1})ToLua.CheckObject<{1}>(L, {3});\r\n", head, str, arg, stackPos);
+                    sb.AppendFormat("{0}var {2} = ToLua.CheckObject<{1}>(L, {3});\r\n", head, str, arg, stackPos);
                 }
             }
         }
@@ -3005,21 +3015,21 @@ public static class ToLuaExport
     {
         for (int i = 0; i < fields.Length; i++)
         {
-            if (fields[i].IsLiteral && fields[i].FieldType.IsPrimitive && !fields[i].FieldType.IsEnum)
-            {
-                continue;
-            }
+            var field = fields[i];
 
-            var beBuffer = IsByteBuffer(fields[i]);
-            GenGetFieldStr(fields[i].Name, fields[i].FieldType, fields[i].IsStatic, beBuffer);
+            if (field.IsLiteral && field.FieldType.IsPrimitive && !field.FieldType.IsEnum)
+                continue;
+
+            var beBuffer = IsByteBuffer(field);
+            GenGetFieldStr(field.Name, field.FieldType, field.IsStatic, beBuffer);
         }
 
         for (int i = 0; i < props.Length; i++)
         {
-            if (!props[i].CanRead)
-            {
+            var prop = props[i];
+
+            if (!CanRead(prop))
                 continue;
-            }
 
             var isStatic = true;
             var index = propList.IndexOf(props[i]);
@@ -3129,37 +3139,37 @@ public static class ToLuaExport
     {
         for (int i = 0; i < fields.Length; i++)
         {
-            if (fields[i].IsLiteral || fields[i].IsInitOnly || fields[i].IsPrivate)
-            {
-                continue;
-            }
+            var field = fields[i];
 
-            GenSetFieldStr(fields[i].Name, fields[i].FieldType, fields[i].IsStatic);
+            if (field.IsLiteral || field.IsInitOnly || field.IsPrivate)
+                continue;
+
+            GenSetFieldStr(field.Name, field.FieldType, field.IsStatic);
         }
 
         for (int i = 0; i < props.Length; i++)
         {
-            if (!props[i].CanWrite || !props[i].GetSetMethod(true).IsPublic)
-            {
+            var prop = props[i];
+
+            if (!CanWrite(prop))
                 continue;
-            }
 
             bool isStatic = true;
-            int index = propList.IndexOf(props[i]);
+            int index = propList.IndexOf(prop);
 
             if (index >= 0)
-            {
                 isStatic = false;
-            }
 
-            var md = methods.Find((p) => { return p.Name == "set_" + props[i].Name; });
-            GenSetFieldStr(props[i].Name, props[i].PropertyType, isStatic, md != null);
+            var md = methods.Find((p) => { return p.Name == "set_" + prop.Name; });
+            GenSetFieldStr(prop.Name, prop.PropertyType, isStatic, md != null);
         }
 
         for (int i = 0; i < events.Length; i++)
         {
-            bool isStatic = eventList.IndexOf(events[i]) < 0;
-            GenSetEventStr(events[i].Name, events[i].EventHandlerType, isStatic);
+            var e = events[i];
+
+            bool isStatic = eventList.IndexOf(e) < 0;
+            GenSetEventStr(e.Name, e.EventHandlerType, isStatic);
         }
     }
 
