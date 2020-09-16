@@ -63,31 +63,6 @@ public class ToLuaTree<T>
         }
     }
 
-    /*public void BreadthFirstTraversal(Action<ToLuaNode<T>> action)
-    {
-        List<ToLuaNode<T>> root = _root.childs;        
-        Queue<ToLuaNode<T>> queue = new Queue<ToLuaNode<T>>();
-
-        for (int i = 0; i < root.Count; i++)
-        {
-            queue.Enqueue(root[i]);
-        }
-
-        while (queue.Count > 0)
-        {
-            ToLuaNode<T> node = queue.Dequeue();
-            action(node);
-
-            if (node.childs != null)
-            {
-                for (int i = 0; i < node.childs.Count; i++)
-                {
-                    queue.Enqueue(node.childs[i]);
-                }
-            }
-        }
-    }*/
-
     public void DepthFirstTraversal(Action<ToLuaNode<T>> begin, Action<ToLuaNode<T>> end, ToLuaNode<T> node)
     {
         begin(node);

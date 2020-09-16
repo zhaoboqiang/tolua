@@ -25,8 +25,8 @@ SOFTWARE.
 using UnityEngine;
 using UnityEditor;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.IO;
@@ -41,7 +41,6 @@ public static class ToLuaMenu
 {
     private static bool beAutoGen = false;
     private static bool beCheck = true;
-    static List<BindType> allTypes = new List<BindType>();
 
     static ToLuaMenu()
     {
@@ -206,8 +205,6 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        ToLuaExport.allTypes.Clear();
-
         foreach (var bindType in ToLuaSettingsUtility.BindTypes)
             ToLuaExport.allTypes.Add(bindType.type);
 
@@ -226,7 +223,6 @@ public static class ToLuaMenu
 
         Debug.Log("Generate lua binding files over");
         ToLuaExport.allTypes.Clear();
-        allTypes.Clear();
         AssetDatabase.Refresh();
     }
 
@@ -446,7 +442,6 @@ public static class ToLuaMenu
             return;
         }
 
-        allTypes.Clear();
         var tree = InitTree();
         var sb = new StringBuilder();
         var dtList = new List<DelegateType>();
@@ -455,8 +450,6 @@ public static class ToLuaMenu
         list.AddRange(ToLuaSettingsUtility.customDelegateList);
         var set = GetCustomTypeDelegates();
 
-        var backupList = new List<BindType>();
-        backupList.AddRange(allTypes);
         var root = tree.GetRoot();
 
         foreach (var t in set)
@@ -514,7 +507,6 @@ public static class ToLuaMenu
         }
 
         sb.AppendLineEx("}\r\n");
-        allTypes.Clear();
         var file = ToLuaSettingsUtility.Settings.SaveDir + "LuaBinder.cs";
 
         using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
@@ -531,13 +523,14 @@ public static class ToLuaMenu
     static void GenRegisterInfo(string nameSpace, StringBuilder sb, List<DelegateType> delegateList,
         List<DelegateType> wrappedDelegatesCache)
     {
-        for (int i = 0; i < allTypes.Count; i++)
+        var bindTypes = ToLuaSettingsUtility.BindTypes;
+
+        for (int i = 0; i < bindTypes.Length; i++)
         {
-            if (allTypes[i].nameSpace == nameSpace)
+            var bindType = bindTypes[i];
+            if (bindType.nameSpace == nameSpace)
             {
-                var str = "\t\t" + allTypes[i].wrapName + "Wrap.Register(L);\r\n";
-                sb.Append(str);
-                allTypes.RemoveAt(i--);
+                sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r\n");
             }
         }
 
