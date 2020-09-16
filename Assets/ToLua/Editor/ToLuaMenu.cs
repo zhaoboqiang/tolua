@@ -246,7 +246,8 @@ public static class ToLuaMenu
 
             for (int j = 0; j < fields.Length; j++)
             {
-                var t = fields[j].FieldType;
+                var field = fields[j];
+                var t = field.FieldType;
 
                 if (ToLuaExport.IsDelegateType(t))
                 {
@@ -256,7 +257,8 @@ public static class ToLuaMenu
 
             for (int j = 0; j < props.Length; j++)
             {
-                var t = props[j].PropertyType;
+                var prop = props[j];
+                var t = prop.PropertyType;
 
                 if (ToLuaExport.IsDelegateType(t))
                 {
@@ -273,8 +275,11 @@ public static class ToLuaMenu
                 var pifs = m.GetParameters();
                 for (int k = 0; k < pifs.Length; k++)
                 {
-                    var t = pifs[k].ParameterType;
-                    if (t.IsByRef) t = t.GetElementType();
+                    var pif = pifs[k];
+
+                    var t = pif.ParameterType;
+                    if (t.IsByRef)
+                        t = t.GetElementType();
 
                     if (ToLuaExport.IsDelegateType(t))
                     {
