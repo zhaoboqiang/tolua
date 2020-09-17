@@ -3921,61 +3921,6 @@ public static class ToLuaExport
         return true;
     }
 
-    /*
-    static void ProcessEditorExtend(Type extendType, List<_MethodBase> list)
-    {
-        if (extendType != null)
-        {
-            var list2 = new List<MethodInfo>();
-            list2.AddRange(extendType.GetMethods(BindingFlags.Instance | binding | BindingFlags.DeclaredOnly));
-
-            for (int i = list2.Count - 1; i >= 0; i--)
-            {
-                if (list2[i].Name.StartsWith("op_") || list2[i].Name.StartsWith("add_") ||
-                    list2[i].Name.StartsWith("remove_"))
-                {
-                    if (!IsNeedOp(list2[i].Name))
-                    {
-                        continue;
-                    }
-                }
-
-                if (IsUseDefinedAttributee(list2[i]))
-                {
-                    list.RemoveAll((md) => { return md.Name == list2[i].Name; });
-                }
-                else
-                {
-                    int index = list.FindIndex((md) => { return IsMethodEqualExtend(md.Method, list2[i]); });
-
-                    if (index >= 0)
-                    {
-                        list.RemoveAt(index);
-                    }
-                }
-
-                if (!IsObsolete(list2[i]))
-                {
-                    list.Add(new _MethodBase(list2[i]));
-                }
-            }
-
-            var field = extendType.GetField("AdditionNameSpace");
-
-            if (field != null)
-            {
-                var str = field.GetValue(null) as string;
-                var spaces = str.Split(';');
-
-                for (int i = 0; i < spaces.Length; i++)
-                {
-                    usingList.Add(spaces[i]);
-                }
-            }
-        }
-    }
-    */
-
     static bool IsGenericType(MethodInfo md, Type t)
     {
         var list = md.GetGenericArguments();
@@ -4036,12 +3981,6 @@ public static class ToLuaExport
 
     static void ProcessExtends(List<_MethodBase> list)
     {
-        /*
-        extendName = "ToLua_" + className.Replace(".", "_");
-        extendType = Type.GetType(extendName + ", Assembly-CSharp-Editor");
-        ProcessEditorExtend(extendType, list);
-        */
-
         var extendTypes = GetExtensionTypes(type);
         foreach (var extendType in extendTypes)
         {
