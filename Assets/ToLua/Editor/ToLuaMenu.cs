@@ -91,8 +91,6 @@ public static class ToLuaMenu
         public Type baseType = null;
         public string nameSpace = null; //注册到lua的table层级
 
-        public List<Type> extendList = new List<Type>();
-
         public BindType(Type t)
         {
             if (typeof(System.MulticastDelegate).IsAssignableFrom(t))
@@ -128,23 +126,6 @@ public static class ToLuaMenu
         public BindType SetBaseType(Type t)
         {
             baseType = t;
-            return this;
-        }
-
-        public BindType AddExtendType(Type t)
-        {
-            if (!extendList.Contains(t))
-            {
-                extendList.Add(t);
-            }
-
-            return this;
-        }
-
-        public BindType AddExtendTypes(IEnumerable<Type> types)
-        {
-            foreach (var type in types)
-                AddExtendType(type);
             return this;
         }
 
@@ -195,7 +176,7 @@ public static class ToLuaMenu
             EditorUtility.DisplayDialog("警告", "请等待编辑器完成编译再执行此功能", "确定");
             return;
         }
-        
+
         var saveDir = ToLuaSettingsUtility.Settings.SaveDir;
         if (!File.Exists(saveDir))
             Directory.CreateDirectory(saveDir);
@@ -216,7 +197,6 @@ public static class ToLuaMenu
             ToLuaExport.baseType = bindType.baseType;
             ToLuaExport.wrapClassName = bindType.wrapName;
             ToLuaExport.libClassName = bindType.libName;
-            ToLuaExport.extendList = bindType.extendList;
             ToLuaExport.Generate(wrapperSaveDir);
         }
 

@@ -111,7 +111,6 @@ public static class ToLuaExport
     public static Type extendType = null;
 
     public static HashSet<Type> eventSet = new HashSet<Type>();
-    public static List<Type> extendList = new List<Type>();
 
     class _MethodBase
     {
@@ -3922,6 +3921,7 @@ public static class ToLuaExport
         return true;
     }
 
+    /*
     static void ProcessEditorExtend(Type extendType, List<_MethodBase> list)
     {
         if (extendType != null)
@@ -3974,6 +3974,7 @@ public static class ToLuaExport
             }
         }
     }
+    */
 
     static bool IsGenericType(MethodInfo md, Type t)
     {
@@ -4003,9 +4004,7 @@ public static class ToLuaExport
                 var md = list2[i];
 
                 if (!md.IsDefined(typeof(ExtensionAttribute), false))
-                {
                     continue;
-                }
 
                 var plist = md.GetParameters();
                 var t = plist[0].ParameterType;
@@ -4024,16 +4023,30 @@ public static class ToLuaExport
         }
     }
 
+    private static IEnumerable<Type> GetExtensionTypes(Type extendedType)
+    {
+        var query = from type in allTypes
+                    where type.IsSealed && !type.IsGenericType && !type.IsNested
+                    from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    where method.IsDefined(typeof(ExtensionAttribute), false)
+                    where method.GetParameters()[0].ParameterType == extendedType
+                    select type;
+        return query;
+    }
+
     static void ProcessExtends(List<_MethodBase> list)
     {
+        /*
         extendName = "ToLua_" + className.Replace(".", "_");
         extendType = Type.GetType(extendName + ", Assembly-CSharp-Editor");
         ProcessEditorExtend(extendType, list);
+        */
 
-        for (int i = 0; i < extendList.Count; i++)
+        var extendTypes = GetExtensionTypes(type);
+        foreach (var extendType in extendTypes)
         {
-            ProcessExtendType(extendList[i], list);
-            string nameSpace = GetNameSpace(extendList[i], out var temp);
+            ProcessExtendType(extendType, list);
+            var nameSpace = GetNameSpace(extendType, out var _);
 
             if (!string.IsNullOrEmpty(nameSpace))
             {
