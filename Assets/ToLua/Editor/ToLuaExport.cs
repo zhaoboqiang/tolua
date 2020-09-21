@@ -866,13 +866,14 @@ public static class ToLuaExport
 
         for (int i = fieldList.Count - 1; i >= 0; i--)
         {
-            if (IsObsolete(fieldList[i]))
+            var field = fieldList[i];
+            if (IsObsolete(field))
             {
                 fieldList.RemoveAt(i);
             }
-            else if (IsDelegateType(fieldList[i].FieldType))
+            else if (IsDelegateType(field.FieldType))
             {
-                eventSet.Add(fieldList[i].FieldType);
+                eventSet.Add(field.FieldType);
             }
         }
 
@@ -883,25 +884,26 @@ public static class ToLuaExport
 
         for (int i = piList.Count - 1; i >= 0; i--)
         {
-            if (IsObsolete(piList[i]))
+            var pi = piList[i];
+            if (IsObsolete(pi))
             {
                 piList.RemoveAt(i);
             }
-            else if (piList[i].Name == "Item" && IsItemThis(piList[i]))
+            else if (pi.Name == "Item" && IsItemThis(pi))
             {
                 piList.RemoveAt(i);
             }
-            else if (piList[i].GetGetMethod() != null && HasGetIndex(piList[i].GetGetMethod()))
+            else if (pi.GetGetMethod() != null && HasGetIndex(pi.GetGetMethod()))
             {
                 piList.RemoveAt(i);
             }
-            else if (piList[i].GetSetMethod() != null && HasSetIndex(piList[i].GetSetMethod()))
+            else if (pi.GetSetMethod() != null && HasSetIndex(pi.GetSetMethod()))
             {
                 piList.RemoveAt(i);
             }
-            else if (IsDelegateType(piList[i].PropertyType))
+            else if (IsDelegateType(pi.PropertyType))
             {
-                eventSet.Add(piList[i].PropertyType);
+                eventSet.Add(pi.PropertyType);
             }
         }
 
@@ -909,7 +911,8 @@ public static class ToLuaExport
 
         for (int i = propList.Count - 1; i >= 0; i--)
         {
-            if (IsObsolete(propList[i]))
+            var prop = propList[i];
+            if (IsObsolete(prop))
             {
                 propList.RemoveAt(i);
             }
@@ -923,13 +926,14 @@ public static class ToLuaExport
 
         for (int i = evList.Count - 1; i >= 0; i--)
         {
-            if (IsObsolete(evList[i]))
+            var ev = evList[i];
+            if (IsObsolete(ev))
             {
                 evList.RemoveAt(i);
             }
-            else if (IsDelegateType(evList[i].EventHandlerType))
+            else if (IsDelegateType(ev.EventHandlerType))
             {
-                eventSet.Add(evList[i].EventHandlerType);
+                eventSet.Add(ev.EventHandlerType);
             }
         }
 
@@ -937,7 +941,8 @@ public static class ToLuaExport
 
         for (int i = eventList.Count - 1; i >= 0; i--)
         {
-            if (IsObsolete(eventList[i]))
+            var ev = eventList[i];
+            if (IsObsolete(ev))
             {
                 eventList.RemoveAt(i);
             }
@@ -1300,7 +1305,7 @@ public static class ToLuaExport
         GenRegisterFuncItems();
         GenRegisterOpItems();
         GenRegisterVariables();
-        //GenRegisterEventTypes(); //注册事件类型
+        GenRegisterEventTypes();            //注册事件类型
 
         if (!isStaticClass)
         {
