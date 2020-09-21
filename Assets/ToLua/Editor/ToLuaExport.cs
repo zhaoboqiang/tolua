@@ -1055,6 +1055,11 @@ public static class ToLuaExport
         return false;
     }
 
+    static string GetRegisterFunctionName(string name)
+    {
+        return name == "Register" ? "_Register" : name;
+    }
+
     static void GenRegisterFuncItems()
     {
         //bool isList = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
@@ -1084,7 +1089,7 @@ public static class ToLuaExport
 
                 if (!name.StartsWith("op_"))
                 {
-                    sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", name, name == "Register" ? "_Register" : name);
+                    sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", name, GetRegisterFunctionName(name));
                 }
 
                 nameCounter[name] = 1;
@@ -1305,7 +1310,7 @@ public static class ToLuaExport
         GenRegisterFuncItems();
         GenRegisterOpItems();
         GenRegisterVariables();
-        GenRegisterEventTypes();            //注册事件类型
+        //GenRegisterEventTypes(); //注册事件类型
 
         if (!isStaticClass)
         {
@@ -1328,7 +1333,7 @@ public static class ToLuaExport
     {
         string name = GetMethodName(m.Method);
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", name == "Register" ? "_Register" : name);
+        sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", GetRegisterFunctionName(name));
         sb.AppendLineEx("\t{");
 
         if (HasAttribute(m.Method, typeof(UseDefinedAttribute)))
@@ -2812,7 +2817,7 @@ public static class ToLuaExport
         var checkTypeMap = CheckCheckTypePos(list);
 
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", name == "Register" ? "_Register" : name);
+        sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", GetRegisterFunctionName(name));
         sb.AppendLineEx("\t{");
 
         BeginTry();
