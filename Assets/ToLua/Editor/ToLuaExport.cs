@@ -27,10 +27,10 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using LuaInterface;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using LuaInterface.Editor;
+using System.Linq;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 public enum MetaOp
 {
@@ -1259,7 +1259,10 @@ public static class ToLuaExport
             sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", abr, funcName);
         }
 
-        eventSet.Clear();
+        for (int i = 0; i < list.Count; i++)
+        {
+            eventSet.Remove(list[i]);
+        }
     }
 
     static void GenRegisterFunction()
@@ -2558,18 +2561,18 @@ public static class ToLuaExport
     //decimal 类型扔掉了
     static Dictionary<Type, int> typeSize = new Dictionary<Type, int>()
     {
-        {typeof(char), 2},
-        {typeof(byte), 3},
-        {typeof(sbyte), 4},
-        {typeof(ushort), 5},
-        {typeof(short), 6},
-        {typeof(uint), 7},
-        {typeof(int), 8},
+        { typeof(char), 2 },
+        { typeof(byte), 3 },
+        { typeof(sbyte), 4 },
+        { typeof(ushort),5 },      
+        { typeof(short), 6 },        
+        { typeof(uint), 7 },
+        { typeof(int), 8 },                
         //{ typeof(ulong), 9 },
         //{ typeof(long), 10 },
-        {typeof(decimal), 11},
-        {typeof(float), 12},
-        {typeof(double), 13},
+        { typeof(decimal), 11 },
+        { typeof(float), 12 },
+        { typeof(double), 13 },
     };
 
     //-1 不存在替换, 1 保留左面， 2 保留右面
@@ -2779,7 +2782,7 @@ public static class ToLuaExport
 
     static _MethodBase GenOverrideFunc(string name)
     {
-        List<_MethodBase> list = new List<_MethodBase>();
+        var list = new List<_MethodBase>();
 
         for (int i = 0; i < methods.Count; i++)
         {

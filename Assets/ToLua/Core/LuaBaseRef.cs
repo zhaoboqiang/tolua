@@ -146,12 +146,12 @@ namespace LuaInterface
             return a.reference > 0;
         }
 
-        public static bool operator ==(LuaBaseRef a, LuaBaseRef b)
+        public static bool operator == (LuaBaseRef a, LuaBaseRef b)
         {
             return CompareRef(a, b);
         }
 
-        public static bool operator !=(LuaBaseRef a, LuaBaseRef b)
+        public static bool operator != (LuaBaseRef a, LuaBaseRef b)
         {
             return !CompareRef(a, b);
         }
