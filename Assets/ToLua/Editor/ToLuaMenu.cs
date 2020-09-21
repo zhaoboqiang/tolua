@@ -480,7 +480,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
         sb.AppendLineEx("\t}");
 
-        sb.AppendLineEx($"\t\t// Delegates: {set.Count}, {list.Count}, {dtList.Count}");
+        sb.AppendLineEx($"\t// Delegates: {set.Count}, {list.Count}, {dtList.Count}");
 
         foreach (var dt in dtList)
         {
