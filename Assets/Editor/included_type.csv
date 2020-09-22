@@ -29,6 +29,8 @@ UnityEngine.Playables.PlayableOutputExtensions,UnityEngine.Playables,PlayableOut
 UnityEngine.Quaternion,UnityEngine,Quaternion,ToLua内部支持,False,False
 UnityEngine.Ray,UnityEngine,Ray,ToLua内部支持,False,False
 UnityEngine.RaycastHit,UnityEngine,RaycastHit,ToLua内部支持,False,False
+UnityEngine.Rendering.CoreUnsafeUtils,UnityEngine.Rendering,CoreUnsafeUtils,,False,False
+UnityEngine.Touch,UnityEngine,Touch,ToLua内部支持,False,False
 UnityEngine.TouchPhase,UnityEngine,TouchPhase,ToLua内部支持,False,False
 UnityEngine.UnityAPICompatibilityVersionAttribute,UnityEngine,UnityAPICompatibilityVersionAttribute,,False,False
 UnityEngine.UserAuthorization,UnityEngine,UserAuthorization,,False,False
