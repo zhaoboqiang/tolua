@@ -1414,9 +1414,6 @@ public static class ToLuaExport
 
     static bool IsGenericMethod(MethodBase md)
     {
-        return md.IsGenericMethod;
-
-        /*
         if (md.IsGenericMethod)
         {
             var gts = md.GetGenericArguments();
@@ -1450,7 +1447,6 @@ public static class ToLuaExport
         }
 
         return false;
-        */
     }
 
     static void GenFunctions()
