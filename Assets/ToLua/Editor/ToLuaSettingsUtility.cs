@@ -189,7 +189,7 @@ namespace LuaInterface.Editor
                 foreach (var assembly in assemblies)
                 {
                     var assemblyName = assembly.GetName().Name;
-                    Debug.Log($"[Assembly] {assemblyName}");
+                    // Debug.Log($"[Assembly] {assemblyName}");
 
                     if (!IsAssemblyIncluded(assemblyName))
                         continue;
