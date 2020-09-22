@@ -122,26 +122,6 @@ public static class ToLuaMenu
 
             baseType = LuaMisc.GetExportBaseType(type);
         }
-
-        public static bool IsObsolete(Type type)
-        {
-            var attrs = type.GetCustomAttributes(true);
-
-            foreach (var attribute in attrs)
-            {
-                var t = attribute.GetType();
-                if (t == typeof(System.ObsoleteAttribute) ||
-                    t == typeof(NoToLuaAttribute) ||
-                    t.Name == "MonoNotSupportedAttribute" ||
-                    t.Name == "MonoTODOAttribute" ||
-                    t.Name == "RequiredByNativeCodeAttribute")
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 
     [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]

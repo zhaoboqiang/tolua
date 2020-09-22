@@ -729,19 +729,20 @@ public static class ToLuaExport
 
         for (int i = list.Count - 1; i >= 0; --i)
         {
+            var methodBase = list[i];
+
             //去掉操作符函数
-            if (list[i].Name.StartsWith("op_") || list[i].Name.StartsWith("add_") || list[i].Name.StartsWith("remove_"))
+            var name = methodBase.Name;
+            if (name.StartsWith("op_") || name.StartsWith("add_") || name.StartsWith("remove_"))
             {
-                if (!IsNeedOp(list[i].Name))
-                {
+                if (!IsNeedOp(name))
                     list.RemoveAt(i);
-                }
 
                 continue;
             }
 
             //扔掉 unity3d 废弃的函数                
-            if (IsObsolete(list[i].Method))
+            if (ToLuaTypes.IsUnsupported(methodBase.Method))
             {
                 list.RemoveAt(i);
             }
@@ -751,13 +752,14 @@ public static class ToLuaExport
 
         for (int i = 0; i < ps.Length; i++)
         {
-            if (IsObsolete(ps[i]))
+            var propertyInfo = ps[i];
+            if (ToLuaTypes.IsUnsupported(propertyInfo))
             {
-                list.RemoveAll((p) => { return p.Method == ps[i].GetGetMethod() || p.Method == ps[i].GetSetMethod(); });
+                list.RemoveAll((p) => { return p.Method == propertyInfo.GetGetMethod() || p.Method == propertyInfo.GetSetMethod(); });
             }
             else
             {
-                var md = ps[i].GetGetMethod();
+                var md = propertyInfo.GetGetMethod();
 
                 if (md != null)
                 {
@@ -776,7 +778,7 @@ public static class ToLuaExport
                     }
                 }
 
-                md = ps[i].GetSetMethod();
+                md = propertyInfo.GetSetMethod();
 
                 if (md != null)
                 {
@@ -867,7 +869,7 @@ public static class ToLuaExport
         for (int i = fieldList.Count - 1; i >= 0; i--)
         {
             var field = fieldList[i];
-            if (IsObsolete(field))
+            if (ToLuaTypes.IsUnsupported(field))
             {
                 fieldList.RemoveAt(i);
             }
@@ -885,7 +887,7 @@ public static class ToLuaExport
         for (int i = piList.Count - 1; i >= 0; i--)
         {
             var pi = piList[i];
-            if (IsObsolete(pi))
+            if (ToLuaTypes.IsUnsupported(pi))
             {
                 piList.RemoveAt(i);
             }
@@ -912,7 +914,7 @@ public static class ToLuaExport
         for (int i = propList.Count - 1; i >= 0; i--)
         {
             var prop = propList[i];
-            if (IsObsolete(prop))
+            if (ToLuaTypes.IsUnsupported(prop))
             {
                 propList.RemoveAt(i);
             }
@@ -927,7 +929,7 @@ public static class ToLuaExport
         for (int i = evList.Count - 1; i >= 0; i--)
         {
             var ev = evList[i];
-            if (IsObsolete(ev))
+            if (ToLuaTypes.IsUnsupported(ev))
             {
                 evList.RemoveAt(i);
             }
@@ -942,7 +944,7 @@ public static class ToLuaExport
         for (int i = eventList.Count - 1; i >= 0; i--)
         {
             var ev = eventList[i];
-            if (IsObsolete(ev))
+            if (ToLuaTypes.IsUnsupported(ev))
             {
                 eventList.RemoveAt(i);
             }
@@ -1639,10 +1641,8 @@ public static class ToLuaExport
 
         for (int i = 0; i < constructors.Length; i++)
         {
-            if (IsObsolete(constructors[i]))
-            {
+            if (ToLuaTypes.IsUnsupported(constructors[i]))
                 continue;
-            }
 
             int count = GetDefalutParamCount(constructors[i]);
             int length = constructors[i].GetParameters().Length;
@@ -3459,26 +3459,6 @@ public static class ToLuaExport
             sb.AppendFormat("{0}{1} o = -arg0;\r\n", head, ret);
     }
 
-    public static bool IsObsolete(MemberInfo mb)
-    {
-        var attrs = mb.GetCustomAttributes(true);
-
-        for (int j = 0; j < attrs.Length; j++)
-        {
-            var t = attrs[j].GetType();
-
-            if (t == typeof(System.ObsoleteAttribute) || t == typeof(NoToLuaAttribute) ||
-                t == typeof(MonoPInvokeCallbackAttribute) ||
-                t.Name == "MonoNotSupportedAttribute" ||
-                t.Name == "MonoTODOAttribute") // || t.ToString() == "UnityEngine.WrapperlessIcall")
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public static bool HasAttribute(MemberInfo mb, Type atrtype)
     {
         var attrs = mb.GetCustomAttributes(true);
@@ -3500,7 +3480,7 @@ public static class ToLuaExport
     {
         fields = type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static);
         var list = from field in fields
-                   where !IsObsolete(field)
+                   where !ToLuaTypes.IsUnsupported(field)
                    select field;
 
         fields = list.ToArray();
@@ -3970,7 +3950,7 @@ public static class ToLuaExport
                 if (t == type || t.IsAssignableFrom(type) ||
                     (IsGenericType(md, t) && (type == t.BaseType || type.IsSubclassOf(t.BaseType))))
                 {
-                    if (!IsObsolete(list2[i]))
+                    if (!ToLuaTypes.IsUnsupported(list2[i]))
                     {
                         var mb = new _MethodBase(md);
                         mb.BeExtend = true;
