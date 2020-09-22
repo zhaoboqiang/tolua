@@ -46,38 +46,31 @@ namespace LuaInterface.Editor
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
         }
 
-        private static Dictionary<Type, Type> BuildOuterTypeMap(Assembly[] assemblies)
+        private static void AddNewType(List<LuaIncludedType> newTypes, Type type, Type outerType)
         {
-            var maps = new Dictionary<Type, Type>();
+            if (!ToLuaSettingsUtility.IsIncluded(type))
+                return;
 
-            foreach (var assembly in assemblies)
+            newTypes.Add(new LuaIncludedType
             {
-                foreach (var type in assembly.GetTypes())
-                {
-                    foreach (var nestedType in type.GetNestedTypes())
-                    {
-                        maps.Add(nestedType, type);
-                    }
-                }
+                Namespace = type.Namespace,
+                Name = type.Name,
+                OuterTypeName = outerType != null ? type.Name : null,
+                FullName = type.FullName,
+                Android = true,
+                iOS = true
+            });
+
+            foreach (var nestedType in type.GetNestedTypes())
+            {
+                AddNewType(newTypes, nestedType, type);
             }
-
-            return maps;
-        }
-
-
-        private static string GetOuterTypeName(Dictionary<Type, Type> maps, Type type)
-        {
-            if (maps.TryGetValue(type, out var outerType))
-                return outerType.Name;
-            return null;
         }
 
         [MenuItem("Reflect/Update types")]
         public static void UpdateTypes()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            var outerTypes = BuildOuterTypeMap(assemblies);
 
             var newTypes = new List<LuaIncludedType>();
 
@@ -89,18 +82,7 @@ namespace LuaInterface.Editor
 
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (!ToLuaSettingsUtility.IsIncluded(type))
-                        continue;
-
-                    newTypes.Add(new LuaIncludedType
-                    {
-                        Namespace = type.Namespace,
-                        Name = type.Name,
-                        OuterTypeName = GetOuterTypeName(outerTypes, type),
-                        FullName = type.FullName,
-                        Android = true,
-                        iOS = true
-                    });
+                    AddNewType(newTypes, type, null);
                 }
             }
 
