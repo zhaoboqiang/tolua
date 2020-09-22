@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using System.Linq;
+using System.Reflection;
 
 namespace LuaInterface.Editor
 {
@@ -38,17 +39,45 @@ namespace LuaInterface.Editor
             resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // save configurations
-            var lines = new List<string> { "FullName,Namespace,Name,Note,Android,iOS" };
+            var lines = new List<string> { "FullName,Namespace,OuterTypeName,Name,Note,Android,iOS" };
             lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS || oldTypes.ContainsKey(type.FullName)
-                           select $"{type.FullName},{type.Namespace},{type.Name},{type.Note},{type.Android},{type.iOS}");
+                           select $"{type.FullName},{type.Namespace},{type.OuterTypeName},{type.Name},{type.Note},{type.Android},{type.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
+        }
+
+        private static Dictionary<Type, Type> BuildOuterTypeMap(Assembly[] assemblies)
+        {
+            var maps = new Dictionary<Type, Type>();
+
+            foreach (var assembly in assemblies)
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    foreach (var nestedType in type.GetNestedTypes())
+                    {
+                        maps.Add(nestedType, type);
+                    }
+                }
+            }
+
+            return maps;
+        }
+
+
+        private static string GetOuterTypeName(Dictionary<Type, Type> maps, Type type)
+        {
+            if (maps.TryGetValue(type, out var outerType))
+                return outerType.Name;
+            return null;
         }
 
         [MenuItem("Reflect/Update types")]
         public static void UpdateTypes()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            var outerTypes = BuildOuterTypeMap(assemblies);
 
             var newTypes = new List<LuaIncludedType>();
 
@@ -67,6 +96,7 @@ namespace LuaInterface.Editor
                     {
                         Namespace = type.Namespace,
                         Name = type.Name,
+                        OuterTypeName = GetOuterTypeName(outerTypes, type),
                         FullName = type.FullName,
                         Android = true,
                         iOS = true

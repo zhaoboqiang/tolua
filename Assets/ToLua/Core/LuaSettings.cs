@@ -32,6 +32,7 @@ namespace LuaInterface
     {
         public string Namespace;
         public string Name;
+        public string OuterTypeName;
         public string FullName;
         public string Note;
         public bool Android;
