@@ -1310,7 +1310,7 @@ public static class ToLuaExport
         GenRegisterFuncItems();
         GenRegisterOpItems();
         GenRegisterVariables();
-        //GenRegisterEventTypes(); //注册事件类型
+        GenRegisterEventTypes();            //注册事件类型
 
         if (!isStaticClass)
         {
