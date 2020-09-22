@@ -83,13 +83,13 @@ public static class ToLuaMenu
 
     public class BindType
     {
-        public string name; //类名称
-        public Type type;
+        public string name { get; private set; } //类名称
+        public Type type { get; private set; }
         public bool IsStatic => type.IsClass && type.IsAbstract && type.IsSealed;
         public string wrapName = ""; //产生的wrap文件名字
-        public string libName = ""; //注册到lua的名字
-        public Type baseType = null;
-        public string nameSpace = null; //注册到lua的table层级
+        public string LibName { get; private set; } //注册到lua的名字
+        public Type baseType { get; private set; }
+        public string nameSpace { get; private set; } //注册到lua的table层级
 
         public BindType(Type t)
         {
@@ -100,9 +100,9 @@ public static class ToLuaMenu
             }
 
             type = t;
-            nameSpace = ToLuaExport.GetNameSpace(t, out libName);
+            nameSpace = ToLuaExport.GetNameSpace(t, out var libName);
             name = ToLuaExport.CombineTypeStr(nameSpace, libName);
-            libName = ToLuaExport.ConvertToLibSign(libName);
+            LibName = ToLuaExport.ConvertToLibSign(libName);
 
             switch (name)
             {
@@ -121,30 +121,6 @@ public static class ToLuaMenu
             }
 
             baseType = LuaMisc.GetExportBaseType(type);
-        }
-
-        public BindType SetBaseType(Type t)
-        {
-            baseType = t;
-            return this;
-        }
-
-        public BindType SetWrapName(string str)
-        {
-            wrapName = str;
-            return this;
-        }
-
-        public BindType SetLibName(string str)
-        {
-            libName = str;
-            return this;
-        }
-
-        public BindType SetNameSpace(string space)
-        {
-            nameSpace = space;
-            return this;
         }
 
         public static bool IsObsolete(Type type)
@@ -196,7 +172,7 @@ public static class ToLuaMenu
             ToLuaExport.isStaticClass = bindType.IsStatic;
             ToLuaExport.baseType = bindType.baseType;
             ToLuaExport.wrapClassName = bindType.wrapName;
-            ToLuaExport.libClassName = bindType.libName;
+            ToLuaExport.libClassName = bindType.LibName;
             ToLuaExport.Generate(wrapperSaveDir);
         }
 
