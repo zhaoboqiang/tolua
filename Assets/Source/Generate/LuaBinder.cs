@@ -1,6 +1,7 @@
-﻿using LuaInterface;
+﻿using System;
+using LuaInterface;
 
-public static class LuaBinder 
+public static class LuaBinder
 {
 	public static void Register(LuaState L)
 	{
