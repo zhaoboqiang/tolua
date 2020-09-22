@@ -128,31 +128,6 @@ namespace LuaInterface.Editor
             return true;
         }
 
-        private static bool IsPublic(Type type)
-        {
-            if (type.IsNested)
-            {
-                if (type.IsNestedPublic)
-                {
-                    return true;
-                }
-
-                if (type.IsNestedAssembly)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (type.IsPublic)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private static bool IsTypeIncludedByType(Type type)
         {
             if (type.IsGenericType)
@@ -161,7 +136,7 @@ namespace LuaInterface.Editor
             if (!type.IsVisible)
                 return false;
 
-            if (!IsPublic(type))
+            if (!ToLuaTypes.IsPublic(type))
                 return false;
 
             if (type.IsInterface)

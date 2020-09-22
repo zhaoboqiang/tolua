@@ -68,13 +68,40 @@ namespace LuaInterface.Editor
             if (type.IsNested)
             {
                 var outerType = GetOuterType(type);
-                if (IsUnsupported(outerType))
+                if (!ToLuaSettingsUtility.IsIncluded(outerType))
                 {
                     return true;
                 }
             }
             return false;
         }
+
+        public static bool IsPublic(Type type)
+        {
+            if (type.IsNested)
+            {
+                if (type.IsNestedPublic)
+                {
+                    return true;
+                }
+
+                if (type.IsNestedAssembly)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (type.IsPublic)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
     }
 
 }
