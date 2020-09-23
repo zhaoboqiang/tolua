@@ -155,7 +155,9 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        foreach (var bindType in ToLuaSettingsUtility.BindTypes)
+        var bindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
+
+        foreach (var bindType in bindTypes)
             ToLuaExport.allTypes.Add(bindType.type);
 
         GenerateClassWrap(new BindType(typeof(UnityEngine.Events.UnityEvent<float>)));
@@ -165,6 +167,57 @@ public static class ToLuaMenu
         AssetDatabase.Refresh();
     }
 
+    static void AutoAddBaseType(List<BindType> bindTypes, BindType bt)
+    {
+        Type t = bt.baseType;
+        if (t == null)
+            return;
+
+        if (t.IsInterface)
+        {
+            Debugger.LogWarning("{0} has a base type {1} is Interface, use SetBaseType to jump it", bt.name, t.FullName);
+
+            AutoAddBaseType(bindTypes, new BindType(t.BaseType));
+        }
+        else 
+        {
+            int index = bindTypes.FindIndex((iter) => { return iter.type == t; });
+            if (index < 0)
+            {
+                Debugger.LogWarning("not defined bindtype for {0}, autogen it, child class is {1}", LuaMisc.GetTypeName(t), bt.name);
+
+                bt = new BindType(t);
+                bindTypes.Add(bt);
+                AutoAddBaseType(bindTypes, bt);
+            }
+        }
+    }
+
+    static BindType[] GenBindTypes(BindType[] bindTypes)
+    {
+        var resultBindTypes = new List<BindType>(bindTypes);
+
+        for (int i = 0; i < bindTypes.Length; i++)
+        {
+            var bindType = bindTypes[i];
+
+            for (int j = i + 1; j < bindTypes.Length; j++)
+            {
+                if (bindType.type == bindTypes[j].type)
+                {
+                    throw new NotSupportedException("Repeat BindType:" + bindType.type);
+                }
+            }
+
+            if (bindType.type.IsEnum)
+                continue;
+
+            AutoAddBaseType(resultBindTypes, bindType);
+        }
+
+        return resultBindTypes.ToArray();
+    }
+	
     [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]
     public static void GenerateClassWraps()
     {
@@ -182,10 +235,9 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        foreach (var bindType in ToLuaSettingsUtility.BindTypes)
-            ToLuaExport.allTypes.Add(bindType.type);
+        var bindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
 
-        foreach (var bindType in ToLuaSettingsUtility.BindTypes)
+        foreach (var bindType in bindTypes)
             GenerateClassWrap(bindType);
 
         Debug.Log("Generate lua binding files over");
