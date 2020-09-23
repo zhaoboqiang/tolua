@@ -124,6 +124,47 @@ public static class ToLuaMenu
         }
     }
 
+    private static void GenerateClassWrap(BindType bindType)
+    {
+        var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
+
+        ToLuaExport.Clear();
+        ToLuaExport.className = bindType.name;
+        ToLuaExport.type = bindType.type;
+        ToLuaExport.isStaticClass = bindType.IsStatic;
+        ToLuaExport.baseType = bindType.baseType;
+        ToLuaExport.wrapClassName = bindType.wrapName;
+        ToLuaExport.libClassName = bindType.LibName;
+        ToLuaExport.Generate(wrapperSaveDir);
+    }
+
+    [MenuItem("Lua/Gen lua wrap file for debug", false, 1)]
+    public static void GenerateClassWrapForDebug()
+    {
+        if (!beAutoGen && EditorApplication.isCompiling)
+        {
+            EditorUtility.DisplayDialog("警告", "请等待编辑器完成编译再执行此功能", "确定");
+            return;
+        }
+
+        var saveDir = ToLuaSettingsUtility.Settings.SaveDir;
+        if (!File.Exists(saveDir))
+            Directory.CreateDirectory(saveDir);
+
+        var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
+        if (!File.Exists(wrapperSaveDir))
+            Directory.CreateDirectory(wrapperSaveDir);
+
+        foreach (var bindType in ToLuaSettingsUtility.BindTypes)
+            ToLuaExport.allTypes.Add(bindType.type);
+
+        GenerateClassWrap(new BindType(typeof(UnityEngine.Events.UnityEvent<float>)));
+
+        Debug.Log("Generate lua binding file over");
+        ToLuaExport.allTypes.Clear();
+        AssetDatabase.Refresh();
+    }
+
     [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]
     public static void GenerateClassWraps()
     {
@@ -145,16 +186,7 @@ public static class ToLuaMenu
             ToLuaExport.allTypes.Add(bindType.type);
 
         foreach (var bindType in ToLuaSettingsUtility.BindTypes)
-        {
-            ToLuaExport.Clear();
-            ToLuaExport.className = bindType.name;
-            ToLuaExport.type = bindType.type;
-            ToLuaExport.isStaticClass = bindType.IsStatic;
-            ToLuaExport.baseType = bindType.baseType;
-            ToLuaExport.wrapClassName = bindType.wrapName;
-            ToLuaExport.libClassName = bindType.LibName;
-            ToLuaExport.Generate(wrapperSaveDir);
-        }
+            GenerateClassWrap(bindType);
 
         Debug.Log("Generate lua binding files over");
         ToLuaExport.allTypes.Clear();
