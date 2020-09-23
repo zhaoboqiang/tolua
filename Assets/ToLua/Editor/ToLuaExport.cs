@@ -1494,9 +1494,7 @@ public static class ToLuaExport
     static bool IsSealedType(Type t)
     {
         if (t.IsSealed)
-        {
             return true;
-        }
 
         if (t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(List<>) ||
                                 t.GetGenericTypeDefinition() == typeof(Dictionary<,>)))
