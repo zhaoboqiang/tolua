@@ -50,7 +50,8 @@ namespace LuaInterface.Editor
                     t.Name == "MonoTODOAttribute" ||
                     t.Name == "RequiredByNativeCodeAttribute" ||
                     t.Name == "UnsafeValueTypeAttribute" ||
-                    t.Name == "CompilerGeneratedAttribute")
+                    t.Name == "CompilerGeneratedAttribute" ||
+                    t.Name == "UsedByNativeCodeAttribute")
                 {
                     return true;
                 }
