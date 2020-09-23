@@ -39,4 +39,11 @@ namespace LuaInterface
         public bool iOS;
     }
 
+    [Serializable]
+    public struct LuaIncludedMethod
+    {
+        public string MethodName;
+        public bool Android;
+        public bool iOS;
+    }
 }
