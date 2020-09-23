@@ -120,6 +120,8 @@ public static class ToLuaExport
 
         public string Name => method.Name;
 
+        public string FullName => method.ReflectedType.FullName + "." + Name;
+
         public MethodBase Method => method;
 
         public bool IsGenericMethod => method.IsGenericMethod;
@@ -1071,10 +1073,11 @@ public static class ToLuaExport
             var m = methods[i];
             int count = 1;
 
-            if (IsGenericMethod(m.Method))
-            {
+            if (!ToLuaSettingsUtility.IsMethodIncluded(m.FullName))
                 continue;
-            }
+ 
+            if (IsGenericMethod(m.Method))
+                continue;
 
             string name = GetMethodName(m.Method);
 
@@ -1456,6 +1459,9 @@ public static class ToLuaExport
         for (int i = 0; i < methods.Count; i++)
         {
             var m = methods[i];
+
+            if (!ToLuaSettingsUtility.IsMethodIncluded(m.FullName))
+                continue;
 
             if (IsGenericMethod(m.Method))
             {

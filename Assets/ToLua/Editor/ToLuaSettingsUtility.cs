@@ -87,6 +87,23 @@ namespace LuaInterface.Editor
             }
         }
 
+        private static Dictionary<string, LuaIncludedMethod> includedMethods;
+        public static Dictionary<string, LuaIncludedMethod> IncludedMethods
+        {
+            get
+            {
+                if (includedMethods == null)
+                {
+                    var methods = LuaSettingsUtility.LoadCsv<LuaIncludedMethod>(Settings.IncludedMethodCsv);
+                    if (methods == null)
+                        includedMethods = new Dictionary<string, LuaIncludedMethod>();
+                    else
+                        includedMethods = methods.ToDictionary(key => key.MethodName);
+                }
+                return includedMethods;
+            }
+        }
+
         public static bool IsAssemblyIncluded(string assemblyName)
         {
             if (IncludedAssemblies.TryGetValue(assemblyName, out var value))
@@ -172,6 +189,25 @@ namespace LuaInterface.Editor
         public static bool IsIncluded(Type type)
         {
             return (IsNamespaceIncluded(type.Namespace) || IncludedTypes.ContainsKey(type.FullName)) && IsTypeIncluded(type);
+        }
+
+        public static bool IsMethodIncluded(string methodName)
+        {
+            if (IncludedMethods.TryGetValue(methodName, out var value))
+            {
+#if UNITY_IOS
+                if (value.iOS)
+                    return true;
+#elif UNITY_ANDROID
+                if (value.Android)
+                    return true;
+#else
+                if (value.iOS || value.Android)
+                    return true;
+#endif
+                return false;
+            }
+            return true;
         }
 
         public static ToLuaMenu.BindType[] BindTypes
