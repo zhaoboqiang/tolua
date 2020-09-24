@@ -26,18 +26,18 @@ using System.Collections;
 namespace LuaInterface
 {
     public static class TypeTraits<T>
-    {        
+    {
         static public Func<IntPtr, int, bool> Check = DefaultCheck;
         static public Type type = typeof(T);
         static public bool IsValueType = type.IsValueType;
         static public bool IsArray = type.IsArray;
 
-        static string typeName = string.Empty;                
+        static string typeName = string.Empty;
         static int nilType = -1;
         static int metaref = -1;
 
         static public void Init(Func<IntPtr, int, bool> check)
-        {            
+        {
             if (check != null)
             {
                 Check = check;
@@ -60,7 +60,7 @@ namespace LuaInterface
             return LuaStatic.GetMetaReference(L, type);
 #else
             if (metaref > 0)
-            {                
+            {
                 return metaref;
             }
 
@@ -73,10 +73,10 @@ namespace LuaInterface
 
             return metaref;
 #endif
-        }   
+        }
 
         static bool DefaultCheck(IntPtr L, int pos)
-        {            
+        {
             var luaType = LuaDLL.lua_type(L, pos);
 
             switch (luaType)
@@ -89,7 +89,7 @@ namespace LuaInterface
                     return IsUserTable(L, pos);
                 default:
                     return false;
-            }            
+            }
         }
 
         static bool IsNilType()
@@ -112,7 +112,7 @@ namespace LuaInterface
             }
 
             nilType = 0;
-            return false;            
+            return false;
         }
 
         static bool IsUserData(IntPtr L, int pos)
@@ -139,7 +139,7 @@ namespace LuaInterface
         }
 
         static bool IsUserTable(IntPtr L, int pos)
-        {            
+        {
             if (type == typeof(LuaTable))
             {
                 return true;
@@ -160,15 +160,15 @@ namespace LuaInterface
 
             return false;
         }
-    }    
+    }
 
     public static class DelegateTraits<T>
-    {        
-        static DelegateCreate _Create = null;        
+    {
+        static DelegateCreate _Create = null;
 
         static public void Init(DelegateCreate func)
         {
-            _Create = func;            
+            _Create = func;
         }
 
         static public Delegate Create(LuaFunction func)
@@ -197,7 +197,7 @@ namespace LuaInterface
                 }
             }
 
-            return _Create(null, null, false);            
+            return _Create(null, null, false);
         }
 
         static public Delegate Create(LuaFunction func, LuaTable self)
@@ -226,7 +226,7 @@ namespace LuaInterface
                 }
             }
 
-            return _Create(null, null, true);            
+            return _Create(null, null, true);
         }
     }
 
@@ -234,7 +234,7 @@ namespace LuaInterface
     {
         static public Action<IntPtr, T> Push = SelectPush();
         static public Func<IntPtr, int, T> Check = DefaultCheck;
-        static public Func<IntPtr, int, T> To = DefaultTo;               
+        static public Func<IntPtr, int, T> To = DefaultTo;
 
         static public void Init(Action<IntPtr, T> push, Func<IntPtr, int, T> check, Func<IntPtr, int, T> to)
         {
@@ -251,23 +251,18 @@ namespace LuaInterface
             if (check != null)
             {
                 Check = check;
-            }            
+            }
         }
 
         static Action<IntPtr, T> SelectPush()
         {
             if (TypeTraits<T>.IsValueType)
-            {
                 return PushValue;
-            }
-            else if (TypeTraits<T>.IsArray)
-            {
+
+            if (TypeTraits<T>.IsArray)
                 return PushArray;
-            }
-            else
-            {
-                return PushObject;
-            }
+
+            return PushObject;
         }
 
         static void PushValue(IntPtr L, T o)
@@ -296,19 +291,18 @@ namespace LuaInterface
         static T DefaultTo(IntPtr L, int pos)
         {
             return (T)ToLua.ToObject(L, pos);
-        }           
-        
+        }
+
         static T DefaultCheck(IntPtr L, int stackPos)
         {
-            int udata = LuaDLL.tolua_rawnetobj(L, stackPos);            
-
+            int udata = LuaDLL.tolua_rawnetobj(L, stackPos);
             if (udata != -1)
             {
-                ObjectTranslator translator = ObjectTranslator.Get(L);
-                object obj = translator.GetObject(udata);
+                var translator = ObjectTranslator.Get(L);
+                var obj = translator.GetObject(udata);
 
                 if (obj != null)
-                {                    
+                {
                     if (obj is T)
                     {
                         return (T)obj;
@@ -328,7 +322,7 @@ namespace LuaInterface
             }
 
             LuaDLL.luaL_typerror(L, stackPos, TypeTraits<T>.GetTypeName());
-            return default(T);            
+            return default(T);
         }
     }
 }
