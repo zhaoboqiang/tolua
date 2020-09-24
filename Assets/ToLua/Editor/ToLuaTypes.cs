@@ -50,7 +50,6 @@ namespace LuaInterface.Editor
                     t == typeof(NoToLuaAttribute) ||
                     t.Name == "MonoNotSupportedAttribute" ||
                     t.Name == "MonoTODOAttribute" ||
-                    t.Name == "RequiredByNativeCodeAttribute" ||
                     t.Name == "UnsafeValueTypeAttribute" ||
                     t.Name == "CompilerGeneratedAttribute")
                 {
