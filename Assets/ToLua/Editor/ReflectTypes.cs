@@ -39,10 +39,10 @@ namespace LuaInterface.Editor
             resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // save configurations
-            var lines = new List<string> { "FullName,Namespace,OuterTypeName,Name,Note,Android,iOS" };
+            var lines = new List<string> { "FullName,Namespace,Name,Note,Android,iOS" };
             lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS || oldTypes.ContainsKey(type.FullName)
-                           select $"{type.FullName},{type.Namespace},{type.OuterTypeName},{type.Name},{type.Note},{type.Android},{type.iOS}");
+                           select $"{type.FullName},{type.Namespace},{type.Name},{type.Note},{type.Android},{type.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
         }
 
@@ -55,16 +55,10 @@ namespace LuaInterface.Editor
             {
                 Namespace = type.Namespace,
                 Name = type.Name,
-                OuterTypeName = outerType != null ? type.Name : null,
                 FullName = type.FullName,
                 Android = true,
                 iOS = true
             });
-
-            foreach (var nestedType in type.GetNestedTypes())
-            {
-                AddNewType(newTypes, nestedType, type);
-            }
         }
 
         [MenuItem("Reflect/Update types")]
