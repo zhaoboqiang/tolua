@@ -17,6 +17,7 @@ System.Type,System,Type,可以导出的内部支持类型,True,True
 TMPro.TMP_EditorResourceManager,TMPro,TMP_EditorResourceManager,,False,False
 TMPro.TMP_FontAssetUtilities,TMPro,TMP_FontAssetUtilities,,False,False
 UnityEngine.Animations.AnimationPlayableExtensions,UnityEngine.Animations,AnimationPlayableExtensions,,False,False
+UnityEngine.Animations.AnimationScriptPlayable,UnityEngine.Animations,AnimationScriptPlayable,,False,False
 UnityEngine.Bounds,UnityEngine,Bounds,ToLua内部支持,False,False
 UnityEngine.Color,UnityEngine,Color,ToLua内部支持,False,False
 UnityEngine.CustomYieldInstruction,UnityEngine,CustomYieldInstruction,,False,False

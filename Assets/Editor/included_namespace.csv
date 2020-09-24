@@ -1,5 +1,6 @@
 Namespace,Assembly,Android,iOS
 System,,False,False
+System.Configuration,,False,False
 AOT,,False,False
 Editor,,False,False
 JetBrains.Annotations,,False,False
