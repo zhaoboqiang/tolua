@@ -220,25 +220,22 @@ namespace LuaInterface
                 str += GetArrayRank(t);
                 return str;                
             }
-            else if (t.IsByRef)
+
+            if (t.IsByRef)
             {
                 t = t.GetElementType();
                 return GetTypeName(t);
             }
-            else if (t.IsGenericType)
-            {
+
+            if (t.IsGenericType)
                 return GetGenericName(t);
-            }
-            else if (t == typeof(void))
-            {
+
+            if (t == typeof(void))
                 return "void";
-            }
-            else
-            {
-                string name = GetPrimitiveStr(t);
-                return name.Replace('+', '.');
-            }
-        }
+            
+            string name = GetPrimitiveStr(t);
+            return name.Replace('+', '.');
+    }
 
         public static string[] GetGenericName(Type[] types, int offset, int count)
         {
