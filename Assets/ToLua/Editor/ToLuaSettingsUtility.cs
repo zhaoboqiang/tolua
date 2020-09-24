@@ -156,16 +156,13 @@ namespace LuaInterface.Editor
             if (!ToLuaTypes.IsPublic(type))
                 return false;
 
-            if (type.IsInterface)
-                return false;
-
             if (ToLuaTypes.IsUnsupported(type))
                 return false;
 
             return true;
         }
 
-        private static bool IsTypeIncluded(Type type)
+        public static bool IsTypeIncluded(Type type)
         {
             if (IncludedTypes.TryGetValue(type.FullName, out var value))
             {
@@ -186,9 +183,14 @@ namespace LuaInterface.Editor
             return IsTypeIncludedByType(type);
         }
 
+        public static bool InIncludedTypeCsv(Type type)
+        {
+            return IncludedTypes.ContainsKey(type.FullName);
+        }
+
         public static bool IsIncluded(Type type)
         {
-            return (IsNamespaceIncluded(type.Namespace) || IncludedTypes.ContainsKey(type.FullName)) && IsTypeIncluded(type);
+            return (IsNamespaceIncluded(type.Namespace) || InIncludedTypeCsv(type)) && IsTypeIncluded(type);
         }
 
         public static bool IsMethodIncluded(string methodName)
