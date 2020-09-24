@@ -156,6 +156,9 @@ namespace LuaInterface.Editor
             if (!ToLuaTypes.IsPublic(type))
                 return false;
 
+            if (type.IsInterface)
+                return false;
+
             if (ToLuaTypes.IsUnsupported(type))
                 return false;
 
