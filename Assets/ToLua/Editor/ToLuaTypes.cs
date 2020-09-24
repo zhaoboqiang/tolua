@@ -34,9 +34,11 @@ namespace LuaInterface.Editor
             }
         }
 
-        public static Type GetOuterType(Type type)
+        public static bool GetOuterType(Type type, out Type outerType)
         {
-            return OuterTypes[type];
+            if (OuterTypes.TryGetValue(type, out outerType))
+                return true;
+            return false;
         }
 
         public static bool IsUnsupported(MemberInfo mi)
@@ -50,8 +52,7 @@ namespace LuaInterface.Editor
                     t.Name == "MonoTODOAttribute" ||
                     t.Name == "RequiredByNativeCodeAttribute" ||
                     t.Name == "UnsafeValueTypeAttribute" ||
-                    t.Name == "CompilerGeneratedAttribute" ||
-                    t.Name == "UsedByNativeCodeAttribute")
+                    t.Name == "CompilerGeneratedAttribute")
                 {
                     return true;
                 }
@@ -68,10 +69,12 @@ namespace LuaInterface.Editor
             // check outer class
             if (type.IsNested)
             {
-                var outerType = GetOuterType(type);
-                if (!ToLuaSettingsUtility.IsIncluded(outerType))
+                if (GetOuterType(type, out var outerType))
                 {
-                    return true;
+                    if (!ToLuaSettingsUtility.IsIncluded(outerType))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -101,8 +104,5 @@ namespace LuaInterface.Editor
 
             return false;
         }
-
-
     }
-
 }
