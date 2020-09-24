@@ -428,8 +428,8 @@ public static class ToLuaExport
                 {
                     if (methodType == 2)
                     {
-                        string str = sbArgs.ToString();
-                        string[] ss = str.Split(',');
+                        var str = sbArgs.ToString();
+                        var ss = str.Split(',');
                         str = string.Join(",", ss, 0, ss.Length - 1);
 
                         sb.AppendFormat("{0}{1}[{2}] ={3};\r\n", head, obj, str, ss[ss.Length - 1]);
