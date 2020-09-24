@@ -25,6 +25,7 @@ SOFTWARE.
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -40,6 +41,8 @@ public static class ToLuaMenu
 {
     private static bool beAutoGen = false;
     private static bool beCheck = true;
+
+    private static BindType[] BindTypes;
 
     static ToLuaMenu()
     {
@@ -157,15 +160,6 @@ public static class ToLuaMenu
         for (int i = 0; i < bindTypes.Length; i++)
         {
             var bindType = bindTypes[i];
-
-            for (int j = i + 1; j < bindTypes.Length; j++)
-            {
-                if (bindType.type == bindTypes[j].type)
-                {
-                    throw new NotSupportedException("Repeat BindType:" + bindType.type);
-                }
-            }
-
             if (bindType.type.IsEnum)
                 continue;
 
@@ -206,9 +200,9 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        var bindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
+        BindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
 
-        foreach (var bindType in bindTypes)
+        foreach (var bindType in BindTypes)
             ToLuaExport.allTypes.Add(bindType.type);
 
         GenerateClassWrap(new BindType(typeof(UnityEngine.GameObject)));
@@ -217,7 +211,6 @@ public static class ToLuaMenu
         ToLuaExport.allTypes.Clear();
         AssetDatabase.Refresh();
     }
-
 
     [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]
     public static void GenerateClassWraps()
@@ -236,9 +229,15 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        var bindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
+        BindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
 
-        foreach (var bindType in bindTypes)
+        // Debug
+		/*
+        PrintTypes.SaveCsv(ToLuaSettingsUtility.BindTypes.Select(bt => bt.type).ToList(), "all_types_1");
+        PrintTypes.SaveCsv(BindTypes.Select(bt => bt.type).ToList(), "all_types_2");
+		*/
+
+        foreach (var bindType in BindTypes)
             GenerateClassWrap(bindType);
 
         Debug.Log("Generate lua binding files over");
@@ -340,7 +339,7 @@ public static class ToLuaMenu
     {
         var tree = new ToLuaTree<string>();
         var root = tree.GetRoot();
-        var list = ToLuaSettingsUtility.BindTypes;
+        var list = BindTypes;
 
         for (int i = 0; i < list.Length; i++)
         {
@@ -545,7 +544,7 @@ public static class ToLuaMenu
     static void GenRegisterInfo(string nameSpace, StringBuilder sb, List<DelegateType> delegateList,
         List<DelegateType> wrappedDelegatesCache)
     {
-        var bindTypes = ToLuaSettingsUtility.BindTypes;
+        var bindTypes = BindTypes;
 
         for (int i = 0; i < bindTypes.Length; i++)
         {
