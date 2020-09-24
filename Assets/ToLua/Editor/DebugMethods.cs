@@ -9,7 +9,6 @@ namespace LuaInterface.Editor
 {
     public static class DebugMethods
     {
-        
         private static void DebugMethod(Type type, MethodInfo methodInfo)
         {
             var sb = new StringBuilder();
@@ -22,7 +21,8 @@ namespace LuaInterface.Editor
             {
                 var parameter = parameters[index];
                 var parameterType = parameter.ParameterType;
-                sb.AppendLine($"\t[{index}]:{parameterType.Name}, {parameter.Name}, {(parameterType.IsGenericParameter ? parameterType.GenericParameterPosition : -1)}");
+                var parameterTypeName = ToLuaExport.GetGenericParameterType(methodInfo, parameterType);
+                sb.AppendLine($"\t[{index}]:{parameterType.Name}, {parameterTypeName}, {parameter.Name}, {(parameterType.IsGenericParameter ? parameterType.GenericParameterPosition : -1)}");
             }
 
             var genericParameters = methodInfo.GetGenericArguments();
@@ -32,14 +32,20 @@ namespace LuaInterface.Editor
                 var parameter = genericParameters[index];
 
                 var constraints = parameter.GetGenericParameterConstraints();
+
                 sb.AppendLine($"\t[{index}]:{parameter.GetType().Name}, {parameter.Name}, {parameter.GenericParameterPosition}, {constraints.Length}");
 
                 for (int constraintIndex = 0, constraintCount = constraints.Length; constraintIndex < constraintCount; ++constraintIndex)
                 {
                     var constraint = constraints[constraintIndex];
-                    sb.AppendLine($"\t\t[{constraintIndex}]:{constraint.GetType().Name}, {constraint.Name}");
+                    sb.AppendLine($"\t\t[{constraintIndex}]:{constraint.Name}");
                 }
             }
+
+            /*
+            var genericName = LuaMisc.GetGenericName(methodInfo);
+            sb.AppendLine($"{genericName}");
+            */
 
             File.WriteAllText($"{Application.dataPath}/Editor/debug_method.txt", sb.ToString());
         }
