@@ -242,7 +242,7 @@ namespace LuaInterface
 
         public static string[] GetGenericName(Type[] types, int offset, int count)
         {
-            string[] results = new string[count];
+            var results = new string[count];
 
             for (int i = 0; i < count; i++)
             {
@@ -274,17 +274,15 @@ namespace LuaInterface
             }
         }
 
-        static string GetGenericName(Type t)
+        private static string GetGenericName(Type t)
         {
-            Type[] gArgs = t.GetGenericArguments();
-            string typeName = t.FullName ?? t.Name;
+            var gArgs = t.GetGenericArguments();
+            var typeName = t.FullName ?? t.Name;
             int count = gArgs.Length;
             int pos = typeName.IndexOf("[");
 
             if (pos > 0)
-            {
                 typeName = typeName.Substring(0, pos);
-            }
 
             string str = null;
             string name = null;
@@ -331,69 +329,36 @@ namespace LuaInterface
         public static string GetPrimitiveStr(Type t)
         {
             if (t == typeof(System.Single))
-            {
                 return "float";
-            }
-            else if (t == typeof(System.String))
-            {
+            if (t == typeof(System.String))
                 return "string";
-            }
-            else if (t == typeof(System.Int32))
-            {
+            if (t == typeof(System.Int32))
                 return "int";
-            }
-            else if (t == typeof(System.Double))
-            {
+            if (t == typeof(System.Double))
                 return "double";
-            }
-            else if (t == typeof(System.Boolean))
-            {
+            if (t == typeof(System.Boolean))
                 return "bool";
-            }
-            else if (t == typeof(System.UInt32))
-            {
+            if (t == typeof(System.UInt32))
                 return "uint";
-            }
-            else if (t == typeof(System.SByte))
-            {
+            if (t == typeof(System.SByte))
                 return "sbyte";
-            }
-            else if (t == typeof(System.Byte))
-            {
+            if (t == typeof(System.Byte))
                 return "byte";
-            }
-            else if (t == typeof(System.Int16))
-            {
+            if (t == typeof(System.Int16))
                 return "short";
-            }
-            else if (t == typeof(System.UInt16))
-            {
+            if (t == typeof(System.UInt16))
                 return "ushort";
-            }
-            else if (t == typeof(System.Char))
-            {
+            if (t == typeof(System.Char))
                 return "char";
-            }
-            else if (t == typeof(System.Int64))
-            {
+            if (t == typeof(System.Int64))
                 return "long";
-            }
-            else if (t == typeof(System.UInt64))
-            {
+            if (t == typeof(System.UInt64))
                 return "ulong";
-            }
-            else if (t == typeof(System.Decimal))
-            {
+            if (t == typeof(System.Decimal))
                 return "decimal";
-            }
-            else if (t == typeof(System.Object))
-            {
+            if (t == typeof(System.Object))
                 return "object";
-            }
-            else
-            {
-                return t.ToString();
-            }
+            return t.ToString();
         }        
 
         public static double ToDouble(object obj)
@@ -401,55 +366,25 @@ namespace LuaInterface
             Type t = obj.GetType();
 
             if (t == typeof(double) || t == typeof(float))
-            {
-                double d = Convert.ToDouble(obj);
-                return d;
-            }
-            else if (t == typeof(int))
-            {
-                int n = Convert.ToInt32(obj);
-                return (double)n;
-            }
-            else if (t == typeof(uint))
-            {
-                uint n = Convert.ToUInt32(obj);
-                return (double)n;
-            }
-            else if (t == typeof(long))
-            {
-                long n = Convert.ToInt64(obj);
-                return (double)n;
-            }
-            else if (t == typeof(ulong))
-            {
-                ulong n = Convert.ToUInt64(obj);
-                return (double)n;
-            }
-            else if (t == typeof(byte))
-            {
-                byte b = Convert.ToByte(obj);
-                return (double)b;
-            }
-            else if (t == typeof(sbyte))
-            {
-                sbyte b = Convert.ToSByte(obj);
-                return (double)b;
-            }
-            else if (t == typeof(char))
-            {
-                char c = Convert.ToChar(obj);
-                return (double)c;
-            }            
-            else if (t == typeof(short))
-            {
-                Int16 n = Convert.ToInt16(obj);
-                return (double)n;
-            }
-            else if (t == typeof(ushort))
-            {
-                UInt16 n = Convert.ToUInt16(obj);
-                return (double)n;
-            }
+                return Convert.ToDouble(obj);
+            if (t == typeof(int))
+                return (double)Convert.ToInt32(obj);
+            if (t == typeof(uint))
+                return (double)Convert.ToUInt32(obj);
+            if (t == typeof(long))
+                return (double)Convert.ToInt64(obj);
+            if (t == typeof(ulong))
+                return (double)Convert.ToUInt64(obj);
+            if (t == typeof(byte))
+                return (double)Convert.ToByte(obj);
+            if (t == typeof(sbyte))
+                return (double)Convert.ToSByte(obj);
+            if (t == typeof(char))
+                return (double)Convert.ToChar(obj);
+            if (t == typeof(short))
+                return (double)Convert.ToInt16(obj);
+            if (t == typeof(ushort))
+                return (double)Convert.ToUInt16(obj);
 
             return 0;
         }
@@ -460,14 +395,10 @@ namespace LuaInterface
             Type baseType = t.BaseType;
 
             if (baseType == typeof(ValueType))
-            {
                 return null;
-            }
 
             if (t.IsAbstract && t.IsSealed)
-            {
                 return baseType == typeof(object) ? null : baseType;
-            }
 
             return baseType;
         }
