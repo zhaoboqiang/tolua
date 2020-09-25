@@ -1447,8 +1447,10 @@ public static class ToLuaExport
 
             if (IsGenericMethod(m.Method))
             {
-                Debugger.Log($"Generic Method {0}.{1} cannot be export to lua", LuaMisc.GetTypeName(type),
-                    m.GetTotalName());
+                var typeName = LuaMisc.GetTypeName(type);
+                var totalName = m.GetTotalName();
+
+                Debugger.Log($"Generic Method {typeName}.{totalName} cannot be export to lua");
                 continue;
             }
 
@@ -2907,22 +2909,14 @@ public static class ToLuaExport
         string str;
 
         if (t.IsByRef)
-        {
             t = t.GetElementType();
-        }
 
         if (IsNumberEnum(t))
-        {
             str = string.Format("uint{0}", sep);
-        }
         else if (IsIEnumerator(t))
-        {
             str = string.Format("{0}{1}", GetTypeStr(typeof(IEnumerator)), sep);
-        }
         else
-        {
             str = string.Format("{0}{1}", GetTypeStr(t), sep);
-        }
 
         return str;
     }
@@ -3470,7 +3464,6 @@ public static class ToLuaExport
         for (int j = 0; j < attrs.Length; j++)
         {
             var t = attrs[j].GetType();
-
             if (t == atrtype)
             {
                 return true;
