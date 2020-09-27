@@ -205,7 +205,9 @@ public static class ToLuaMenu
         foreach (var bindType in BindTypes)
             ToLuaExport.allTypes.Add(bindType.type);
 
-        GenerateClassWrap(new BindType(typeof(UnityEngine.GameObject)));
+        // var type = ReflectTypes.GetType("EasySave", "ES3Types.ES3Type_Color32");
+        var type = typeof(UnityEngine.Material);
+        GenerateClassWrap(new BindType(type));
 
         Debug.Log("Generate lua binding file over");
         ToLuaExport.allTypes.Clear();
