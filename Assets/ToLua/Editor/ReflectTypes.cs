@@ -8,6 +8,12 @@ namespace LuaInterface.Editor
 {
     public static class ReflectTypes
     {
+        public static Type GetType(string assemblyName, string typeName)
+        {
+            var selectedAssembly = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(assembly => assembly.GetName().Name == assemblyName);
+            return selectedAssembly.GetType(typeName);
+        }
+
         private static void UpdateCsv(List<LuaIncludedType> newTypes)
         {
             // Load previous configurations
