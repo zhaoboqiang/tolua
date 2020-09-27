@@ -1108,56 +1108,36 @@ public static class ToLuaExport
     static void GenRegisterOpItems()
     {
         if ((op & MetaOp.Add) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__add\", op_Addition);");
-        }
 
         if ((op & MetaOp.Sub) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__sub\", op_Subtraction);");
-        }
 
         if ((op & MetaOp.Mul) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__mul\", op_Multiply);");
-        }
 
         if ((op & MetaOp.Div) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__div\", op_Division);");
-        }
 
         if ((op & MetaOp.Eq) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__eq\", op_Equality);");
-        }
 
         if ((op & MetaOp.Neg) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__unm\", op_UnaryNegation);");
-        }
 
         if ((op & MetaOp.ToStr) != 0)
-        {
             sb.AppendLineEx("\t\tL.RegFunction(\"__tostring\", ToLua.op_ToString);");
-        }
     }
 
     static bool IsItemThis(PropertyInfo info)
     {
         MethodInfo md = info.GetGetMethod();
-
         if (md != null)
-        {
             return md.GetParameters().Length != 0;
-        }
 
         md = info.GetSetMethod();
-
         if (md != null)
-        {
             return md.GetParameters().Length != 1;
-        }
 
         return true;
     }
