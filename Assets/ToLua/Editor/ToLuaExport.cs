@@ -277,6 +277,14 @@ public static class ToLuaExport
             return m != null ? m.ReturnType : null;
         }
 
+        private static string GetIndent(int indentLevel)
+        {
+            var indent = string.Empty;
+            for (int i = 0; i < indentLevel; ++i)
+                indent += "\t";
+            return indent;
+        }
+
         public string GetTotalName()
         {
             var ss = new string[args.Length];
@@ -318,21 +326,18 @@ public static class ToLuaExport
             }
 
             var count = parameters.Length;
-            var head = string.Empty;
+            var indent = GetIndent(tab);
             var methodType = GetMethodType(method, out var pi);
             var offset = ((method.IsStatic && !BeExtend) || beConstruct) ? 1 : 2;
 
             if (method.Name == "op_Equality")
                 checkTypePos = -1;
 
-            for (int i = 0; i < tab; i++)
-                head += "\t";
-
             if ((!method.IsStatic && !beConstruct) || BeExtend)
             {
                 if (checkTypePos > 0)
                 {
-                    CheckObject(head, type, className, 1);
+                    CheckObject(indent, type, className, 1);
                 }
                 else
                 {
@@ -340,20 +345,20 @@ public static class ToLuaExport
                     {
                         if (!type.IsValueType && checkTypePos > 0)
                         {
-                            CheckObject(head, type, className, 1);
+                            CheckObject(indent, type, className, 1);
                         }
                         else
                         {
-                            sb.AppendFormat("{0}var obj = ({1})ToLua.ToObject(L, 1);\r\n", head, className);
+                            sb.AppendFormat("{0}var obj = ({1})ToLua.ToObject(L, 1);\r\n", indent, className);
                         }
                     }
                     else if (checkTypePos > 0) // && methodType == 0)
                     {
-                        CheckObject(head, type, className, 1);
+                        CheckObject(indent, type, className, 1);
                     }
                     else
                     {
-                        ToObject(head, type, className, 1);
+                        ToObject(indent, type, className, 1);
                     }
                 }
             }
@@ -371,7 +376,7 @@ public static class ToLuaExport
                                 ((param.Attributes & ParameterAttributes.Out) != ParameterAttributes.None);
                 bool beParams = IsParams(param);
                 Type t = GetGenericBaseType(method, param.ParameterType);
-                ProcessArg(t, head, arg, offset + j, j >= checkTypePos, beParams, beOutArg);
+                ProcessArg(t, indent, arg, offset + j, j >= checkTypePos, beParams, beOutArg);
             }
 
             for (int j = 0; j < count; j++)
@@ -407,14 +412,12 @@ public static class ToLuaExport
 
             if (beConstruct)
             {
-                sb.AppendFormat("{2}var obj = new {0}({1});\r\n", className, sbArgs.ToString(), head);
+                sb.AppendFormat("{2}var obj = new {0}({1});\r\n", className, sbArgs.ToString(), indent);
                 var str = GetPushFunction(type);
-                sb.AppendFormat("{0}ToLua.{1}(L, obj);\r\n", head, str);
+                sb.AppendFormat("{0}ToLua.{1}(L, obj);\r\n", indent, str);
 
                 for (int i = 0; i < refList.Count; i++)
-                {
-                    GenPushStr(refTypes[i], refList[i], head);
-                }
+                    GenPushStr(refTypes[i], refList[i], indent);
 
                 return refList.Count + 1;
             }
@@ -432,24 +435,24 @@ public static class ToLuaExport
                         var ss = str.Split(',');
                         str = string.Join(",", ss, 0, ss.Length - 1);
 
-                        sb.AppendFormat("{0}{1}[{2}] ={3};\r\n", head, obj, str, ss[ss.Length - 1]);
+                        sb.AppendFormat("{0}{1}[{2}] ={3};\r\n", indent, obj, str, ss[ss.Length - 1]);
                     }
                     else if (methodType == 1)
                     {
-                        sb.AppendFormat("{0}{1}.Item = arg0;\r\n", head, obj, pi.Name);
+                        sb.AppendFormat("{0}{1}.Item = arg0;\r\n", indent, obj, pi.Name);
                     }
                     else
                     {
-                        sb.AppendFormat("{0}{1}.{2}({3});\r\n", head, obj, method.Name, sbArgs.ToString());
+                        sb.AppendFormat("{0}{1}.{2}({3});\r\n", indent, obj, method.Name, sbArgs.ToString());
                     }
                 }
                 else if (methodType == 1)
                 {
-                    sb.AppendFormat("{0}{1}.{2} = arg0;\r\n", head, obj, pi.Name);
+                    sb.AppendFormat("{0}{1}.{2} = arg0;\r\n", indent, obj, pi.Name);
                 }
                 else
                 {
-                    sb.AppendFormat("{3}{0}.{1}({2});\r\n", obj, method.Name, sbArgs.ToString(), head);
+                    sb.AppendFormat("{3}{0}.{1}({2});\r\n", obj, method.Name, sbArgs.ToString(), indent);
                 }
             }
             else
@@ -465,56 +468,56 @@ public static class ToLuaExport
                 {
                     if (methodType == 2)
                     {
-                        sb.AppendFormat("{0}{1} o = {2}[{3}];\r\n", head, ret, obj, sbArgs.ToString());
+                        sb.AppendFormat("{0}{1} o = {2}[{3}];\r\n", indent, ret, obj, sbArgs.ToString());
                     }
                     else if (methodType == 1)
                     {
-                        sb.AppendFormat("{0}{1} o = {2}.Item;\r\n", head, ret, obj);
+                        sb.AppendFormat("{0}{1} o = {2}.Item;\r\n", indent, ret, obj);
                     }
                     else
                     {
-                        sb.AppendFormat("{0}{1} o = {2}.{3}({4});\r\n", head, ret, obj, method.Name, sbArgs.ToString());
+                        sb.AppendFormat("{0}{1} o = {2}.{3}({4});\r\n", indent, ret, obj, method.Name, sbArgs.ToString());
                     }
                 }
                 else if (method.Name == "Equals")
                 {
                     if (type.IsValueType || method.GetParameters().Length > 1)
                     {
-                        sb.AppendFormat("{0}{1} o = obj.Equals({2});\r\n", head, ret, sbArgs.ToString());
+                        sb.AppendFormat($"{indent}{ret} o = {obj}.Equals({sbArgs});\r\n");
                     }
                     else
                     {
-                        sb.AppendFormat("{0}{1} o = obj != null ? obj.Equals({2}) : arg0 == null;\r\n", head, ret, sbArgs.ToString());
+                        sb.AppendFormat($"{indent}{ret} o = obj != null ? obj.Equals({sbArgs}) : arg0 == null;\r\n");
                     }
                 }
                 else if (methodType == 1)
                 {
-                    sb.AppendFormat("{0}{1} o = {2}.{3};\r\n", head, ret, obj, pi.Name);
+                    sb.AppendFormat("{0}{1} o = {2}.{3};\r\n", indent, ret, obj, pi.Name);
                 }
                 else
                 {
-                    sb.AppendFormat("{0}{1} o = {2}.{3}({4});\r\n", head, ret, obj, method.Name, sbArgs.ToString());
+                    sb.AppendFormat("{0}{1} o = {2}.{3}({4});\r\n", indent, ret, obj, method.Name, sbArgs.ToString());
                 }
 
                 bool isbuffer = IsByteBuffer();
-                GenPushStr(retType, "o", head, isbuffer);
+                GenPushStr(retType, "o", indent, isbuffer);
             }
 
             for (int i = 0; i < refList.Count; i++)
             {
                 if (refTypes[i] == typeof(RaycastHit) && method.Name == "Raycast" && (type == typeof(Physics) || type == typeof(Collider)))
                 {
-                    sb.AppendFormat("{0}if (o) ToLua.Push(L, {1}); else LuaDLL.lua_pushnil(L);\r\n", head, refList[i]);
+                    sb.AppendFormat("{0}if (o) ToLua.Push(L, {1}); else LuaDLL.lua_pushnil(L);\r\n", indent, refList[i]);
                 }
                 else
                 {
-                    GenPushStr(refTypes[i], refList[i], head);
+                    GenPushStr(refTypes[i], refList[i], indent);
                 }
             }
 
             if (!method.IsStatic && type.IsValueType && method.Name != "ToString")
             {
-                sb.Append(head + "ToLua.SetBack(L, 1, obj);\r\n");
+                sb.Append(indent + "ToLua.SetBack(L, 1, obj);\r\n");
             }
 
             return refList.Count;
@@ -522,7 +525,7 @@ public static class ToLuaExport
 
         bool IsByteBuffer()
         {
-            object[] attrs = method.GetCustomAttributes(true);
+            var attrs = method.GetCustomAttributes(true);
 
             for (int j = 0; j < attrs.Length; j++)
             {
