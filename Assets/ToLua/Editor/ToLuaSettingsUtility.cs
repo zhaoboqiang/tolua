@@ -35,192 +35,10 @@ namespace LuaInterface.Editor
             return new DelegateType(t);
         }
 
-        private static Dictionary<string, LuaIncludedAssembly> includedAssemblies;
-        public static Dictionary<string, LuaIncludedAssembly> IncludedAssemblies
-        {
-            get
-            {
-                if (includedAssemblies == null)
-                {
-                    var assemblies = LuaSettingsUtility.LoadCsv<LuaIncludedAssembly>(Settings.IncludedAssemblyCsv);
-                    if (assemblies == null)
-                        includedAssemblies = new Dictionary<string, LuaIncludedAssembly>();
-                    else
-                        includedAssemblies = assemblies.ToDictionary(key => key.Name);
-                }
-                return includedAssemblies;
-            }
-        }
-
-        private static Dictionary<string, LuaIncludedNamespace> includedNamespaces;
-        public static Dictionary<string, LuaIncludedNamespace> IncludedNamespaces
-        {
-            get
-            {
-                if (includedNamespaces == null)
-                {
-                    var namespaces = LuaSettingsUtility.LoadCsv<LuaIncludedNamespace>(Settings.IncludedNamespaceCsv);
-                    if (namespaces == null)
-                        includedNamespaces = new Dictionary<string, LuaIncludedNamespace>();
-                    else
-                        includedNamespaces = namespaces.ToDictionary(key => key.Namespace);
-                }
-                return includedNamespaces;
-            }
-        }
-
-
-        private static Dictionary<string, LuaIncludedType> includedTypes;
-        public static Dictionary<string, LuaIncludedType> IncludedTypes
-        {
-            get
-            {
-                if (includedTypes == null)
-                {
-                    var types = LuaSettingsUtility.LoadCsv<LuaIncludedType>(Settings.IncludedTypeCsv);
-                    if (types == null)
-                        includedTypes = new Dictionary<string, LuaIncludedType>();
-                    else
-                        includedTypes = types.ToDictionary(key => key.FullName);
-                }
-                return includedTypes;
-            }
-        }
-
-        private static Dictionary<string, LuaIncludedMethod> includedMethods;
-        public static Dictionary<string, LuaIncludedMethod> IncludedMethods
-        {
-            get
-            {
-                if (includedMethods == null)
-                {
-                    var methods = LuaSettingsUtility.LoadCsv<LuaIncludedMethod>(Settings.IncludedMethodCsv);
-                    if (methods == null)
-                        includedMethods = new Dictionary<string, LuaIncludedMethod>();
-                    else
-                        includedMethods = methods.ToDictionary(key => key.MethodName);
-                }
-                return includedMethods;
-            }
-        }
-
-        public static bool IsAssemblyIncluded(string assemblyName)
-        {
-            if (IncludedAssemblies.TryGetValue(assemblyName, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-            return true;
-        }
-
-        public static bool IsNamespaceIncluded(string ns)
-        {
-            if (string.IsNullOrEmpty(ns))
-                return true;
-
-            if (IncludedNamespaces.TryGetValue(ns, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-            return true;
-        }
-
-        private static bool IsTypeIncludedByType(Type type)
-        {
-            if (type.IsGenericType)
-                return false;
-
-            if (!type.IsVisible)
-                return false;
-
-            if (!ToLuaTypes.IsPublic(type))
-                return false;
-
-            if (type.IsInterface)
-                return false;
-
-            if (ToLuaTypes.IsUnsupported(type))
-                return false;
-
-            return true;
-        }
-
-        public static bool IsTypeIncluded(Type type)
-        {
-            if (IncludedTypes.TryGetValue(type.FullName, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-
-            // default rule
-            return IsTypeIncludedByType(type);
-        }
-
-        public static bool InIncludedTypeCsv(Type type)
-        {
-            return IncludedTypes.ContainsKey(type.FullName);
-        }
-
-        public static bool IsIncluded(Type type)
-        {
-            return (IsNamespaceIncluded(type.Namespace) || InIncludedTypeCsv(type)) && IsTypeIncluded(type);
-        }
-
-        public static bool IsMethodIncluded(string methodName)
-        {
-            if (IncludedMethods.TryGetValue(methodName, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-            return true;
-        }
-
         public static ToLuaMenu.BindType[] BindTypes
         {
             get
             {
-                includedAssemblies = null;
-
                 var bindTypes = new List<ToLuaMenu.BindType>();
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -229,12 +47,12 @@ namespace LuaInterface.Editor
                     var assemblyName = assembly.GetName().Name;
                     // Debug.Log($"[Assembly] {assemblyName}");
 
-                    if (!IsAssemblyIncluded(assemblyName))
+                    if (!ReflectAssemblies.IsAssemblyIncluded(assemblyName))
                         continue;
 
                     foreach (var type in assembly.GetTypes())
                     {
-                        if (!IsIncluded(type))
+                        if (!ReflectTypes.IsIncluded(type))
                             continue;
 
                         if (typeof(MulticastDelegate).IsAssignableFrom(type))

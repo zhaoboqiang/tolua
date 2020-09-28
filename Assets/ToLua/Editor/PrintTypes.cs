@@ -9,17 +9,19 @@ namespace LuaInterface.Editor
     {
         public static void SaveCsv(List<Type> types, string fileName)
         {
-            var lines = new List<string> { "FullName,Namespace,Name,Included,NamespaceIncluded,InTypeCsv,TypeIncluded,Unsupported,Public,Visible,NestedPublic,Generic,Abstract" };
+            var lines = new List<string> { "FullName,Namespace,Name,Android,iOS,Included,NamespaceIncluded,InTypeCsv,TypeIncluded,Unsupported,Public,Visible,NestedPublic,Generic,Abstract" };
             foreach (var type in types)
             {
-                var included = ToLuaSettingsUtility.IsIncluded(type);
-                var namespaceIncluded = ToLuaSettingsUtility.IsNamespaceIncluded(type.Namespace);
-                var inTypeCsv = ToLuaSettingsUtility.InIncludedTypeCsv(type);
-                var typeIncluded = ToLuaSettingsUtility.IsTypeIncluded(type);
+                var included = ReflectTypes.IsIncluded(type);
+                var namespaceIncluded = ReflectNamespaces.IsNamespaceIncluded(type.Namespace);
+                var inTypeCsv = ReflectTypes.InIncludedTypeCsv(type);
+                var typeIncluded = ReflectTypes.IsTypeIncluded(type);
                 var isPublic = ToLuaTypes.IsPublic(type);
                 var isUnsupport = ToLuaTypes.IsUnsupported(type);
+                var android = ToLuaTypes.AndroidSupported(type);
+                var iOS = ToLuaTypes.iOSSupported(type);
 
-                lines.Add($"{type.FullName},{type.Namespace},{type.Name},{included},{namespaceIncluded},{inTypeCsv},{typeIncluded},{isUnsupport},{isPublic},{type.IsVisible},{type.IsNestedPublic},{type.IsGenericType},{type.IsAbstract}");
+                lines.Add($"{type.FullName},{type.Namespace},{type.Name},{android},{iOS},{included},{namespaceIncluded},{inTypeCsv},{typeIncluded},{isUnsupport},{isPublic},{type.IsVisible},{type.IsNestedPublic},{type.IsGenericType},{type.IsAbstract}");
             }
             ReflectUtility.SaveCsv(lines, $"{Application.dataPath}/Editor/{fileName}.csv");
         }

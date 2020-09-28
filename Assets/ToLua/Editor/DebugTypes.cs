@@ -11,10 +11,10 @@ namespace LuaInterface.Editor
     {
         private static void DebugType(Type type)
         {
-            var included = ToLuaSettingsUtility.IsIncluded(type);
-            var namespaceIncluded = ToLuaSettingsUtility.IsNamespaceIncluded(type.Namespace);
-            var inTypeCsv = ToLuaSettingsUtility.InIncludedTypeCsv(type);
-            var typeIncluded = ToLuaSettingsUtility.IsTypeIncluded(type);
+            var included = ReflectTypes.IsIncluded(type);
+            var namespaceIncluded = ReflectNamespaces.IsNamespaceIncluded(type.Namespace);
+            var inTypeCsv = ReflectTypes.InIncludedTypeCsv(type);
+            var typeIncluded = ReflectTypes.IsTypeIncluded(type);
             var isPublic = ToLuaTypes.IsPublic(type);
             var isUnsupport = ToLuaTypes.IsUnsupported(type);
 

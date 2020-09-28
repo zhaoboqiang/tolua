@@ -980,9 +980,7 @@ public static class ToLuaExport
     static bool HasGetIndex(MemberInfo md)
     {
         if (md.Name == "get_Item")
-        {
             return true;
-        }
 
         var attrs = type.GetCustomAttributes(true);
 
@@ -1000,9 +998,7 @@ public static class ToLuaExport
     static bool HasSetIndex(MemberInfo md)
     {
         if (md.Name == "set_Item")
-        {
             return true;
-        }
 
         var attrs = type.GetCustomAttributes(true);
 
@@ -1022,14 +1018,10 @@ public static class ToLuaExport
         var pis = md.GetParameters();
 
         if (pis.Length != count)
-        {
             return false;
-        }
 
         if (pis[0].ParameterType == typeof(int))
-        {
             return true;
-        }
 
         return false;
     }
@@ -1048,7 +1040,7 @@ public static class ToLuaExport
             var m = methods[i];
             int count = 1;
 
-            if (!ToLuaSettingsUtility.IsMethodIncluded(m.FullName))
+            if (!ReflectMethods.IsMethodIncluded(m.FullName))
                 continue;
  
             if (IsGenericMethod(m.Method))
@@ -1327,9 +1319,7 @@ public static class ToLuaExport
     static bool IsGenericConstraintType(Type t)
     {
         if (!t.IsGenericType)
-        {
             return t.IsGenericParameter || t == typeof(System.ValueType);
-        }
 
         var types = t.GetGenericArguments();
 
@@ -1338,14 +1328,10 @@ public static class ToLuaExport
             var t1 = types[i];
 
             if (t1.IsGenericParameter || t1 == typeof(System.ValueType))
-            {
                 return true;
-            }
 
             if (IsGenericConstraintType(t1))
-            {
                 return true;
-            }
         }
 
         return false;
@@ -1405,7 +1391,7 @@ public static class ToLuaExport
         {
             var m = methods[i];
 
-            if (!ToLuaSettingsUtility.IsMethodIncluded(m.FullName))
+            if (!ReflectMethods.IsMethodIncluded(m.FullName))
                 continue;
 
             if (IsGenericMethod(m.Method))
@@ -3950,9 +3936,7 @@ public static class ToLuaExport
     static void GetDelegateTypeFromMethodParams(_MethodBase m)
     {
         if (m.IsGenericMethod)
-        {
             return;
-        }
 
         var pifs = m.GetParameters();
 
@@ -4026,9 +4010,7 @@ public static class ToLuaExport
     public static string ConvertToLibSign(string str)
     {
         if (string.IsNullOrEmpty(str))
-        {
             return null;
-        }
 
         str = str.Replace('<', '_');
         str = RemoveChar(str, '>');
@@ -4123,9 +4105,7 @@ public static class ToLuaExport
     static Type GetParameterType(ParameterInfo info)
     {
         if (info.ParameterType == extendType)
-        {
             return type;
-        }
 
         return info.ParameterType;
     }

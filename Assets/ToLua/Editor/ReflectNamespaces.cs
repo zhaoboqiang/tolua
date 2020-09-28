@@ -7,10 +7,49 @@ namespace LuaInterface.Editor
 {
     public static class ReflectNamespaces
     {
+        private static Dictionary<string, LuaIncludedNamespace> includedNamespaces;
+        public static Dictionary<string, LuaIncludedNamespace> IncludedNamespaces
+        {
+            get
+            {
+                if (includedNamespaces == null)
+                {
+                    var namespaces = LuaSettingsUtility.LoadCsv<LuaIncludedNamespace>(ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
+                    if (namespaces == null)
+                        includedNamespaces = new Dictionary<string, LuaIncludedNamespace>();
+                    else
+                        includedNamespaces = namespaces.ToDictionary(key => key.Namespace);
+                }
+                return includedNamespaces;
+            }
+        }
+
+        public static bool IsNamespaceIncluded(string ns)
+        {
+            if (string.IsNullOrEmpty(ns))
+                return true;
+
+            if (IncludedNamespaces.TryGetValue(ns, out var value))
+            {
+#if UNITY_IOS
+                if (value.iOS)
+                    return true;
+#elif UNITY_ANDROID
+                if (value.Android)
+                    return true;
+#else
+                if (value.iOS || value.Android)
+                    return true;
+#endif
+                return false;
+            }
+            return true;
+        }
+
         private static void UpdateCsv(Dictionary<string, LuaIncludedNamespace> newNamespaces)
         {
             // Load previous configurations
-            var oldNamespaces = ToLuaSettingsUtility.IncludedNamespaces;
+            var oldNamespaces = IncludedNamespaces;
 
             // merge previous configurations
             var keys = newNamespaces.Keys.ToArray<string>();
@@ -54,7 +93,7 @@ namespace LuaInterface.Editor
             foreach (var assembly in assemblies)
             {
                 var assemblyName = assembly.GetName().Name;
-                if (!ToLuaSettingsUtility.IsAssemblyIncluded(assemblyName))
+                if (!ReflectAssemblies.IsAssemblyIncluded(assemblyName))
                     continue;
 
                 foreach (var type in assembly.GetTypes())
