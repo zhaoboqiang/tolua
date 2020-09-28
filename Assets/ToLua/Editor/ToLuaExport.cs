@@ -186,9 +186,7 @@ public static class ToLuaExport
             var list = new List<Type>();
 
             if (!method.IsStatic)
-            {
                 list.Add(type);
-            }
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -209,14 +207,10 @@ public static class ToLuaExport
             }
 
             for (int i = offset; i < list.Count - 1; i++)
-            {
                 sb.Append(GetTypeOf(list[i], ", "));
-            }
 
             if (list.Count > 0)
-            {
                 sb.Append(GetTypeOf(list[list.Count - 1], ""));
-            }
 
             return sb.ToString();
         }
