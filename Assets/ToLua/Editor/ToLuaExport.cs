@@ -156,33 +156,23 @@ public static class ToLuaExport
             var list2 = new List<Type>();
 
             if (!IsStatic)
-            {
                 list1.Add(type);
-            }
 
             if (!b.IsStatic)
-            {
                 list2.Add(type);
-            }
 
             for (int i = 0; i < args.Length; i++)
-            {
                 list1.Add(GetParameterType(args[i]));
-            }
 
             var p = b.args;
 
             for (int i = 0; i < p.Length; i++)
-            {
                 list2.Add(GetParameterType(p[i]));
-            }
 
             for (int i = 0; i < list1.Count; i++)
             {
                 if (list1[i] != list2[i])
-                {
                     break;
-                }
 
                 ++count;
             }
