@@ -13,7 +13,7 @@ Mono.CompilerServices.SymbolWriter,False,False
 Mono.Security,False,False
 mscorlib,False,False
 nunit.framework,False,False
-System,False,False
+System,True,True
 System.Configuration,False,False
 System.Core,False,False
 System.Xml,False,False

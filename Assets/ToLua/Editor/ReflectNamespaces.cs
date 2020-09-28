@@ -34,12 +34,12 @@ namespace LuaInterface.Editor
             }
 
             // save configurations
-            var lines = new List<string> { "Namespace,Assembly,Android,iOS" };
+            var lines = new List<string> { "Namespace,Android,iOS" };
             var values = newNamespaces.Values.ToList();
             values.Sort((lhs, rhs) => lhs.Namespace.CompareTo(rhs.Namespace));
             lines.AddRange(from ns in values
-                           where !ns.Android || !ns.iOS
-                           select $"{ns.Namespace},{ns.Android},{ns.Android},{ns.iOS}");
+                           //where !ns.Android || !ns.iOS
+                           select $"{ns.Namespace},{ns.Android},{ns.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
         }
 
