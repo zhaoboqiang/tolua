@@ -1,9 +1,9 @@
 Namespace,Android,iOS
 AOT,False,False
 Cinemachine,True,True
-Cinemachine.Editor,True,True
+Cinemachine.Editor,False,False
 Cinemachine.PostFX,True,True
-Cinemachine.PostFX.Editor,True,True
+Cinemachine.PostFX.Editor,False,False
 Cinemachine.Utility,True,True
 Editor,False,False
 JetBrains.Annotations,False,False
