@@ -757,11 +757,9 @@ public static class ToLuaExport
             else
             {
                 var md = propertyInfo.GetGetMethod();
-
                 if (md != null)
                 {
                     int index = list.FindIndex((m) => { return m.Method == md; });
-
                     if (index >= 0)
                     {
                         if (md.GetParameters().Length == 0)
@@ -776,11 +774,9 @@ public static class ToLuaExport
                 }
 
                 md = propertyInfo.GetSetMethod();
-
                 if (md != null)
                 {
                     int index = list.FindIndex((m) => { return m.Method == md; });
-
                     if (index >= 0)
                     {
                         if (md.GetParameters().Length == 1)
