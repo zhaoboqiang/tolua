@@ -24,23 +24,14 @@ namespace LuaInterface.Editor
             }
         }
 
-        public static bool IsAssemblyIncluded(string assemblyName)
+        public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
-            if (IncludedAssemblies.TryGetValue(assemblyName, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-            return true;
+            var flags = ToLuaPlatformFlags.Editor;
+
+            if (IncludedAssemblies.TryGetValue(name, out var value))
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
+
+            return flags;
         }
 
         private static void UpdateCsv(List<LuaIncludedAssembly> newAssemblies)

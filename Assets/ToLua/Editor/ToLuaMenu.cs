@@ -178,7 +178,7 @@ public static class ToLuaMenu
         ToLuaExport.type = bindType.type;
         ToLuaExport.isStaticClass = bindType.IsStatic;
         ToLuaExport.baseType = bindType.baseType;
-        ToLuaExport.wrapClassName = bindType.wrapName;
+        ToLuaExport.className = bindType.wrapName;
         ToLuaExport.libClassName = bindType.LibName;
         ToLuaExport.Generate(wrapperSaveDir);
     }
@@ -607,9 +607,7 @@ public static class ToLuaMenu
         dir = Application.streamingAssetsPath + "/" + dir;
 
         if (!File.Exists(dir))
-        {
             Directory.CreateDirectory(dir);
-        }
 
         return dir;
     }
@@ -623,7 +621,6 @@ public static class ToLuaMenu
         for (int i = 0; i < files.Length; i++)
         {
             var importer = AssetImporter.GetAtPath(files[i]);
-
             if (importer)
             {
                 importer.assetBundleName = bundleName;

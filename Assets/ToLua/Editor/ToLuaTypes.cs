@@ -103,17 +103,5 @@ namespace LuaInterface.Editor
 
             return false;
         }
-
-        public static bool AndroidSupported(Type type)
-        {
-            // TODO:
-            return true;
-        }
-        
-        public static bool iOSSupported(Type type)
-        {
-            // TODO:
-            return true;
-        }
     }
 }

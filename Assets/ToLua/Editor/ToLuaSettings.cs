@@ -15,5 +15,6 @@ namespace LuaInterface
         string IncludedNamespaceCsv { get; } 
         string IncludedTypeCsv { get; } 
         string IncludedMethodCsv { get; } 
+        string IncludedEnumCsv { get; } 
     }
 }

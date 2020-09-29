@@ -24,26 +24,14 @@ namespace LuaInterface.Editor
             }
         }
 
-        public static bool IsNamespaceIncluded(string ns)
+        public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
-            if (string.IsNullOrEmpty(ns))
-                return true;
+            var flags = ToLuaPlatformFlags.Editor;
 
-            if (IncludedNamespaces.TryGetValue(ns, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-            return true;
+            if (IncludedNamespaces.TryGetValue(name, out var value))
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
+
+            return flags;
         }
 
         private static void UpdateCsv(Dictionary<string, LuaIncludedNamespace> newNamespaces)
@@ -93,9 +81,6 @@ namespace LuaInterface.Editor
             foreach (var assembly in assemblies)
             {
                 var assemblyName = assembly.GetName().Name;
-                if (!ReflectAssemblies.IsAssemblyIncluded(assemblyName))
-                    continue;
-
                 foreach (var type in assembly.GetTypes())
                 {
                     var ns = type.Namespace;

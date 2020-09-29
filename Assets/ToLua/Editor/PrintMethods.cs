@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -5,26 +6,26 @@ using UnityEngine;
 
 namespace LuaInterface.Editor
 {
-    public static class PrintTypes
+    public static class PrintMethods
     {
         public static void SaveCsv(List<Type> types, string fileName)
         {
-            var lines = new List<string> { "FullName,Namespace,Name,Android,iOS,Included,NamespaceIncluded,InTypeCsv,TypeIncluded,Unsupported,Public,Visible,NestedPublic,Generic,Abstract" };
+            var lines = new List<string> { "FullName,MethodName,Android,iOS" };
             foreach (var type in types)
             {
                 var platformFlags = ReflectTypes.GetPlatformFlags(type);
-                var namespacePlatformFlags = ReflectNamespaces.GetPlatformFlags(type.Namespace);
+                var namespaceIncluded = ReflectNamespaces.GetPlatformFlags(type.Namespace);
                 var platformFlagsFromCsv = ReflectTypes.GetPlatformFlagsFromCsv(type);
                 var platformFlagsFromRule = ReflectTypes.GetPlatformFlagsFromRule(type);
                 var isPublic = ToLuaTypes.IsPublic(type);
                 var isUnsupport = ToLuaTypes.IsUnsupported(type);
 
-                lines.Add($"{type.FullName},{type.Namespace},{type.Name},{platformFlags},{namespacePlatformFlags},{platformFlagsFromCsv},{platformFlagsFromRule},{isUnsupport},{isPublic},{type.IsVisible},{type.IsNestedPublic},{type.IsGenericType},{type.IsAbstract}");
+                lines.Add($"{type.FullName},{type.Namespace},{type.Name},{platformFlags},{namespaceIncluded},{platformFlagsFromCsv},{platformFlagsFromRule},{isUnsupport},{isPublic},{type.IsVisible},{type.IsNestedPublic},{type.IsGenericType},{type.IsAbstract}");
             }
             ReflectUtility.SaveCsv(lines, $"{Application.dataPath}/Editor/{fileName}.csv");
         }
 
-        [MenuItem("Print/Types")]
+        [MenuItem("Print/Methods")]
         public static void Print()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -38,7 +39,7 @@ namespace LuaInterface.Editor
                 }
             }
 
-            SaveCsv(types, "all_types");
+            SaveCsv(types, "all_methods");
         }
     }
 }

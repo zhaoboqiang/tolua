@@ -44,4 +44,13 @@ namespace LuaInterface
         public bool Android;
         public bool iOS;
     }
+
+    [Serializable]
+    public struct LuaIncludedEnum
+    {
+        public string FieldFullName;
+        public bool Android;
+        public bool iOS;
+    }
+
 }

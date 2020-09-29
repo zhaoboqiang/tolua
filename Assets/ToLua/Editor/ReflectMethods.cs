@@ -25,36 +25,14 @@ namespace LuaInterface.Editor
             }
         }
 
-        public static bool IsMethodIncluded(string methodName)
+        public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
-            if (IncludedMethods.TryGetValue(methodName, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
-            return true;
-        }
+            var flags = ToLuaPlatformFlags.Editor;
 
+            if (IncludedMethods.TryGetValue(name, out var value))
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
 
-        public static bool AndroidSupported(Type type)
-        {
-            // TODO:
-            return true;
-        }
-        
-        public static bool iOSSupported(Type type)
-        {
-            // TODO:
-            return true;
+            return flags;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace LuaInterface.Editor
             }
         }
 
-        private static bool IsTypeIncludedByType(Type type)
+        private static bool IsTypeIncluded(Type type)
         {
             if (type.IsGenericType)
                 return false;
@@ -45,37 +45,36 @@ namespace LuaInterface.Editor
             return true;
         }
 
-        public static bool IsTypeIncluded(Type type)
+        public static ToLuaPlatformFlags GetPlatformFlagsFromCsv(Type type)
         {
-            if (IncludedTypes.TryGetValue(type.FullName, out var value))
-            {
-#if UNITY_IOS
-                if (value.iOS)
-                    return true;
-#elif UNITY_ANDROID
-                if (value.Android)
-                    return true;
-#else
-                if (value.iOS || value.Android)
-                    return true;
-#endif
-                return false;
-            }
+            var flags = ToLuaPlatformFlags.Editor;
 
-            // default rule
-            return IsTypeIncludedByType(type);
+            if (IncludedTypes.TryGetValue(type.FullName, out var value))
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
+
+            return flags;
         }
 
-        public static bool InIncludedTypeCsv(Type type)
+        public static ToLuaPlatformFlags GetPlatformFlagsFromRule(Type type)
         {
-            return IncludedTypes.ContainsKey(type.FullName);
+            return IsTypeIncluded(type) ? ToLuaPlatformFlags.All : ToLuaPlatformFlags.None;
         }
 
         public static bool IsIncluded(Type type)
         {
-            return (ReflectNamespaces.IsNamespaceIncluded(type.Namespace) || InIncludedTypeCsv(type)) && IsTypeIncluded(type);
+            return (GetPlatformFlags(type) & ToLuaPlatformFlags.All) != ToLuaPlatformFlags.None;
         }
 
+        public static ToLuaPlatformFlags GetPlatformFlags(Type type)
+        {
+            var namespaceFlags = ReflectNamespaces.GetPlatformFlags(type.Namespace);
+            var assemblyFlags = ReflectAssemblies.GetPlatformFlags(type.Assembly.GetName().Name);
+
+            var typeFlagsFromCsv = GetPlatformFlagsFromCsv(type);
+            var typeFlagsFromRule = GetPlatformFlagsFromRule(type);
+
+            return (namespaceFlags & assemblyFlags | typeFlagsFromCsv) & typeFlagsFromRule;
+        }
 
         public static Type GetType(string assemblyName, string typeName)
         {
@@ -88,7 +87,7 @@ namespace LuaInterface.Editor
             // Load previous configurations
             var oldTypes = IncludedTypes;
 
-            // merge previous configurations
+            // Merge previous configurations
             for (int index = 0, count = newTypes.Count; index < count; ++index)
             {
                 var newType = newTypes[index];
@@ -99,7 +98,7 @@ namespace LuaInterface.Editor
                 }
             }
 
-            // merge not exist previous configurations
+            // Merge not exist previous configurations
             var mergedTypes = newTypes.ToDictionary(key => key.FullName);
             foreach (var kv in oldTypes)
             {
@@ -113,7 +112,7 @@ namespace LuaInterface.Editor
             var resultTypes = mergedTypes.Values.ToList();
             resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
-            // save configurations
+            // Save configurations
             var lines = new List<string> { "FullName,Namespace,Name,Note,Android,iOS" };
             lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS || oldTypes.ContainsKey(type.FullName)
@@ -123,9 +122,6 @@ namespace LuaInterface.Editor
 
         private static void AddNewType(List<LuaIncludedType> newTypes, Type type, Type outerType)
         {
-            if (!ReflectTypes.IsIncluded(type))
-                return;
-
             newTypes.Add(new LuaIncludedType
             {
                 Namespace = type.Namespace,
@@ -145,10 +141,6 @@ namespace LuaInterface.Editor
 
             foreach (var assembly in assemblies)
             {
-                var assemblyName = assembly.GetName().Name;
-                if (!ReflectAssemblies.IsAssemblyIncluded(assemblyName))
-                    continue;
-
                 foreach (var type in assembly.GetTypes())
                 {
                     AddNewType(newTypes, type, null);

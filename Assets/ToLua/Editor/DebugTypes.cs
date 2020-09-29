@@ -11,14 +11,14 @@ namespace LuaInterface.Editor
     {
         private static void DebugType(Type type)
         {
-            var included = ReflectTypes.IsIncluded(type);
-            var namespaceIncluded = ReflectNamespaces.IsNamespaceIncluded(type.Namespace);
-            var inTypeCsv = ReflectTypes.InIncludedTypeCsv(type);
-            var typeIncluded = ReflectTypes.IsTypeIncluded(type);
+            var platformFlags = ReflectTypes.GetPlatformFlags(type);
+            var namespaceIncluded = ReflectNamespaces.GetPlatformFlags(type.Namespace);
+            var platformFlagsFromCsv = ReflectTypes.GetPlatformFlagsFromCsv(type);
+            var platformFlagsFromRule = ReflectTypes.GetPlatformFlagsFromRule(type);
             var isPublic = ToLuaTypes.IsPublic(type);
             var isUnsupport = ToLuaTypes.IsUnsupported(type);
 
-            Debug.Log($"{type.FullName},{type.Namespace},{type.Name},{included},{namespaceIncluded},{inTypeCsv},{typeIncluded},{isUnsupport},{isPublic},{type.IsVisible},{type.IsNestedPublic},{type.IsGenericType},{type.IsAbstract}");
+            Debug.Log($"{type.FullName},{type.Namespace},{type.Name},{platformFlags},{namespaceIncluded},{platformFlagsFromCsv},{platformFlagsFromRule},{isUnsupport},{isPublic},{type.IsVisible},{type.IsNestedPublic},{type.IsGenericType},{type.IsAbstract}");
         }
 
         private static void DebugType(string assemblyName, string typeName)

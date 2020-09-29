@@ -44,12 +44,6 @@ namespace LuaInterface.Editor
 
                 foreach (var assembly in assemblies)
                 {
-                    var assemblyName = assembly.GetName().Name;
-                    // Debug.Log($"[Assembly] {assemblyName}");
-
-                    if (!ReflectAssemblies.IsAssemblyIncluded(assemblyName))
-                        continue;
-
                     foreach (var type in assembly.GetTypes())
                     {
                         if (!ReflectTypes.IsIncluded(type))
