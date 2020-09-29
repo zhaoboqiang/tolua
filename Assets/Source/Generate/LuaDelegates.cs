@@ -20,8 +20,8 @@ public static class LuaDelegates
 
         if (func != null)
         {
-            LuaState state = func.GetLuaState();
-            LuaDelegate target = state.GetLuaDelegate(func);
+            var state = func.GetLuaState();
+            var target = state.GetLuaDelegate(func);
             
             if (target != null)
             {

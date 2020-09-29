@@ -1863,9 +1863,7 @@ namespace LuaInterface
         Type GetBaseType(Type t)
         {
             if (t.IsGenericType)
-            {
                 return GetSpecialGenericType(t);
-            }
 
             return LuaMisc.GetExportBaseType(t);
         }
