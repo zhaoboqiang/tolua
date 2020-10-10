@@ -12,8 +12,8 @@ System.Collections.IEnumerator,System.Collections,IEnumerator,可以导出的内
 System.Delegate,System,Delegate,可以导出的内部支持类型,True,True
 System.Enum,System,Enum,可以导出的内部支持类型,True,True
 System.Object,System,Object,可以导出的内部支持类型,True,True
-System.String,System,String,可以导出的内部支持类型,True,True
-System.Type,System,Type,可以导出的内部支持类型,True,True
+System.String,System,String,可以导出的内部支持类型,False,False
+System.Type,System,Type,可以导出的内部支持类型,False,False
 TMPro.TMP_EditorResourceManager,TMPro,TMP_EditorResourceManager,,False,False
 TMPro.TMP_FontAssetUtilities,TMPro,TMP_FontAssetUtilities,,False,False
 UnityEngine.Animations.AnimationPlayableExtensions,UnityEngine.Animations,AnimationPlayableExtensions,,False,False

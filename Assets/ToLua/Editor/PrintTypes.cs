@@ -14,8 +14,8 @@ namespace LuaInterface.Editor
             {
                 var platformFlags = ReflectTypes.GetPlatformFlags(type);
                 var namespacePlatformFlags = ReflectNamespaces.GetPlatformFlags(type.Namespace);
-                var platformFlagsFromCsv = ReflectTypes.GetPlatformFlagsFromCsv(type);
-                var platformFlagsFromRule = ReflectTypes.GetPlatformFlagsFromRule(type);
+                var platformFlagsFromCsv = ReflectTypes.GetPlatformFlagsFromCsv(type, ToLuaPlatformFlags.All);
+                var platformFlagsFromRule = ReflectTypes.GetPlatformFlagsFromRule(type, ToLuaPlatformFlags.All);
                 var isPublic = ToLuaTypes.IsPublic(type);
                 var isUnsupport = ToLuaTypes.IsUnsupported(type);
 

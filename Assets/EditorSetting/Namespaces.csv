@@ -51,7 +51,7 @@ System.Net.NetworkInformation.MacOsStructs,False,False
 System.Net.Security,False,False
 System.Net.Sockets,False,False
 System.Net.WebSockets,True,True
-System.Reflection,True,True
+System.Reflection,False,False
 System.Runtime.CompilerServices,False,False
 System.Runtime.InteropServices,False,False
 System.Runtime.InteropServices.ComTypes,False,False

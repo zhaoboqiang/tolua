@@ -27,10 +27,10 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
-            var flags = ToLuaPlatformFlags.Editor;
+            var flags = ToLuaPlatformFlags.All; // deny list
 
             if (IncludedEnums.TryGetValue(name, out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
 
             return flags;
         }

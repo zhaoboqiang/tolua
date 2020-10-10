@@ -26,10 +26,10 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
-            var flags = ToLuaPlatformFlags.Editor;
+            var flags = ToLuaPlatformFlags.None; // allow list
 
             if (IncludedAssemblies.TryGetValue(name, out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
 
             return flags;
         }
@@ -67,7 +67,6 @@ namespace LuaInterface.Editor
             // save configurations
             var lines = new List<string> { "Name,Android,iOS" };
             lines.AddRange(from assembly in resultAssemblies
-                           //where !assembly.Android || !assembly.iOS
                            select $"{assembly.Name},{assembly.Android},{assembly.iOS}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
         }

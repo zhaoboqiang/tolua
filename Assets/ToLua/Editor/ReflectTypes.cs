@@ -45,19 +45,17 @@ namespace LuaInterface.Editor
             return true;
         }
 
-        public static ToLuaPlatformFlags GetPlatformFlagsFromCsv(Type type)
+        public static ToLuaPlatformFlags GetPlatformFlagsFromCsv(Type type, ToLuaPlatformFlags flags)
         {
-            var flags = ToLuaPlatformFlags.Editor;
-
             if (IncludedTypes.TryGetValue(type.FullName, out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
 
             return flags;
         }
 
-        public static ToLuaPlatformFlags GetPlatformFlagsFromRule(Type type)
+        public static ToLuaPlatformFlags GetPlatformFlagsFromRule(Type type, ToLuaPlatformFlags flags)
         {
-            return IsTypeIncluded(type) ? ToLuaPlatformFlags.All : ToLuaPlatformFlags.None;
+            return IsTypeIncluded(type) ? flags : ToLuaPlatformFlags.None;
         }
 
         public static bool IsIncluded(Type type)
@@ -67,13 +65,13 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlags(Type type)
         {
+            var assemblyName = type.Assembly.GetName().Name;
+
+            var assemblyFlags = ReflectAssemblies.GetPlatformFlags(assemblyName);
             var namespaceFlags = ReflectNamespaces.GetPlatformFlags(type.Namespace);
-            var assemblyFlags = ReflectAssemblies.GetPlatformFlags(type.Assembly.GetName().Name);
 
-            var typeFlagsFromCsv = GetPlatformFlagsFromCsv(type);
-            var typeFlagsFromRule = GetPlatformFlagsFromRule(type);
-
-            return (namespaceFlags & assemblyFlags | typeFlagsFromCsv) & typeFlagsFromRule;
+            var flags = GetPlatformFlagsFromCsv(type, assemblyFlags & namespaceFlags);
+            return GetPlatformFlagsFromRule(type, flags);
         }
 
         public static Type GetType(string assemblyName, string typeName)

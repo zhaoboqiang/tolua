@@ -171,6 +171,9 @@ public static class ToLuaMenu
 	
     private static void GenerateClassWrap(BindType bindType)
     {
+        if (!ReflectTypes.IsIncluded(bindType.type))
+            return;
+
         var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
 
         ToLuaExport.Clear();
@@ -178,7 +181,7 @@ public static class ToLuaMenu
         ToLuaExport.type = bindType.type;
         ToLuaExport.isStaticClass = bindType.IsStatic;
         ToLuaExport.baseType = bindType.baseType;
-        ToLuaExport.className = bindType.wrapName;
+        ToLuaExport.wrapClassName = bindType.wrapName;
         ToLuaExport.libClassName = bindType.LibName;
         ToLuaExport.Generate(wrapperSaveDir);
     }
@@ -205,8 +208,8 @@ public static class ToLuaMenu
         foreach (var bindType in BindTypes)
             ToLuaExport.allTypes.Add(bindType.type);
 
-        // var type = ReflectTypes.GetType("EasySave", "ES3Types.ES3Type_Color32");
-        var type = typeof(UnityEngine.Material);
+        //var type = ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition");
+        var type = typeof(UnityEngine.AndroidJNI);
         GenerateClassWrap(new BindType(type));
 
         Debug.Log("Generate lua binding file over");
@@ -553,7 +556,17 @@ public static class ToLuaMenu
             var bindType = bindTypes[i];
             if (bindType.nameSpace == nameSpace)
             {
+                var platformFlags = ReflectTypes.GetPlatformFlags(bindType.type);
+                if (platformFlags == ToLuaPlatformFlags.None)
+                    continue;
+
+                var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+                ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
+
                 sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r\n");
+
+                ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
             }
         }
 
