@@ -1080,11 +1080,11 @@ public static class ToLuaExport
             if (IsGenericMethod(m.Method))
                 continue;
 
-            var methodPlatformFlags = ReflectMethods.GetPlatformFlags(m.FullName);
-			if (methodPlatformFlags == ToLuaPlatformFlags.None)
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
+			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
 				continue;
 				
-            var methodPlatformFlagsText = ToLuaPlatformUtility.GetText(methodPlatformFlags);
+            var methodPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             string name = GetMethodName(m.Method);
 
@@ -1329,13 +1329,13 @@ public static class ToLuaExport
 
     static void GenFunction(_MethodBase m)
     {
-        var methodPlatformFlags = ReflectMethods.GetPlatformFlags(m.FullName);
-        if (methodPlatformFlags == ToLuaPlatformFlags.None)
+        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
+        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
 	
-        var methodPlatformFlagsText = ToLuaPlatformUtility.GetText(methodPlatformFlags);
+        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
-        BeginPlatformMacro(methodPlatformFlagsText);
+        BeginPlatformMacro(fieldPlatformFlagsText);
 
         var name = GetMethodName(m.Method);
 
@@ -1377,7 +1377,7 @@ public static class ToLuaExport
 
         sb.AppendLineEx("\t}");
 
-        EndPlatformMacro(methodPlatformFlagsText);
+        EndPlatformMacro(fieldPlatformFlagsText);
     }
 
     //没有未知类型的模版类型List<int> 返回false, List<T>返回true
@@ -2838,17 +2838,17 @@ public static class ToLuaExport
         else if (methodBases.Count == 0)
             return null;
 
-        var methodPlatformFlags = ReflectMethods.GetPlatformFlags(methodBases[0].FullName);
-        if (methodPlatformFlags == ToLuaPlatformFlags.None)
+        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(methodBases[0].FullName);
+        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return null;
         
         methodBases.Sort(Compare);
 
         var checkTypeMap = CheckCheckTypePos(methodBases);
 
-        var methodPlatformFlagsText = ToLuaPlatformUtility.GetText(methodPlatformFlags);
+        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
-        BeginPlatformMacro(methodPlatformFlagsText);
+        BeginPlatformMacro(fieldPlatformFlagsText);
 
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", GetRegisterFunctionName(name));
@@ -2881,7 +2881,7 @@ public static class ToLuaExport
         EndTry();
         sb.AppendLineEx("\t}");
 
-        EndPlatformMacro(methodPlatformFlagsText);
+        EndPlatformMacro(fieldPlatformFlagsText);
 
         return null;
     }
@@ -3508,14 +3508,14 @@ public static class ToLuaExport
         {
             var fieldName = field.Name;
             var fullName = type.FullName + "." + fieldName;
-            var enumPlatformFlags = ReflectEnums.GetPlatformFlags(fullName);
-            if (enumPlatformFlags != ToLuaPlatformFlags.None)
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(fullName);
+            if (fieldPlatformFlags != ToLuaPlatformFlags.None)
             {
-                var enumPlatformFlagsText = ToLuaPlatformUtility.GetText(enumPlatformFlags);
+                var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
-                BeginPlatformMacro(enumPlatformFlagsText);
+                BeginPlatformMacro(fieldPlatformFlagsText);
                 sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, null);\r\n", fieldName);
-                EndPlatformMacro(enumPlatformFlagsText);
+                EndPlatformMacro(fieldPlatformFlagsText);
             }
         }
 
@@ -3541,12 +3541,12 @@ public static class ToLuaExport
         {
             var fieldName = field.Name;
             var fullName = type.FullName + "." + fieldName;
-            var enumPlatformFlags = ReflectEnums.GetPlatformFlags(fullName);
-            if (enumPlatformFlags != ToLuaPlatformFlags.None)
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(fullName);
+            if (fieldPlatformFlags != ToLuaPlatformFlags.None)
             {
-                var enumPlatformFlagsText = ToLuaPlatformUtility.GetText(enumPlatformFlags);
+                var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
-                BeginPlatformMacro(enumPlatformFlagsText);
+                BeginPlatformMacro(fieldPlatformFlagsText);
 
                 sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
                 sb.AppendFormat("\tstatic int get_{0}(IntPtr L)\r\n", field.Name);
@@ -3555,7 +3555,7 @@ public static class ToLuaExport
                 sb.AppendLineEx("\t\treturn 1;");
                 sb.AppendLineEx("\t}");
 
-                EndPlatformMacro(enumPlatformFlagsText);
+                EndPlatformMacro(fieldPlatformFlagsText);
             }
         }
 

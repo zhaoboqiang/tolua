@@ -1,0 +1,8 @@
+FieldFullName,Android,iOS
+UnityEngine.TextureFormat.ETC_RGB4Crunched,True,False
+UnityEngine.TextureFormat.ETC2_RGBA8Crunched,True,False
+UnityEngine.AndroidActivityIndicatorStyle,True,False
+UnityEngine.TextureFormat.DXT1Crunched,False,False
+UnityEngine.TextureFormat.DXT5Crunched,False,False
+UnityEngine.MeshRenderer.receiveGI,False,False
+UnityEngine.Rendering.CoreUtils.HasFlag,False,False

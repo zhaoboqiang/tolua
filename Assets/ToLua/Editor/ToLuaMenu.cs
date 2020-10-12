@@ -209,7 +209,7 @@ public static class ToLuaMenu
             ToLuaExport.allTypes.Add(bindType.type);
 
         //var type = ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition");
-        var type = typeof(UnityEngine.AndroidJNI);
+        var type = typeof(UnityEngine.MeshRenderer);
         GenerateClassWrap(new BindType(type));
 
         Debug.Log("Generate lua binding file over");

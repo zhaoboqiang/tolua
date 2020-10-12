@@ -38,15 +38,7 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaIncludedMethod
-    {
-        public string MethodName;
-        public bool Android;
-        public bool iOS;
-    }
-
-    [Serializable]
-    public struct LuaIncludedEnum
+    public struct LuaIncludedField
     {
         public string FieldFullName;
         public bool Android;
