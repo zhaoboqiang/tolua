@@ -9,7 +9,7 @@ namespace LuaInterface.Editor
     {
         public static void SaveCsv(List<Type> types, string fileName)
         {
-            var lines = new List<string> { "FullName,Namespace,Name,Android,iOS,Included,NamespaceIncluded,InTypeCsv,TypeIncluded,Unsupported,Public,Visible,NestedPublic,Generic,Abstract" };
+            var lines = new List<string> { "FullName,Namespace,Name,PlatformFlags,NamespacePlatformFlags,CsvPlatformFlags,RulePlatformFlags,Unsupported,Public,Visible,NestedPublic,Generic,Abstract" };
             foreach (var type in types)
             {
                 var platformFlags = ReflectTypes.GetPlatformFlags(type);
