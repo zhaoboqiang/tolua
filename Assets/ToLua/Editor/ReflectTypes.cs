@@ -27,7 +27,7 @@ namespace LuaInterface.Editor
 
         private static bool IsTypeIncluded(Type type)
         {
-            if (type.IsGenericType)
+            if (type.IsGenericTypeDefinition)
                 return false;
 
             if (!type.IsVisible)
