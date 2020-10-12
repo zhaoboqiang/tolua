@@ -652,7 +652,7 @@ public static class ToLuaExport
                 GenerateMethods();
                 GenIndexFunc();
                 GenNewIndexFunc();
-                GenOutFunction();
+                //GenOutFunction();
                 GenEventFunctions();
 
                 EndCodeGen(dir);
@@ -666,11 +666,8 @@ public static class ToLuaExport
     static bool BeDropMethodType(MethodInfo md)
     {
         var t = md.DeclaringType;
-
         if (t == type)
-        {
             return true;
-        }
 
         return allTypes.IndexOf(t) < 0;
     }
@@ -1169,7 +1166,7 @@ public static class ToLuaExport
 
     static string GetConstantFieldName(FieldInfo fieldInfo)
     {
-        return fieldInfo.ReflectedType.FullName + "." + fieldInfo.Name;
+        return fieldInfo.ReflectedType.FullName.Replace("+", ".") + "." + fieldInfo.Name;
     }
 
     static void RegisterProperties()
@@ -2608,7 +2605,7 @@ public static class ToLuaExport
         { typeof(char), 2 },
         { typeof(byte), 3 },
         { typeof(sbyte), 4 },
-        { typeof(ushort),5 },
+        { typeof(ushort), 5 },
         { typeof(short), 6 },
         { typeof(uint), 7 },
         { typeof(int), 8 },                
