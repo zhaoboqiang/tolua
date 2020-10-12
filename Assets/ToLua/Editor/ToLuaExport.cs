@@ -1418,20 +1418,20 @@ public static class ToLuaExport
     {
         if (md.IsGenericMethod)
         {
-            var gts = md.GetGenericArguments();
+            var arguments = md.GetGenericArguments();
             var list = new List<ParameterInfo>(md.GetParameters());
 
-            for (int i = 0; i < gts.Length; i++)
+            for (int i = 0; i < arguments.Length; i++)
             {
-                var ts = gts[i].GetGenericParameterConstraints();
-                if (ts == null || ts.Length == 0 || IsGenericConstraints(ts))
+                var constraints = arguments[i].GetGenericParameterConstraints();
+                if (constraints == null || constraints.Length == 0 || IsGenericConstraints(constraints))
                     return true;
 
-                var p = list.Find((iter) => iter.ParameterType == gts[i]);
+                var p = list.Find((iter) => iter.ParameterType == arguments[i]);
                 if (p == null)
                     return true;
 
-                list.RemoveAll((iter) => iter.ParameterType == gts[i]);
+                list.RemoveAll((iter) => iter.ParameterType == arguments[i]);
             }
 
             for (int i = 0; i < list.Count; i++)
@@ -4148,7 +4148,8 @@ public static class ToLuaExport
         string typeName = t.FullName;
         int count = gArgs.Length;
         int pos = typeName.IndexOf("[");
-        typeName = typeName.Substring(0, pos);
+        if (pos > 0)
+            typeName = typeName.Substring(0, pos);
 
         string str = null;
         string name = null;
