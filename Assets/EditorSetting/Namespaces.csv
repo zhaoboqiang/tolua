@@ -87,8 +87,8 @@ Unity.Jobs.LowLevel.Unsafe,False,False
 Unity.Profiling,True,True
 Unity.Profiling.LowLevel,False,False
 UnityEditor.Experimental,False,False
-UnityEditor.Rendering.Universal,True,True
-UnityEditor.ShaderGraph,True,True
+UnityEditor.Rendering.Universal,False,False
+UnityEditor.ShaderGraph,False,False
 UnityEditorInternal,False,False
 UnityEngine,True,True
 UnityEngine._Scripting.APIUpdating,False,False
