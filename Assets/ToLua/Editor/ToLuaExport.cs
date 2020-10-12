@@ -32,6 +32,7 @@ using System.Linq;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+[System.Flags]
 public enum MetaOp
 {
     None = 0,
@@ -1449,9 +1450,6 @@ public static class ToLuaExport
 
     static void GenerateMethods()
     {
-        if (nameCounter.Count == 0)
-            return;
-
         var set = new HashSet<string>();
 
         for (int i = 0; i < methods.Count; i++)
