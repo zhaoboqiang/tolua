@@ -236,11 +236,8 @@ public static class ToLuaMenu
 
         BindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
 
-        // Debug
-		/*
-        PrintTypes.SaveCsv(ToLuaSettingsUtility.BindTypes.Select(bt => bt.type).ToList(), "all_types_1");
-        PrintTypes.SaveCsv(BindTypes.Select(bt => bt.type).ToList(), "all_types_2");
-		*/
+        foreach (var bindType in BindTypes)
+            ToLuaExport.allTypes.Add(bindType.type);
 
         foreach (var bindType in BindTypes)
             GenerateClassWrap(bindType);
