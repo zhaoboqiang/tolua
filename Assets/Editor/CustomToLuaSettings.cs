@@ -31,6 +31,5 @@ public class CustomToLuaSettings : ToLuaSettings
     public string IncludedAssemblyCsv => GetCsvPath("Assemblies");
     public string IncludedNamespaceCsv => GetCsvPath("Namespaces");
     public string IncludedTypeCsv => GetCsvPath("Types");
-    public string IncludedMethodCsv => GetCsvPath("Methods");
-    public string IncludedEnumCsv => GetCsvPath("Enums");
+    public string IncludedFieldCsv => GetCsvPath("Fields");
 }

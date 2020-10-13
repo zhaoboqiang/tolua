@@ -34,5 +34,13 @@ namespace LuaInterface.Editor
 
             return flags;
         }
+
+        public static ToLuaPlatformFlags GetPlatformFlags(MemberInfo memberInfo)
+        {
+            var name = $"{memberInfo.ReflectedType.FullName}.{memberInfo.Name}";
+
+            return GetPlatformFlags(name);
+        }
+ 
     }
 }

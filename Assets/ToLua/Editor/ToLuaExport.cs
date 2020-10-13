@@ -1084,13 +1084,13 @@ public static class ToLuaExport
 			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
 				continue;
 				
-            var methodPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             string name = GetMethodName(m.Method);
 
             if (!nameCounter.TryGetValue(name, out count))
             {
-                RegisterMethod(m.Method, name, methodPlatformFlagsText);
+                RegisterMethod(m.Method, name, fieldPlatformFlagsText);
 
                 nameCounter[name] = 1;
             }
@@ -1144,7 +1144,7 @@ public static class ToLuaExport
 
     static bool IsItemThis(PropertyInfo info)
     {
-        MethodInfo md = info.GetGetMethod();
+        var md = info.GetGetMethod();
         if (md != null)
             return md.GetParameters().Length != 0;
 
@@ -1172,59 +1172,86 @@ public static class ToLuaExport
 
     static void RegisterProperties()
     {
-        if (fields.Length == 0 && props.Length == 0 && events.Length == 0 && isStaticClass && baseType == null)
-            return;
-
-        for (int i = 0; i < fields.Length; i++)
+        foreach (var field in fields)
         {
-            var field = fields[i];
+            
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(field);
+			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+				continue;
+				
+            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+            BeginPlatformMacro(fieldPlatformFlagsText);
+
+            var name = field.Name;
 
             if (field.IsLiteral || field.IsPrivate || field.IsInitOnly)
             {
                 if (field.IsLiteral && field.FieldType.IsPrimitive && !field.FieldType.IsEnum)
                 {
-                    sb.AppendFormat("\t\tL.RegConstant(\"{0}\", {1});\r\n", field.Name, GetConstantFieldName(field));
+                    sb.AppendFormat("\t\tL.RegConstant(\"{0}\", {1});\r\n", name, GetConstantFieldName(field));
                 }
                 else
                 {
-                    sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, null);\r\n", field.Name);
+                    sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, null);\r\n", name);
                 }
             }
             else
             {
-                sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, set_{0});\r\n", field.Name);
+                sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, set_{0});\r\n", name);
             }
+
+            EndPlatformMacro(fieldPlatformFlagsText);
         }
 
-        for (int i = 0; i < props.Length; i++)
+        foreach (var prop in props)
         {
-            var prop = props[i];
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(prop);
+			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+				continue;
+				
+            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
             var canRead = CanRead(prop);
             var canWrite = CanWrite(prop);
 
+            BeginPlatformMacro(fieldPlatformFlagsText);
+
+            var name = prop.Name;
+
             if (canRead && canWrite)
             {
-                var md = methods.Find((p) => { return p.Name == "get_" + prop.Name; });
-                string get = md == null ? "get" : "_get";
-                md = methods.Find((p) => { return p.Name == "set_" + prop.Name; });
-                string set = md == null ? "set" : "_set";
-                sb.AppendFormat("\t\tL.RegVar(\"{0}\", {1}_{0}, {2}_{0});\r\n", prop.Name, get, set);
+                var md = methods.Find((p) => { return p.Name == "get_" + name; });
+                var get = md == null ? "get" : "_get";
+                md = methods.Find((p) => { return p.Name == "set_" + name; });
+                var set = md == null ? "set" : "_set";
+                sb.AppendFormat("\t\tL.RegVar(\"{0}\", {1}_{0}, {2}_{0});\r\n", name, get, set);
             }
             else if (canRead)
             {
-                var md = methods.Find((p) => { return p.Name == "get_" + prop.Name; });
-                sb.AppendFormat("\t\tL.RegVar(\"{0}\", {1}_{0}, null);\r\n", prop.Name, md == null ? "get" : "_get");
+                var md = methods.Find((p) => { return p.Name == "get_" + name; });
+                sb.AppendFormat("\t\tL.RegVar(\"{0}\", {1}_{0}, null);\r\n", name, md == null ? "get" : "_get");
             }
             else if (canWrite)
             {
-                var md = methods.Find((p) => { return p.Name == "set_" + prop.Name; });
-                sb.AppendFormat("\t\tL.RegVar(\"{0}\", null, {1}_{0});\r\n", prop.Name, md == null ? "set" : "_set");
+                var md = methods.Find((p) => { return p.Name == "set_" + name; });
+                sb.AppendFormat("\t\tL.RegVar(\"{0}\", null, {1}_{0});\r\n", name, md == null ? "set" : "_set");
             }
+
+            EndPlatformMacro(fieldPlatformFlagsText);
         }
 
-        for (int i = 0; i < events.Length; i++)
+        foreach (var eventInfo in events)
         {
-            sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, set_{0});\r\n", events[i].Name);
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(eventInfo);
+			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+				continue;
+				
+            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+            BeginPlatformMacro(fieldPlatformFlagsText);
+            sb.AppendFormat("\t\tL.RegVar(\"{0}\", get_{0}, set_{0});\r\n", eventInfo.Name);
+            EndPlatformMacro(fieldPlatformFlagsText);
         }
     }
 
