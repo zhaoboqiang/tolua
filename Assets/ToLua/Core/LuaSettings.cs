@@ -29,8 +29,6 @@ namespace LuaInterface
     [Serializable]
     public struct LuaIncludedType
     {
-        public string Namespace;
-        public string Name;
         public string FullName;
         public string Note;
         public bool Android;
