@@ -3020,15 +3020,25 @@ public static class ToLuaExport
         }
     }
 
-    static void GenGetFieldStr(string varName, Type varType, bool isStatic, bool isByteBuffer, bool beOverride = false)
+    static void GenGetFieldStr(MemberInfo memberInfo, Type varType, bool isStatic, bool isByteBuffer, bool beOverride = false)
     {
+        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
+        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+            return;
+	
+        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+        BeginPlatformMacro(fieldPlatformFlagsText);
+
+        var fieldName = memberInfo.Name;
+
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int {0}_{1}(IntPtr L)\r\n", beOverride ? "_get" : "get", varName);
+        sb.AppendFormat("\tstatic int {0}_{1}(IntPtr L)\r\n", beOverride ? "_get" : "get", fieldName);
         sb.AppendLineEx("\t{");
 
         if (isStatic)
         {
-            var arg = $"{className}.{varName}";
+            var arg = $"{className}.{fieldName}";
             BeginTry();
             GenPushStr(varType, arg, "\t\t\t", isByteBuffer);
             sb.AppendLineEx("\t\t\treturn 1;");
@@ -3040,7 +3050,7 @@ public static class ToLuaExport
             BeginTry();
             sb.AppendLineEx("\t\t\to = ToLua.ToObject(L, 1);");
             sb.AppendFormat("\t\t\tvar obj = ({0})o;\r\n", className);
-            sb.AppendFormat("\t\t\t{0} ret = obj.{1};\r\n", GetTypeStr(varType), varName);
+            sb.AppendFormat("\t\t\t{0} ret = obj.{1};\r\n", GetTypeStr(varType), fieldName);
             GenPushStr(varType, "ret", "\t\t\t", isByteBuffer);
             sb.AppendLineEx("\t\t\treturn 1;");
 
@@ -3049,21 +3059,35 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\t{");
 
             sb.AppendFormat(
-                "\t\t\treturn LuaDLL.toluaL_exception(L, e, o, \"attempt to index {0} on a nil value\");\r\n", varName);
+                "\t\t\treturn LuaDLL.toluaL_exception(L, e, o, \"attempt to index {0} on a nil value\");\r\n", fieldName);
             sb.AppendLineEx("\t\t}");
         }
 
         sb.AppendLineEx("\t}");
+
+        EndPlatformMacro(fieldPlatformFlagsText);
     }
 
-    static void GenGetEventStr(string varName, Type varType)
+    static void GenGetEventStr(MemberInfo memberInfo, Type varType)
     {
+        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
+        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+            return;
+	
+        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+        BeginPlatformMacro(fieldPlatformFlagsText);
+
+        var fieldName = memberInfo.Name;
+
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int get_{0}(IntPtr L)\r\n", varName);
+        sb.AppendFormat("\tstatic int get_{0}(IntPtr L)\r\n", fieldName);
         sb.AppendLineEx("\t{");
         sb.AppendFormat("\t\tToLua.Push(L, new EventObject(typeof({0})));\r\n", GetTypeStr(varType));
         sb.AppendLineEx("\t\treturn 1;");
         sb.AppendLineEx("\t}");
+
+        EndPlatformMacro(fieldPlatformFlagsText);
     }
 
     static void GenIndexFunc()
@@ -3076,7 +3100,7 @@ public static class ToLuaExport
                 continue;
 
             var beBuffer = IsByteBuffer(field);
-            GenGetFieldStr(field.Name, field.FieldType, field.IsStatic, beBuffer);
+            GenGetFieldStr(field, field.FieldType, field.IsStatic, beBuffer);
         }
 
         for (int i = 0; i < props.Length; i++)
@@ -3086,30 +3110,36 @@ public static class ToLuaExport
             if (!CanRead(prop))
                 continue;
 
-            var isStatic = true;
-            var index = propList.IndexOf(props[i]);
+            var isStatic = propList.IndexOf(prop) < 0;
 
-            if (index >= 0)
-            {
-                isStatic = false;
-            }
+            var md = methods.Find((p) => p.Name == "get_" + prop.Name);
+            var beBuffer = IsByteBuffer(prop);
 
-            var md = methods.Find((p) => p.Name == "get_" + props[i].Name);
-            var beBuffer = IsByteBuffer(props[i]);
-
-            GenGetFieldStr(props[i].Name, props[i].PropertyType, isStatic, beBuffer, md != null);
+            GenGetFieldStr(prop, prop.PropertyType, isStatic, beBuffer, md != null);
         }
 
         for (int i = 0; i < events.Length; i++)
         {
-            GenGetEventStr(events[i].Name, events[i].EventHandlerType);
+            var eventInfo = events[i];
+
+            GenGetEventStr(eventInfo, eventInfo.EventHandlerType);
         }
     }
 
-    static void GenSetFieldStr(string varName, Type varType, bool isStatic, bool beOverride = false)
+    static void GenSetFieldStr(MemberInfo memberInfo, Type varType, bool isStatic, bool beOverride = false)
     {
+        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
+        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+            return;
+	
+        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+        BeginPlatformMacro(fieldPlatformFlagsText);
+
+        var fieldName = memberInfo.Name;
+
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int {0}_{1}(IntPtr L)\r\n", beOverride ? "_set" : "set", varName);
+        sb.AppendFormat("\tstatic int {0}_{1}(IntPtr L)\r\n", beOverride ? "_set" : "set", fieldName);
         sb.AppendLineEx("\t{");
 
         if (!isStatic)
@@ -3119,7 +3149,7 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\t\to = ToLua.ToObject(L, 1);");
             sb.AppendFormat("\t\t\t{0} obj = ({0})o;\r\n", className);
             ProcessArg(varType, "\t\t\t", "arg0", 2);
-            sb.AppendFormat("\t\t\tobj.{0} = arg0;\r\n", varName);
+            sb.AppendFormat("\t\t\tobj.{0} = arg0;\r\n", fieldName);
 
             if (type.IsValueType)
             {
@@ -3131,32 +3161,42 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\tcatch(Exception e)");
             sb.AppendLineEx("\t\t{");
             sb.AppendFormat(
-                "\t\t\treturn LuaDLL.toluaL_exception(L, e, o, \"attempt to index {0} on a nil value\");\r\n", varName);
+                "\t\t\treturn LuaDLL.toluaL_exception(L, e, o, \"attempt to index {0} on a nil value\");\r\n", fieldName);
             sb.AppendLineEx("\t\t}");
         }
         else
         {
             BeginTry();
             ProcessArg(varType, "\t\t\t", "arg0", 2);
-            sb.AppendFormat("\t\t\t{0}.{1} = arg0;\r\n", className, varName);
+            sb.AppendFormat("\t\t\t{0}.{1} = arg0;\r\n", className, fieldName);
             sb.AppendLineEx("\t\t\treturn 0;");
             EndTry();
         }
 
         sb.AppendLineEx("\t}");
+
+        EndPlatformMacro(fieldPlatformFlagsText);
     }
 
-    static void GenSetEventStr(string varName, Type varType, bool isStatic)
+    static void GenSetEventStr(MemberInfo memberInfo, Type varType, bool isStatic)
     {
+        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
+        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+            return;
+	
+        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+        BeginPlatformMacro(fieldPlatformFlagsText);
+
+        var fieldName = memberInfo.Name;
+
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int set_{0}(IntPtr L)\r\n", varName);
+        sb.AppendFormat("\tstatic int set_{0}(IntPtr L)\r\n", fieldName);
         sb.AppendLineEx("\t{");
         BeginTry();
 
         if (!isStatic)
-        {
             sb.AppendFormat("\t\t\t{0} obj = ({0})ToLua.CheckObject(L, 1, typeof({0}));\r\n", className);
-        }
 
         string strVarType = GetTypeStr(varType);
         string objStr = isStatic ? className : "obj";
@@ -3170,24 +3210,26 @@ public static class ToLuaExport
         sb.AppendLineEx("\t\t\t{");
         sb.AppendFormat(
             "\t\t\t\treturn LuaDLL.luaL_throw(L, \"The event '{0}.{1}' can only appear on the left hand side of += or -= when used outside of the type '{0}'\");\r\n",
-            className, varName);
+            className, fieldName);
         sb.AppendLineEx("\t\t\t}\r\n");
 
         sb.AppendLineEx("\t\t\tif (arg0.op == EventOp.Add)");
         sb.AppendLineEx("\t\t\t{");
         sb.AppendFormat("\t\t\t\tvar ev = ({0})arg0.func;\r\n", strVarType);
-        sb.AppendFormat("\t\t\t\t{0}.{1} += ev;\r\n", objStr, varName);
+        sb.AppendFormat("\t\t\t\t{0}.{1} += ev;\r\n", objStr, fieldName);
         sb.AppendLineEx("\t\t\t}");
         sb.AppendLineEx("\t\t\telse if (arg0.op == EventOp.Sub)");
         sb.AppendLineEx("\t\t\t{");
         sb.AppendFormat("\t\t\t\tvar ev = ({0})arg0.func;\r\n", strVarType);
-        sb.AppendFormat("\t\t\t\t{0}.{1} -= ev;\r\n", objStr, varName);
+        sb.AppendFormat("\t\t\t\t{0}.{1} -= ev;\r\n", objStr, fieldName);
         sb.AppendLineEx("\t\t\t}\r\n");
 
         sb.AppendLineEx("\t\t\treturn 0;");
         EndTry();
 
         sb.AppendLineEx("\t}");
+
+        EndPlatformMacro(fieldPlatformFlagsText);
     }
 
     static void GenNewIndexFunc()
@@ -3199,7 +3241,7 @@ public static class ToLuaExport
             if (field.IsLiteral || field.IsInitOnly || field.IsPrivate)
                 continue;
 
-            GenSetFieldStr(field.Name, field.FieldType, field.IsStatic);
+            GenSetFieldStr(field, field.FieldType, field.IsStatic);
         }
 
         for (int i = 0; i < props.Length; i++)
@@ -3209,22 +3251,19 @@ public static class ToLuaExport
             if (!CanWrite(prop))
                 continue;
 
-            bool isStatic = true;
-            int index = propList.IndexOf(prop);
-
-            if (index >= 0)
-                isStatic = false;
+            bool isStatic = propList.IndexOf(prop) < 0;
 
             var md = methods.Find((p) => { return p.Name == "set_" + prop.Name; });
-            GenSetFieldStr(prop.Name, prop.PropertyType, isStatic, md != null);
+            GenSetFieldStr(prop, prop.PropertyType, isStatic, md != null);
         }
 
         for (int i = 0; i < events.Length; i++)
         {
-            var e = events[i];
+            var eventInfo = events[i];
 
-            bool isStatic = eventList.IndexOf(e) < 0;
-            GenSetEventStr(e.Name, e.EventHandlerType, isStatic);
+            bool isStatic = eventList.IndexOf(eventInfo) < 0;
+
+            GenSetEventStr(eventInfo, eventInfo.EventHandlerType, isStatic);
         }
     }
 
