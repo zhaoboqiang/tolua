@@ -209,7 +209,7 @@ public static class ToLuaMenu
             ToLuaExport.allTypes.Add(bindType.type);
 
         //var type = ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition");
-        var type = typeof(UnityEngine.MeshRenderer);
+        var type = typeof(UnityEngine.Apple.ReplayKit.ReplayKit.BroadcastStatusCallback);
         GenerateClassWrap(new BindType(type));
 
         Debug.Log("Generate lua binding file over");
@@ -249,13 +249,13 @@ public static class ToLuaMenu
 
     static HashSet<Type> GetCustomTypeDelegates()
     {
-        var list = ToLuaSettingsUtility.BindTypes;
-        var set = new HashSet<Type>();
+        var bindTypes = ToLuaSettingsUtility.BindTypes;
+        var delegateTypes = new HashSet<Type>();
         var binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase | BindingFlags.Instance;
 
-        for (int i = 0; i < list.Length; i++)
+        for (int i = 0; i < bindTypes.Length; i++)
         {
-            var type = list[i].type;
+            var type = bindTypes[i].type;
             var fields = type.GetFields(BindingFlags.GetField | BindingFlags.SetField | binding);
             var props = type.GetProperties(BindingFlags.GetProperty | BindingFlags.SetProperty | binding);
 
@@ -268,7 +268,7 @@ public static class ToLuaMenu
 
                 if (ToLuaExport.IsDelegateType(t))
                 {
-                    set.Add(t);
+                    delegateTypes.Add(t);
                 }
             }
 
@@ -279,7 +279,7 @@ public static class ToLuaMenu
 
                 if (ToLuaExport.IsDelegateType(t))
                 {
-                    set.Add(t);
+                    delegateTypes.Add(t);
                 }
             }
 
@@ -300,13 +300,13 @@ public static class ToLuaMenu
 
                     if (ToLuaExport.IsDelegateType(t))
                     {
-                        set.Add(t);
+                        delegateTypes.Add(t);
                     }
                 }
             }
         }
 
-        return set;
+        return delegateTypes;
     }
 
     [MenuItem("Lua/Gen Lua Delegates", false, 2)]
@@ -465,7 +465,7 @@ public static class ToLuaMenu
 
         var tree = InitTree();
         var sb = new StringBuilder();
-        var dtList = new List<DelegateType>();
+        var delegateTypes = new List<DelegateType>();
 
         var list = new List<DelegateType>();
         list.AddRange(ToLuaSettingsUtility.customDelegateList);
@@ -495,7 +495,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
         sb.AppendLineEx("\t\tL.BeginModule(null);");
 
-        GenRegisterInfo(null, sb, list, dtList);
+        GenRegisterInfo(null, sb, list, delegateTypes);
 
         Action<ToLuaNode<string>> begin = (node) =>
         {
@@ -505,7 +505,7 @@ public static class ToLuaMenu
             sb.Append($"\t\tL.BeginModule(\"{node.value}\");\r\n");
             var space = GetSpaceNameFromTree(node);
 
-            GenRegisterInfo(space, sb, list, dtList);
+            GenRegisterInfo(space, sb, list, delegateTypes);
         };
 
         Action<ToLuaNode<string>> end = (node) =>
@@ -522,11 +522,11 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
         sb.AppendLineEx("\t}");
 
-        sb.AppendLineEx($"\t// Delegates: {set.Count}, {list.Count}, {dtList.Count}");
+        sb.AppendLineEx($"\t// Delegates: {set.Count}, {list.Count}, {delegateTypes.Count}");
 
-        foreach (var dt in dtList)
+        foreach (var delegateType in delegateTypes)
         {
-            ToLuaExport.GenEventFunction(dt.type, sb);
+            ToLuaExport.GenerateDelegate(delegateType.type, sb);
         }
 
         sb.AppendLineEx("}\r\n");

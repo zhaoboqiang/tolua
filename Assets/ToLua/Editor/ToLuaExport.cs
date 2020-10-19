@@ -1174,7 +1174,6 @@ public static class ToLuaExport
     {
         foreach (var field in fields)
         {
-            
             var fieldPlatformFlags = ReflectFields.GetPlatformFlags(field);
 			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
 				continue;
@@ -1269,6 +1268,14 @@ public static class ToLuaExport
                 continue;
             }
 
+            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(t);
+			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+				continue;
+				
+            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+
+            BeginPlatformMacro(fieldPlatformFlagsText);
+
             funcName = ConvertToLibSign(funcName);
             int index = Array.FindIndex(ToLuaSettingsUtility.customDelegateList, (p) => p.type == t);
             string abr = null;
@@ -1277,6 +1284,8 @@ public static class ToLuaExport
             funcName = ConvertToLibSign(space) + "_" + funcName;
 
             sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", abr, funcName);
+
+            EndPlatformMacro(fieldPlatformFlagsText);
         }
 
         for (int i = 0; i < list.Count; i++)
@@ -4112,8 +4121,16 @@ public static class ToLuaExport
         }
     }
 
-    public static void GenEventFunction(Type t, StringBuilder sb)
+    public static void GenerateDelegate(Type t, StringBuilder sb)
     {
+        var platformFlags = ReflectTypes.GetPlatformFlags(type);
+        if (platformFlags == ToLuaPlatformFlags.None)
+            return;
+            
+        var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+        BeginPlatformMacro(platformFlagsText);
+
         var space = GetNameSpace(t, out var funcName);
         funcName = CombineTypeStr(space, funcName);
         funcName = ConvertToLibSign(funcName);
@@ -4145,13 +4162,15 @@ public static class ToLuaExport
         sb.AppendLineEx("\t\t\treturn LuaDLL.toluaL_exception(L, e);");
         sb.AppendLineEx("\t\t}");
         sb.AppendLineEx("\t}");
+
+        EndPlatformMacro(platformFlagsText);
     }
 
     static void GenEventFunctions()
     {
         foreach (Type t in eventSet)
         {
-            GenEventFunction(t, sb);
+            GenerateDelegate(t, sb);
         }
     }
 
