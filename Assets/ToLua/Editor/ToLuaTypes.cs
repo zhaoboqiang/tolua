@@ -6,41 +6,6 @@ namespace LuaInterface.Editor
 {
     public static class ToLuaTypes
     {
-        private static Dictionary<Type, Type> _outerTypes;
-        private static Dictionary<Type, Type> OuterTypes
-        {
-            get
-            {
-                if (_outerTypes == null)
-                {
-                    _outerTypes = new Dictionary<Type, Type>();
-
-                    var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    var types = new List<Type>();
-
-                    foreach (var assembly in assemblies)
-                    {
-                        foreach (var type in assembly.GetTypes())
-                        {
-                            foreach (var nestedType in type.GetNestedTypes())
-                            {
-                                _outerTypes.Add(nestedType, type);
-                            }
-                        }
-                    }
-                }
-
-                return _outerTypes;
-            }
-        }
-
-        public static bool GetOuterType(Type type, out Type outerType)
-        {
-            if (OuterTypes.TryGetValue(type, out outerType))
-                return true;
-            return false;
-        }
-
         public static bool IsUnsupported(MemberInfo mi)
         {
             foreach (var attribute in mi.GetCustomAttributes(true))
@@ -66,16 +31,16 @@ namespace LuaInterface.Editor
                 return true;
 
             // check outer class
-            if (type.IsNested)
+            while (type.IsNested)
             {
-                if (GetOuterType(type, out var outerType))
-                {
-                    if (!ReflectTypes.IsIncluded(outerType))
-                    {
-                        return true;
-                    }
-                }
+                var outerType = type.ReflectedType;
+
+                if (!ReflectTypes.IsIncluded(outerType))
+                    return true;
+                
+                type = outerType;
             }
+
             return false;
         }
 

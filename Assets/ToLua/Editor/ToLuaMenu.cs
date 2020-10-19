@@ -209,7 +209,7 @@ public static class ToLuaMenu
             ToLuaExport.allTypes.Add(bindType.type);
 
         //var type = ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition");
-        var type = typeof(UnityEngine.Apple.ReplayKit.ReplayKit.BroadcastStatusCallback);
+        var type = typeof(UnityEngine.Apple.ReplayKit.ReplayKit);
         GenerateClassWrap(new BindType(type));
 
         Debug.Log("Generate lua binding file over");
@@ -457,38 +457,44 @@ public static class ToLuaMenu
     {
         var bindTypes = BindTypes;
 
-        for (int i = 0; i < bindTypes.Length; i++)
+        foreach (var bindType in bindTypes)
         {
-            var bindType = bindTypes[i];
-            if (bindType.nameSpace == nameSpace)
-            {
-                var platformFlags = ReflectTypes.GetPlatformFlags(bindType.type);
-                if (platformFlags == ToLuaPlatformFlags.None)
-                    continue;
+            if (bindType.nameSpace != nameSpace)
+                continue;
 
-                var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+            var platformFlags = ReflectTypes.GetPlatformFlags(bindType.type);
+            if (platformFlags == ToLuaPlatformFlags.None)
+                continue;
 
-                ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
+            var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
 
-                sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r\n");
+            ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
 
-                ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
-            }
+            sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r\n");
+
+            ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
         }
 
-        for (int i = 0; i < delegateTypes.Length; i++)
+        foreach (var type in delegateTypes)
         {
-            var type = delegateTypes[i];
             var typeSpace = ToLuaExport.GetNameSpace(type, out var funcName);
+            if (typeSpace != nameSpace)
+                continue;
 
-            if (typeSpace == nameSpace)
-            {
-                funcName = ToLuaExport.ConvertToLibSign(funcName);
-                var typeFullName = ToLuaExport.GetTypeFullName(type);
+            var platformFlags = ReflectTypes.GetPlatformFlags(type);
+            if (platformFlags == ToLuaPlatformFlags.None)
+                continue;
 
-                sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", funcName, typeFullName);
-                wrappedDelegateTypes.Add(type);
-            }
+            var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+            funcName = ToLuaExport.ConvertToLibSign(funcName);
+            var typeFullName = ToLuaExport.GetTypeFullName(type);
+
+            ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
+            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", funcName, typeFullName);
+            ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
+
+            wrappedDelegateTypes.Add(type);
         }
     }
 

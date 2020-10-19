@@ -68,7 +68,11 @@ namespace LuaInterface.Editor
             var assemblyName = type.Assembly.GetName().Name;
 
             var assemblyFlags = ReflectAssemblies.GetPlatformFlags(assemblyName);
+
             var namespaceFlags = ReflectNamespaces.GetPlatformFlags(type.Namespace);
+
+            for (var outerType = type; outerType.IsNested; outerType = outerType.ReflectedType)
+                namespaceFlags &= ReflectNamespaces.GetPlatformFlags(outerType.Namespace);
 
             var flags = GetPlatformFlagsFromCsv(type, assemblyFlags & namespaceFlags);
             return GetPlatformFlagsFromRule(type, flags);

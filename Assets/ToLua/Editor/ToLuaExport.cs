@@ -1238,8 +1238,7 @@ public static class ToLuaExport
 
         foreach (Type t in eventSet)
         {
-            string space = GetNameSpace(t, out var funcName);
-
+            var space = GetNameSpace(t, out var funcName);
             if (space != className)
             {
                 list.Add(t);
