@@ -89,6 +89,7 @@ Unity.Profiling.LowLevel,False,False
 UnityEditor.Experimental,False,False
 UnityEditor.Rendering.Universal,False,False
 UnityEditor.ShaderGraph,False,False
+UnityEditor.XCodeEditor,False,False
 UnityEditorInternal,False,False
 UnityEngine,True,True
 UnityEngine._Scripting.APIUpdating,False,False
@@ -127,6 +128,7 @@ UnityEngine.Experimental.U2D,False,False
 UnityEngine.Experimental.VFX,False,False
 UnityEngine.Experimental.Video,False,False
 UnityEngine.Experimental.XR,False,False
+UnityEngine.Experimental.XR.Interaction,True,True
 UnityEngine.Internal,False,False
 UnityEngine.Internal.VR,False,False
 UnityEngine.iOS,False,True
@@ -157,6 +159,7 @@ UnityEngine.Serialization,False,False
 UnityEngine.SocialPlatforms,False,False
 UnityEngine.SocialPlatforms.GameCenter,False,False
 UnityEngine.SocialPlatforms.Impl,False,False
+UnityEngine.SpatialTracking,True,True
 UnityEngine.Sprites,True,True
 UnityEngine.Subsystems,True,True
 UnityEngine.TestTools,True,True
@@ -183,6 +186,7 @@ UnityEngine.Windows.Speech,False,False
 UnityEngine.Windows.WebCam,False,False
 UnityEngine.WSA,False,False
 UnityEngine.XR,True,True
+UnityEngine.XR.LegacyInputHelpers,True,True
 UnityEngine.XR.Provider,True,True
 UnityEngine.XR.Tango,False,False
 UnityEngine.XR.WSA,False,False

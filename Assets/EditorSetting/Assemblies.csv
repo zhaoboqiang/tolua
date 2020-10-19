@@ -14,8 +14,17 @@ Mono.Security,False,False
 mscorlib,False,False
 nunit.framework,False,False
 System,True,True
+System.ComponentModel,False,False
 System.Configuration,False,False
 System.Core,False,False
+System.Data,False,False
+System.Drawing,False,False
+System.Numerics,False,False
+System.Runtime,False,False
+System.Runtime.Serialization,False,False
+System.Security,False,False
+System.ServiceModel.Internals,False,False
+System.Transactions,False,False
 System.Xml,False,False
 System.Xml.Linq,False,False
 ToLua.Injection.Editor,False,False
