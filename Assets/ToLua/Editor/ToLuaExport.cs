@@ -54,28 +54,6 @@ public enum ObjAmbig
     All = 3
 }
 
-public class DelegateType
-{
-    public string name;
-    public Type type;
-    public string abr = null;
-
-    public string strType = "";
-
-    public DelegateType(Type t)
-    {
-        type = t;
-        strType = ToLuaExport.GetTypeStr(t);
-        name = ToLuaExport.ConvertToLibSign(strType);
-    }
-
-    public DelegateType SetAbrName(string str)
-    {
-        abr = str;
-        return this;
-    }
-}
-
 public static class ToLuaExport
 {
     public static string className = string.Empty;
@@ -1277,13 +1255,9 @@ public static class ToLuaExport
             BeginPlatformMacro(fieldPlatformFlagsText);
 
             funcName = ConvertToLibSign(funcName);
-            int index = Array.FindIndex(ToLuaSettingsUtility.customDelegateList, (p) => p.type == t);
-            string abr = null;
-            if (index >= 0) abr = ToLuaSettingsUtility.customDelegateList[index].abr;
-            abr = abr ?? funcName;
-            funcName = ConvertToLibSign(space) + "_" + funcName;
+            var funcFullName = ConvertToLibSign(space) + "_" + funcName;
 
-            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", abr, funcName);
+            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", funcName, funcFullName);
 
             EndPlatformMacro(fieldPlatformFlagsText);
         }
@@ -2957,6 +2931,12 @@ public static class ToLuaExport
         return LuaMisc.GetTypeName(t);
     }
 
+    public static string GetTypeFullName(Type type)
+    {
+        var typeName = GetTypeStr(type);
+        return ConvertToLibSign(typeName);
+    }
+ 
     //获取 typeof(string) 这样的名字
     static string GetTypeOf(Type t, string sep)
     {
@@ -3837,18 +3817,16 @@ public static class ToLuaExport
         }
     }
 
-    public static void GenDelegates(DelegateType[] list)
+    public static void GenDelegates(Type[] delegateTypes)
     {
         usingList.Add("System");
         usingList.Add("System.Collections.Generic");
 
-        for (int i = 0; i < list.Length; i++)
+        foreach (var type in delegateTypes)
         {
-            var t = list[i].type;
-
-            if (!typeof(System.Delegate).IsAssignableFrom(t))
+            if (!typeof(System.Delegate).IsAssignableFrom(type))
             {
-                Debug.LogError(t.FullName + " not a delegate type");
+                Debug.LogError(type.FullName + " not a delegate type");
                 return;
             }
         }
@@ -3862,104 +3840,108 @@ public static class ToLuaExport
         sb.AppendLineEx();
         sb.Append("\t{\r\n");
 
-        if (list.Length > 0)
+        if (delegateTypes.Length > 0)
         {
-            for (int i = 0; i < list.Length; i++)
+            foreach (var type in delegateTypes)
             {
-                var type = list[i].strType;
-                var name = list[i].name;
-                sb.AppendFormat($"\t\tdelegates.Add(typeof({type}), {name});\r\n");
+                var typeName = GetTypeStr(type);
+                var typeFullName = GetTypeFullName(type);
+
+                sb.AppendFormat($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});\r\n");
             }
 
             sb.AppendLineEx();
         }
 
-        if (list.Length > 0)
+        if (delegateTypes.Length > 0)
         {
-            for (int i = 0; i < list.Length; i++)
+            foreach (var type in delegateTypes)
             {
-                string type = list[i].strType;
-                string name = list[i].name;
-                sb.AppendFormat("\t\tDelegateTraits<{0}>.Init({1});\r\n", type, name);
+                var typeName = GetTypeStr(type);
+                var typeFullName = GetTypeFullName(type);
+
+                sb.AppendFormat($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});\r\n");
             }
 
             sb.AppendLineEx();
         }
 
-        if (list.Length > 0)
+        if (delegateTypes.Length > 0)
         {
-            for (int i = 0; i < list.Length; i++)
+            foreach (var type in delegateTypes)
             {
-                string type = list[i].strType;
-                string name = list[i].name;
-                sb.AppendFormat("\t\tTypeTraits<{0}>.Init(Check_{1});\r\n", type, name);
+                var typeName = GetTypeStr(type);
+                var typeFullName = GetTypeFullName(type);
+
+                sb.AppendFormat($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});\r\n");
             }
 
             sb.AppendLineEx();
         }
 
-        for (int i = 0; i < list.Length; i++)
+        foreach (var type in delegateTypes)
         {
-            var type = list[i].strType;
-            string name = list[i].name;
-            sb.AppendFormat("\t\tStackTraits<{0}>.Push = Push_{1};\r\n", type, name);
+            var typeName = GetTypeStr(type);
+            var typeFullName = GetTypeFullName(type);
+
+            sb.AppendFormat($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};\r\n");
         }
 
         sb.Append("\t}\r\n");
         sb.Append(CreateDelegate);
         sb.AppendLineEx(RemoveDelegate);
 
-        for (int i = 0; i < list.Length; i++)
+        foreach (var type in delegateTypes)
         {
-            var t = list[i].type;
-            var strType = list[i].strType;
-            var name = list[i].name;
-            var mi = t.GetMethod("Invoke");
+            var typeName = GetTypeStr(type);
+            var typeFullName = GetTypeFullName(type);
+
+            var mi = type.GetMethod("Invoke");
             var args = GetDelegateParams(mi);
 
             //生成委托类
-            sb.AppendFormat("\tclass {0}_Event : LuaDelegate\r\n", name);
+            sb.AppendFormat("\tclass {0}_Event : LuaDelegate\r\n", typeFullName);
             sb.AppendLineEx("\t{");
-            sb.AppendFormat("\t\tpublic {0}_Event(LuaFunction func) : base(func) {{ }}\r\n", name);
-            sb.AppendFormat("\t\tpublic {0}_Event(LuaFunction func, LuaTable self) : base(func, self) {{ }}\r\n", name);
+            sb.AppendFormat("\t\tpublic {0}_Event(LuaFunction func) : base(func) {{ }}\r\n", typeFullName);
+            sb.AppendFormat("\t\tpublic {0}_Event(LuaFunction func, LuaTable self) : base(func, self) {{ }}\r\n", typeFullName);
             sb.AppendLineEx();
             sb.AppendFormat("\t\tpublic {0} Call({1})\r\n", GetTypeStr(mi.ReturnType), args);
-            GenDelegateBody(sb, t, "\t\t");
+            GenDelegateBody(sb, type, "\t\t");
             sb.AppendLineEx();
             sb.AppendFormat("\t\tpublic {0} CallWithSelf({1})\r\n", GetTypeStr(mi.ReturnType), args);
-            GenDelegateBody(sb, t, "\t\t", true);
+            GenDelegateBody(sb, type, "\t\t", true);
             sb.AppendLineEx("\t}\r\n");
 
             //生成转换函数1
-            sb.AppendFormat("\tpublic static {0} {1}(LuaFunction func, LuaTable self, bool flag)\r\n", strType, name);
+            sb.AppendFormat("\tpublic static {0} {1}(LuaFunction func, LuaTable self, bool flag)\r\n", typeName, typeFullName);
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tif (func == null)");
             sb.AppendLineEx("\t\t{");
-            sb.AppendFormat("\t\t\t{0} fn = delegate({1}) {2}", strType, args, GetDefaultDelegateBody(mi));
+            sb.AppendFormat("\t\t\t{0} fn = delegate({1}) {2}", typeName, args, GetDefaultDelegateBody(mi));
             sb.AppendLineEx("\t\t\treturn fn;");
             sb.AppendLineEx("\t\t}\r\n");
             sb.AppendLineEx("\t\tif(!flag)");
             sb.AppendLineEx("\t\t{");
-            sb.AppendFormat("\t\t\tvar target = new {0}_Event(func);\r\n", name);
-            sb.AppendFormat("\t\t\t{0} d = target.Call;\r\n", strType);
+            sb.AppendFormat("\t\t\tvar target = new {0}_Event(func);\r\n", typeFullName);
+            sb.AppendFormat("\t\t\t{0} d = target.Call;\r\n", typeName);
             sb.AppendLineEx("\t\t\ttarget.method = d.Method;");
             sb.AppendLineEx("\t\t\treturn d;");
             sb.AppendLineEx("\t\t}");
             sb.AppendLineEx("\t\telse");
             sb.AppendLineEx("\t\t{");
-            sb.AppendFormat("\t\t\tvar target = new {0}_Event(func, self);\r\n", name);
-            sb.AppendFormat("\t\t\t{0} d = target.CallWithSelf;\r\n", strType);
+            sb.AppendFormat("\t\t\tvar target = new {0}_Event(func, self);\r\n", typeFullName);
+            sb.AppendFormat("\t\t\t{0} d = target.CallWithSelf;\r\n", typeName);
             sb.AppendLineEx("\t\t\ttarget.method = d.Method;");
             sb.AppendLineEx("\t\t\treturn d;");
             sb.AppendLineEx("\t\t}");
             sb.AppendLineEx("\t}\r\n");
 
-            sb.AppendFormat("\tstatic bool Check_{0}(IntPtr L, int pos)\r\n", name);
+            sb.AppendFormat("\tstatic bool Check_{0}(IntPtr L, int pos)\r\n", typeFullName);
             sb.AppendLineEx("\t{");
-            sb.AppendFormat("\t\treturn TypeChecker.CheckDelegateType(typeof({0}), L, pos);\r\n", strType);
+            sb.AppendFormat("\t\treturn TypeChecker.CheckDelegateType(typeof({0}), L, pos);\r\n", typeName);
             sb.AppendLineEx("\t}\r\n");
 
-            sb.AppendFormat("\tstatic void Push_{0}(IntPtr L, {1} o)\r\n", name, strType);
+            sb.AppendFormat("\tstatic void Push_{0}(IntPtr L, {1} o)\r\n", typeFullName, typeName);
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tToLua.Push(L, o);");
             sb.AppendLineEx("\t}\r\n");
