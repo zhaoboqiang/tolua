@@ -492,29 +492,6 @@ public static class ToLuaMenu
         }
     }
 
-    static void GenPreLoadFunction(BindType bt, StringBuilder sb)
-    {
-        var funcName = "LuaOpen_" + bt.wrapName;
-
-        sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
-        sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", funcName);
-        sb.AppendLineEx("\t{");
-        sb.AppendLineEx("\t\ttry");
-        sb.AppendLineEx("\t\t{");
-        sb.AppendLineEx("\t\t\tLuaState state = LuaState.Get(L);");
-        sb.AppendFormat("\t\t\tstate.BeginPreModule(\"{0}\");\r\n", bt.nameSpace);
-        sb.AppendFormat("\t\t\t{0}Wrap.Register(state);\r\n", bt.wrapName);
-        sb.AppendFormat("\t\t\tint reference = state.GetMetaReference(typeof({0}));\r\n", bt.name);
-        sb.AppendLineEx("\t\t\tstate.EndPreModule(L, reference);");
-        sb.AppendLineEx("\t\t\treturn 1;");
-        sb.AppendLineEx("\t\t}");
-        sb.AppendLineEx("\t\tcatch(Exception e)");
-        sb.AppendLineEx("\t\t{");
-        sb.AppendLineEx("\t\t\treturn LuaDLL.toluaL_exception(L, e);");
-        sb.AppendLineEx("\t\t}");
-        sb.AppendLineEx("\t}");
-    }
-
     static string GetOS()
     {
         return LuaConst.osDir;
