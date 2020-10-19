@@ -1059,9 +1059,9 @@ public static class ToLuaExport
                 continue;
 
             var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
-			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
-				continue;
-				
+            if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+                continue;
+
             var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             string name = GetMethodName(m.Method);
@@ -1153,9 +1153,9 @@ public static class ToLuaExport
         foreach (var field in fields)
         {
             var fieldPlatformFlags = ReflectFields.GetPlatformFlags(field);
-			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
-				continue;
-				
+            if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+                continue;
+
             var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             BeginPlatformMacro(fieldPlatformFlagsText);
@@ -1184,9 +1184,9 @@ public static class ToLuaExport
         foreach (var prop in props)
         {
             var fieldPlatformFlags = ReflectFields.GetPlatformFlags(prop);
-			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
-				continue;
-				
+            if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+                continue;
+
             var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             var canRead = CanRead(prop);
@@ -1221,9 +1221,9 @@ public static class ToLuaExport
         foreach (var eventInfo in events)
         {
             var fieldPlatformFlags = ReflectFields.GetPlatformFlags(eventInfo);
-			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
-				continue;
-				
+            if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+                continue;
+
             var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             BeginPlatformMacro(fieldPlatformFlagsText);
@@ -1247,9 +1247,9 @@ public static class ToLuaExport
             }
 
             var fieldPlatformFlags = ReflectFields.GetPlatformFlags(t);
-			if (fieldPlatformFlags == ToLuaPlatformFlags.None)
-				continue;
-				
+            if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+                continue;
+
             var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
             BeginPlatformMacro(fieldPlatformFlagsText);
@@ -1342,7 +1342,7 @@ public static class ToLuaExport
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
-	
+
         var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
         BeginPlatformMacro(fieldPlatformFlagsText);
@@ -2851,7 +2851,7 @@ public static class ToLuaExport
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(methodBases[0].FullName);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return null;
-        
+
         methodBases.Sort(Compare);
 
         var checkTypeMap = CheckCheckTypePos(methodBases);
@@ -2936,7 +2936,7 @@ public static class ToLuaExport
         var typeName = GetTypeStr(type);
         return ConvertToLibSign(typeName);
     }
- 
+
     //获取 typeof(string) 这样的名字
     static string GetTypeOf(Type t, string sep)
     {
@@ -3014,7 +3014,7 @@ public static class ToLuaExport
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
-	
+
         var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
         BeginPlatformMacro(fieldPlatformFlagsText);
@@ -3062,7 +3062,7 @@ public static class ToLuaExport
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
-	
+
         var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
         BeginPlatformMacro(fieldPlatformFlagsText);
@@ -3120,7 +3120,7 @@ public static class ToLuaExport
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
-	
+
         var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
         BeginPlatformMacro(fieldPlatformFlagsText);
@@ -3172,7 +3172,7 @@ public static class ToLuaExport
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
-	
+
         var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
 
         BeginPlatformMacro(fieldPlatformFlagsText);
@@ -3817,19 +3817,36 @@ public static class ToLuaExport
         }
     }
 
+    private static void ForEachDelegates(Type[] delegateTypes, Action<Type, string, string> action, string lineEnding = "")
+    {
+        if (delegateTypes.Length > 0)
+        {
+            foreach (var type in delegateTypes)
+            {
+                var platformFlags = ReflectTypes.GetPlatformFlags(type);
+                if (platformFlags != ToLuaPlatformFlags.None)
+                {
+                    var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+                    BeginPlatformMacro(platformFlagsText);
+
+                    var typeName = GetTypeStr(type);
+                    var typeFullName = GetTypeFullName(type);
+
+                    action(type, typeName, typeFullName);
+
+                    EndPlatformMacro(platformFlagsText);
+                }
+            }
+
+            sb.AppendLineEx(lineEnding);
+        }
+    }
+
     public static void GenDelegates(Type[] delegateTypes)
     {
         usingList.Add("System");
         usingList.Add("System.Collections.Generic");
-
-        foreach (var type in delegateTypes)
-        {
-            if (!typeof(System.Delegate).IsAssignableFrom(type))
-            {
-                Debug.LogError(type.FullName + " not a delegate type");
-                return;
-            }
-        }
 
         sb.Append("public static class LuaDelegates\r\n");
         sb.Append("{\r\n");
@@ -3840,62 +3857,27 @@ public static class ToLuaExport
         sb.AppendLineEx();
         sb.Append("\t{\r\n");
 
-        if (delegateTypes.Length > 0)
-        {
-            foreach (var type in delegateTypes)
-            {
-                var typeName = GetTypeStr(type);
-                var typeFullName = GetTypeFullName(type);
+        ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
+            sb.AppendFormat($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});\r\n")
+        );
 
-                sb.AppendFormat($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});\r\n");
-            }
+        ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
+            sb.AppendFormat($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});\r\n")
+        );
 
-            sb.AppendLineEx();
-        }
+        ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
+            sb.AppendFormat($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});\r\n")
+        );
 
-        if (delegateTypes.Length > 0)
-        {
-            foreach (var type in delegateTypes)
-            {
-                var typeName = GetTypeStr(type);
-                var typeFullName = GetTypeFullName(type);
-
-                sb.AppendFormat($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});\r\n");
-            }
-
-            sb.AppendLineEx();
-        }
-
-        if (delegateTypes.Length > 0)
-        {
-            foreach (var type in delegateTypes)
-            {
-                var typeName = GetTypeStr(type);
-                var typeFullName = GetTypeFullName(type);
-
-                sb.AppendFormat($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});\r\n");
-            }
-
-            sb.AppendLineEx();
-        }
-
-        foreach (var type in delegateTypes)
-        {
-            var typeName = GetTypeStr(type);
-            var typeFullName = GetTypeFullName(type);
-
-            sb.AppendFormat($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};\r\n");
-        }
+        ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
+            sb.AppendFormat($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};\r\n")
+        );
 
         sb.Append("\t}\r\n");
         sb.Append(CreateDelegate);
         sb.AppendLineEx(RemoveDelegate);
 
-        foreach (var type in delegateTypes)
-        {
-            var typeName = GetTypeStr(type);
-            var typeFullName = GetTypeFullName(type);
-
+        ForEachDelegates(delegateTypes, (type, typeName, typeFullName) => {
             var mi = type.GetMethod("Invoke");
             var args = GetDelegateParams(mi);
 
@@ -3944,8 +3926,8 @@ public static class ToLuaExport
             sb.AppendFormat("\tstatic void Push_{0}(IntPtr L, {1} o)\r\n", typeFullName, typeName);
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tToLua.Push(L, o);");
-            sb.AppendLineEx("\t}\r\n");
-        }
+            sb.AppendLineEx("\t}");
+        }, "\r\n");
 
         sb.AppendLineEx("}\r\n");
         SaveFile(ToLuaSettingsUtility.Settings.SaveDir + "LuaDelegates.cs");
@@ -4108,7 +4090,9 @@ public static class ToLuaExport
         var platformFlags = ReflectTypes.GetPlatformFlags(type);
         if (platformFlags == ToLuaPlatformFlags.None)
             return;
-            
+
+        sb.AppendLineEx("\r\n");
+
         var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
 
         BeginPlatformMacro(platformFlagsText);
@@ -4117,7 +4101,7 @@ public static class ToLuaExport
         funcName = CombineTypeStr(space, funcName);
         funcName = ConvertToLibSign(funcName);
 
-        sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendFormat("\tstatic int {0}(IntPtr L)\r\n", funcName);
         sb.AppendLineEx("\t{");
         sb.AppendLineEx("\t\ttry");
