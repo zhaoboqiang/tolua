@@ -6,3 +6,4 @@ UnityEngine.TextureFormat.DXT1Crunched,False,False
 UnityEngine.TextureFormat.DXT5Crunched,False,False
 UnityEngine.MeshRenderer.receiveGI,False,False
 UnityEngine.Rendering.CoreUtils.HasFlag,False,False
+UnityEngine.UI.DefaultControls.factory,False,False

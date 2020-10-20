@@ -18,6 +18,8 @@ System.TimeSpan,可以导出的内部支持类型,True,True
 System.Type,可以导出的内部支持类型,False,False
 TMPro.TMP_EditorResourceManager,,False,False
 TMPro.TMP_FontAssetUtilities,,False,False
+TMPro.TMP_PackageResourceImporterWindow,,False,False
+TMPro.TMP_PackageResourceImporter,,False,False
 UnityEngine.Animations.AnimationPlayableExtensions,,False,False
 UnityEngine.Animations.AnimationScriptPlayable,,False,False
 UnityEngine.Bounds,ToLua内部支持,False,False
@@ -48,3 +50,13 @@ UnityEngine.WaitForEndOfFrame,ToLua内部支持,False,False
 UnityEngine.WaitForFixedUpdate,ToLua内部支持,False,False
 UnityEngine.WaitForSeconds,ToLua内部支持,False,False
 UnityEngine.YieldInstruction,ToLua内部支持,False,False
+UnityEngine.CanvasRenderer.OnRequestRebuild,Editor only,False,False
+UnityEngine.UI.GraphicRebuildTracker,Editor only,False,False
+UnityEngine.UI.Graphic.OnRequestRebuild,Editor only,False,False
+UnityEngine.UI.Text.OnRequestRebuild,Editor only,False,False
+UnityEngine.Rendering.PostProcessing.PostProcessResources.ChangeHandler,Editor only,False,False
+UnityEngine.InputManagerEntry,,False,False
+UnityEngine.InputManagerEntry.Axis,,False,False
+UnityEngine.InputManagerEntry.Joy,,False,False
+UnityEngine.InputManagerEntry.Kind,,False,False
+UnityEngine.iPhoneUtils,Obsolete,False,False
