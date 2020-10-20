@@ -24,6 +24,7 @@ UnityEngine.Animations.AnimationPlayableExtensions,,False,False
 UnityEngine.Animations.AnimationScriptPlayable,,False,False
 UnityEngine.Bounds,ToLua内部支持,False,False
 UnityEngine.Color,ToLua内部支持,False,False
+UnityEngine.Caching,,False,False
 UnityEngine.ClusterInputType,,False,False
 UnityEngine.ClusterInput,,False,False
 UnityEngine.ClusterNetwork,,False,False
@@ -60,3 +61,7 @@ UnityEngine.InputManagerEntry.Axis,,False,False
 UnityEngine.InputManagerEntry.Joy,,False,False
 UnityEngine.InputManagerEntry.Kind,,False,False
 UnityEngine.iPhoneUtils,Obsolete,False,False
+UnityEngine.DrivenRectTransformTracker,,False,False
+UnityEngine.EventProvider,,False,False
+UnityEngine.InputRegistering,,False,False
+UnityEngine.Rendering.CoreRenderPipelinePreferences,,False,False
