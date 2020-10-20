@@ -1236,7 +1236,7 @@ public static class ToLuaExport
     {
         var list = new List<Type>();
 
-        foreach (Type t in eventSet)
+        foreach (var t in eventSet)
         {
             var space = GetNameSpace(t, out var funcName);
             if (space != className)
@@ -1245,7 +1245,7 @@ public static class ToLuaExport
                 continue;
             }
 
-            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(t);
+            var fieldPlatformFlags = ReflectTypes.GetPlatformFlags(t) & ReflectFields.GetPlatformFlags(t);
             if (fieldPlatformFlags == ToLuaPlatformFlags.None)
                 continue;
 
@@ -1256,7 +1256,7 @@ public static class ToLuaExport
             funcName = ConvertToLibSign(funcName);
             var funcFullName = ConvertToLibSign(space) + "_" + funcName;
 
-            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", funcName, funcFullName);
+            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1}); // [RegisterEvents] \r\n", funcName, funcFullName);
 
             EndPlatformMacro(fieldPlatformFlagsText);
         }
@@ -4086,7 +4086,7 @@ public static class ToLuaExport
 
     public static void GenerateDelegate(Type t, StringBuilder sb)
     {
-        var platformFlags = ReflectTypes.GetPlatformFlags(type);
+        var platformFlags = ReflectTypes.GetPlatformFlags(t) & ReflectFields.GetPlatformFlags(t);
         if (platformFlags == ToLuaPlatformFlags.None)
             return;
 

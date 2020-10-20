@@ -475,6 +475,7 @@ public static class ToLuaMenu
             ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
         }
 
+        /*
         foreach (var type in delegateTypes)
         {
             var typeSpace = ToLuaExport.GetNameSpace(type, out var funcName);
@@ -491,11 +492,12 @@ public static class ToLuaMenu
             var typeFullName = ToLuaExport.GetTypeFullName(type);
 
             ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
-            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1});\r\n", funcName, typeFullName);
+            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1}); // [GenRegisterInfo]\r\n", funcName, typeFullName);
             ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
 
             wrappedDelegateTypes.Add(type);
         }
+        */
     }
 
     static string GetOS()
