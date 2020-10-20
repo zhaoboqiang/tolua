@@ -3816,7 +3816,7 @@ public static class ToLuaExport
         }
     }
 
-    private static void ForEachDelegates(Type[] delegateTypes, Action<Type, string, string> action, string lineEnding = "")
+    private static void ForEachDelegates(Type[] delegateTypes, Action<Type, string, string> action, bool multiLine = false)
     {
         if (delegateTypes.Length > 0)
         {
@@ -3834,11 +3834,16 @@ public static class ToLuaExport
 
                     action(type, typeName, typeFullName);
 
+                    sb.AppendLineEx();
+
                     EndPlatformMacro(platformFlagsText);
+
+                    if (multiLine)
+                    {
+                        sb.AppendLine();
+                    }
                 }
             }
-
-            sb.AppendLineEx(lineEnding);
         }
     }
 
@@ -3857,19 +3862,19 @@ public static class ToLuaExport
         sb.Append("\t{\r\n");
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendFormat($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});\r\n")
+            sb.AppendFormat($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});")
         );
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendFormat($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});\r\n")
+            sb.AppendFormat($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});")
         );
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendFormat($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});\r\n")
+            sb.AppendFormat($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});")
         );
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendFormat($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};\r\n")
+            sb.AppendFormat($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};")
         );
 
         sb.Append("\t}\r\n");
@@ -3925,8 +3930,8 @@ public static class ToLuaExport
             sb.AppendFormat("\tstatic void Push_{0}(IntPtr L, {1} o)\r\n", typeFullName, typeName);
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tToLua.Push(L, o);");
-            sb.AppendLineEx("\t}");
-        }, "\r\n");
+            sb.Append("\t}");
+        }, true);
 
         sb.AppendLineEx("}\r\n");
         SaveFile(ToLuaSettingsUtility.Settings.SaveDir + "LuaDelegates.cs");
