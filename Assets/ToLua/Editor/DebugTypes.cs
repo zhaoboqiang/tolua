@@ -30,7 +30,8 @@ namespace LuaInterface.Editor
         [MenuItem("Reflect/Debug types")]
         public static void Main()
         {
-            DebugType("EasySave", "ES3Types.ES3Type_Color32");
+            // DebugType("EasySave", "ES3Types.ES3Type_Color32");
+            DebugType(typeof(UnityEngine.CanvasRenderer.OnRequestRebuild));
         }
     }
 }
