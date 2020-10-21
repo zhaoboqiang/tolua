@@ -1135,17 +1135,16 @@ public static class ToLuaExport
 
     static private bool CanRead(PropertyInfo propertyInfo)
     {
-        return propertyInfo.CanRead && propertyInfo.GetGetMethod(true).IsPublic;
+        var propertyFieldSetting = ReflectProperties.Lookup(propertyInfo);
+
+        return propertyFieldSetting.CanRead && propertyInfo.CanRead && propertyInfo.GetGetMethod(true).IsPublic;
     }
 
     static private bool CanWrite(PropertyInfo propertyInfo)
     {
-        return propertyInfo.CanWrite && propertyInfo.GetSetMethod(true).IsPublic;
-    }
+        var propertyFieldSetting = ReflectProperties.Lookup(propertyInfo);
 
-    static string GetConstantFieldName(FieldInfo fieldInfo)
-    {
-        return fieldInfo.ReflectedType.FullName.Replace("+", ".") + "." + fieldInfo.Name;
+        return propertyFieldSetting.CanWrite && propertyInfo.CanWrite && propertyInfo.GetSetMethod(true).IsPublic;
     }
 
     static void RegisterProperties()
@@ -1166,7 +1165,7 @@ public static class ToLuaExport
             {
                 if (field.IsLiteral && field.FieldType.IsPrimitive && !field.FieldType.IsEnum)
                 {
-                    sb.AppendFormat("\t\tL.RegConstant(\"{0}\", {1});\r\n", name, GetConstantFieldName(field));
+                    sb.AppendFormat("\t\tL.RegConstant(\"{0}\", {1});\r\n", name, ToLuaMembers.GetName(field));
                 }
                 else
                 {
@@ -2902,7 +2901,7 @@ public static class ToLuaExport
 
     public static string GetBaseTypeStr(Type t)
     {
-        return t.IsGenericType ? LuaMisc.GetTypeName(t) : t.FullName.Replace("+", ".");
+        return t.IsGenericType ? LuaMisc.GetTypeName(t) : ToLuaTypes.GetName(t);
     }
 
     //获取类型名字

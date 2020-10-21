@@ -186,8 +186,7 @@ public static class ToLuaMenu
         ToLuaExport.Generate(wrapperSaveDir);
     }
 
-    [MenuItem("Lua/Gen lua wrap file for debug", false, 1)]
-    public static void GenerateClassWrapForDebug()
+    public static void GenerateClassWraps(Type[] types)
     {
         if (!beAutoGen && EditorApplication.isCompiling)
         {
@@ -203,41 +202,10 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        BindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
+        BindTypes = (from type in types select new BindType(type)).ToArray();
 
-        foreach (var bindType in BindTypes)
-            ToLuaExport.allTypes.Add(bindType.type);
-
-        //var type = ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition");
-        var type = typeof(UnityEngine.Apple.ReplayKit.ReplayKit);
-        GenerateClassWrap(new BindType(type));
-
-        Debug.Log("Generate lua binding file over");
-        ToLuaExport.allTypes.Clear();
-        AssetDatabase.Refresh();
-    }
-
-    [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]
-    public static void GenerateClassWraps()
-    {
-        if (!beAutoGen && EditorApplication.isCompiling)
-        {
-            EditorUtility.DisplayDialog("警告", "请等待编辑器完成编译再执行此功能", "确定");
-            return;
-        }
-
-        var saveDir = ToLuaSettingsUtility.Settings.SaveDir;
-        if (!File.Exists(saveDir))
-            Directory.CreateDirectory(saveDir);
-
-        var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
-        if (!File.Exists(wrapperSaveDir))
-            Directory.CreateDirectory(wrapperSaveDir);
-
-        BindTypes = GenBindTypes(ToLuaSettingsUtility.BindTypes);
-
-        foreach (var bindType in BindTypes)
-            ToLuaExport.allTypes.Add(bindType.type);
+        foreach (var type in types)
+            ToLuaExport.allTypes.Add(type);
 
         foreach (var bindType in BindTypes)
             GenerateClassWrap(bindType);
@@ -247,8 +215,23 @@ public static class ToLuaMenu
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Lua/Gen Lua Delegates", false, 2)]
-    static void GenLuaDelegates()
+
+    [MenuItem("Lua/Gen lua wrap file for debug", false, 1)]
+    public static void GenerateClassWrapForDebug()
+    {
+        GenerateClassWraps(new Type[] {
+            // ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition")
+            typeof(UnityEngine.CanvasRenderer)
+        });
+    }
+
+    [MenuItem("Lua/Gen Lua Wrap Files", false, 1)]
+    public static void GenerateClassWraps()
+    {
+        GenerateClassWraps(ToLuaSettingsUtility.Types);
+    }
+
+    static void GenerateDelegates(Type[] types)
     {
         if (!beAutoGen && EditorApplication.isCompiling)
         {
@@ -257,11 +240,24 @@ public static class ToLuaMenu
         }
 
         ToLuaExport.Clear();
-        var delegateTypes = ToLuaSettingsUtility.DelegateTypes;
-        ToLuaExport.GenDelegates(delegateTypes);
+        ToLuaExport.GenDelegates(types);
         ToLuaExport.Clear();
         AssetDatabase.Refresh();
         Debug.Log("Create lua delegate over");
+    }
+ 
+    [MenuItem("Lua/Gen Lua Delegate For debug", false, 2)]
+    static void GenLuaDelegateForDebug()
+    {
+        GenerateDelegates(new Type[] {
+            typeof(UnityEngine.CanvasRenderer.OnRequestRebuild)
+        });
+    }
+
+    [MenuItem("Lua/Gen Lua Delegates", false, 2)]
+    static void GenLuaDelegates()
+    {
+        GenerateDelegates(ToLuaSettingsUtility.DelegateTypes);
     }
 
     static ToLuaTree<string> InitTree()

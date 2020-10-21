@@ -20,11 +20,11 @@ namespace LuaInterface.Editor
             return new ToLuaMenu.BindType(t);
         }
 
-        public static ToLuaMenu.BindType[] BindTypes
+        public static Type[] Types
         {
             get
             {
-                var bindTypes = new List<ToLuaMenu.BindType>();
+                var types = new List<Type>();
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
                 foreach (var assembly in assemblies)
@@ -37,11 +37,11 @@ namespace LuaInterface.Editor
                         if (typeof(MulticastDelegate).IsAssignableFrom(type))
                             continue;
 
-                        bindTypes.Add(_GT(type));
+                        types.Add(type);
                     }
                 }
 
-                return bindTypes.ToArray();
+                return types.ToArray();
             }
         }
 
@@ -49,14 +49,11 @@ namespace LuaInterface.Editor
         {
             get
             {
-                var bindTypes = BindTypes;
-
                 var delegateTypes = new HashSet<Type>();
                 var binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase | BindingFlags.Instance;
 
-                for (int i = 0; i < bindTypes.Length; i++)
+                foreach (var type in Types)
                 {
-                    var type = bindTypes[i].type;
                     var fields = type.GetFields(BindingFlags.GetField | BindingFlags.SetField | binding);
                     var props = type.GetProperties(BindingFlags.GetProperty | BindingFlags.SetProperty | binding);
 
