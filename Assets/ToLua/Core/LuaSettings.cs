@@ -43,4 +43,11 @@ namespace LuaInterface
         public bool iOS;
     }
 
+    [Serializable]
+    public struct LuaIncludedProperty
+    {
+        public string FieldFullName;
+        public bool CanRead;
+        public bool CanWrite;
+    }
 }
