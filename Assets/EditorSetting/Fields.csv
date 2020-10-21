@@ -8,7 +8,9 @@ UnityEngine.MeshRenderer.scaleInLightmap,False,False
 UnityEngine.MeshRenderer.receiveGI,False,False
 UnityEngine.MeshRenderer.stitchLightmapSeams,False,False
 UnityEngine.Rendering.CoreUtils.HasFlag,False,False
+UnityEngine.CanvasRenderer.onRequestRebuild,False,False
 UnityEngine.UI.DefaultControls.factory,False,False
+UnityEngine.AudioSettings.SetSpatializerPluginName,False,False
 UnityEngine.AudioSettings.GetSpatializerPluginNames,False,False
 UnityEngine.AudioSettings.SetSpatializerPluginNames,False,False
 UnityEngine.Input.IsJoystickPreconfigured,False,False
@@ -29,3 +31,11 @@ UnityEngine.TerrainData.SetTerrainLayersRegisterUndo,False,False
 UnityEngine.Terrain.bakeLightProbesForTrees,False,False
 UnityEngine.Terrain.deringLightProbesForTrees,False,False
 UnityEngine.Texture.imageContentsHash,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_IconsPath,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_ParametricLightIconPath,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_FreeformLightIconPath,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_SpriteLightIconPath,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_PointLightIconPath,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_GlobalLightIconPath,False,False
+UnityEngine.Experimental.Rendering.Universal.Light2D.s_LightIconPaths,False,False
+UnityEngine.GUIStyleState.scaledBackgrounds,False,False
