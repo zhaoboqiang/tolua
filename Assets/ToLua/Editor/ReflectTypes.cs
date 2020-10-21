@@ -47,7 +47,7 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlagsFromCsv(Type type, ToLuaPlatformFlags flags)
         {
-            if (IncludedTypes.TryGetValue(type.FullName.Replace("+", "."), out var value))
+            if (IncludedTypes.TryGetValue(ToLuaTypes.GetName(type), out var value))
                 flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
 
             return flags;
