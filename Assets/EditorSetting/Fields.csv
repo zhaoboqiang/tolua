@@ -20,3 +20,12 @@ UnityEngine.Light.areaSize,False,False
 UnityEngine.Light.lightmapBakeType,False,False
 UnityEngine.MonoBehaviour.runInEditMode,False,False
 UnityEngine.ParticleSystemForceField.FindAll,False,False
+UnityEngine.Rendering.PostProcessing.PostProcessResources.ChangeHandler,False,False
+UnityEngine.Rendering.PostProcessing.RuntimeUtilities.isSinglePassStereoSelected,False,False
+UnityEngine.Rendering.RenderPipelineAsset.terrainBrushPassIndex,False,False
+UnityEngine.Rendering.ScriptableRenderContext.EmitWorldGeometryForSceneView,False,False
+UnityEngine.Rendering.XRGraphics.tryEnable,False,False
+UnityEngine.TerrainData.SetTerrainLayersRegisterUndo,False,False
+UnityEngine.Terrain.bakeLightProbesForTrees,False,False
+UnityEngine.Terrain.deringLightProbesForTrees,False,False
+UnityEngine.Texture.imageContentsHash,False,False

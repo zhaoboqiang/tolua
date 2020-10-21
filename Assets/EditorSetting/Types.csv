@@ -65,3 +65,7 @@ UnityEngine.DrivenRectTransformTracker,,False,False
 UnityEngine.EventProvider,,False,False
 UnityEngine.InputRegistering,,False,False
 UnityEngine.Rendering.CoreRenderPipelinePreferences,,False,False
+UnityEngine.Rendering.ReloadAttribute,,False,False
+UnityEngine.Rendering.ResourceReloader,,False,False
+UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset,,False,False
+UnityEngine.Tilemaps.Tilemap.SyncTile,,False,False
