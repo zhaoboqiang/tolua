@@ -6,6 +6,11 @@ namespace LuaInterface.Editor
 {
     public static class ToLuaTypes
     {
+        public static string GetName(Type type)
+        {
+            return type.FullName.Replace("+", ".");
+        }
+
         public static bool IsUnsupported(MemberInfo mi)
         {
             foreach (var attribute in mi.GetCustomAttributes(true))
