@@ -76,10 +76,10 @@ UnityEditor,False,False
 UnityEditor.Advertisements,False,False
 UnityEditor.Android.Extensions,False,False
 UnityEditor.Graphs,False,False
+UnityEditor.iOS_I2Loc.Xcode,False,False
 UnityEditor.iOS.Extensions,False,False
 UnityEditor.iOS.Extensions.Common,False,False
 UnityEditor.iOS.Extensions.Xcode,False,False
-UnityEditor.iOS_I2Loc.Xcode,False,False
 UnityEditor.OSXStandalone.Extensions,False,False
 UnityEditor.Purchasing,False,False
 UnityEditor.SpatialTracking,False,False

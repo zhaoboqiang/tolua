@@ -18,18 +18,27 @@ System.TimeSpan,可以导出的内部支持类型,True,True
 System.Type,可以导出的内部支持类型,False,False
 TMPro.TMP_EditorResourceManager,,False,False
 TMPro.TMP_FontAssetUtilities,,False,False
-TMPro.TMP_PackageResourceImporterWindow,,False,False
 TMPro.TMP_PackageResourceImporter,,False,False
+TMPro.TMP_PackageResourceImporterWindow,,False,False
 UnityEngine.Animations.AnimationPlayableExtensions,,False,False
 UnityEngine.Animations.AnimationScriptPlayable,,False,False
 UnityEngine.Bounds,ToLua内部支持,False,False
-UnityEngine.Color,ToLua内部支持,False,False
 UnityEngine.Caching,,False,False
-UnityEngine.ClusterInputType,,False,False
+UnityEngine.CanvasRenderer.OnRequestRebuild,Editor only,False,False
 UnityEngine.ClusterInput,,False,False
+UnityEngine.ClusterInputType,,False,False
 UnityEngine.ClusterNetwork,,False,False
+UnityEngine.Color,ToLua内部支持,False,False
 UnityEngine.CustomYieldInstruction,,False,False
+UnityEngine.DrivenRectTransformTracker,,False,False
+UnityEngine.EventProvider,,False,False
 UnityEngine.HashUnsafeUtilities,,False,False
+UnityEngine.InputManagerEntry,,False,False
+UnityEngine.InputManagerEntry.Axis,,False,False
+UnityEngine.InputManagerEntry.Joy,,False,False
+UnityEngine.InputManagerEntry.Kind,,False,False
+UnityEngine.InputRegistering,,False,False
+UnityEngine.iPhoneUtils,Obsolete,False,False
 UnityEngine.LayerMask,ToLua内部支持,False,False
 UnityEngine.Mathf,ToLua内部支持,False,False
 UnityEngine.Plane,ToLua内部支持,False,False
@@ -39,9 +48,18 @@ UnityEngine.Playables.PlayableOutputExtensions,,False,False
 UnityEngine.Quaternion,ToLua内部支持,False,False
 UnityEngine.Ray,ToLua内部支持,False,False
 UnityEngine.RaycastHit,ToLua内部支持,False,False
+UnityEngine.Rendering.CoreRenderPipelinePreferences,,False,False
 UnityEngine.Rendering.CoreUnsafeUtils,,False,False
+UnityEngine.Rendering.PostProcessing.PostProcessResources.ChangeHandler,Editor only,False,False
+UnityEngine.Rendering.ReloadAttribute,,False,False
+UnityEngine.Rendering.ResourceReloader,,False,False
+UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset,,False,False
+UnityEngine.Tilemaps.Tilemap.SyncTile,,False,False
 UnityEngine.Touch,ToLua内部支持,False,False
 UnityEngine.TouchPhase,ToLua内部支持,False,False
+UnityEngine.UI.Graphic.OnRequestRebuild,Editor only,False,False
+UnityEngine.UI.GraphicRebuildTracker,Editor only,False,False
+UnityEngine.UI.Text.OnRequestRebuild,Editor only,False,False
 UnityEngine.UnityAPICompatibilityVersionAttribute,,False,False
 UnityEngine.UserAuthorization,,False,False
 UnityEngine.Vector2,ToLua内部支持,False,False
@@ -51,21 +69,3 @@ UnityEngine.WaitForEndOfFrame,ToLua内部支持,False,False
 UnityEngine.WaitForFixedUpdate,ToLua内部支持,False,False
 UnityEngine.WaitForSeconds,ToLua内部支持,False,False
 UnityEngine.YieldInstruction,ToLua内部支持,False,False
-UnityEngine.CanvasRenderer.OnRequestRebuild,Editor only,False,False
-UnityEngine.UI.GraphicRebuildTracker,Editor only,False,False
-UnityEngine.UI.Graphic.OnRequestRebuild,Editor only,False,False
-UnityEngine.UI.Text.OnRequestRebuild,Editor only,False,False
-UnityEngine.Rendering.PostProcessing.PostProcessResources.ChangeHandler,Editor only,False,False
-UnityEngine.InputManagerEntry,,False,False
-UnityEngine.InputManagerEntry.Axis,,False,False
-UnityEngine.InputManagerEntry.Joy,,False,False
-UnityEngine.InputManagerEntry.Kind,,False,False
-UnityEngine.iPhoneUtils,Obsolete,False,False
-UnityEngine.DrivenRectTransformTracker,,False,False
-UnityEngine.EventProvider,,False,False
-UnityEngine.InputRegistering,,False,False
-UnityEngine.Rendering.CoreRenderPipelinePreferences,,False,False
-UnityEngine.Rendering.ReloadAttribute,,False,False
-UnityEngine.Rendering.ResourceReloader,,False,False
-UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset,,False,False
-UnityEngine.Tilemaps.Tilemap.SyncTile,,False,False
