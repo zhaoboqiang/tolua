@@ -39,3 +39,8 @@ UnityEngine.Experimental.Rendering.Universal.Light2D.s_PointLightIconPath,False,
 UnityEngine.Experimental.Rendering.Universal.Light2D.s_GlobalLightIconPath,False,False
 UnityEngine.Experimental.Rendering.Universal.Light2D.s_LightIconPaths,False,False
 UnityEngine.GUIStyleState.scaledBackgrounds,False,False
+UnityEngine.Texture2D.alphaIsTransparency,False,False
+UnityEngine.UI.Graphic.onRequestRebuild,False,False
+UnityEngine.UI.Text.onRequestRebuild,False,False
+UnityEngine.Timeline.AnimationPlayableAsset.LiveLink,False,False
+UnityEngine.Rendering.PostProcessing.PostProcessResources.changeHandler,False,False

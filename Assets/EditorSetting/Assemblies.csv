@@ -131,7 +131,7 @@ UnityEngine.TerrainPhysicsModule,True,True
 UnityEngine.TestRunner,False,False
 UnityEngine.TextCoreModule,True,True
 UnityEngine.TextRenderingModule,True,True
-UnityEngine.TilemapModule,True,True
+UnityEngine.TilemapModule,False,False
 UnityEngine.TLSModule,True,True
 UnityEngine.UI,True,True
 UnityEngine.UIElementsModule,True,True

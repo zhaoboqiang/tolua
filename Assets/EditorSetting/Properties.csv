@@ -1,5 +1,5 @@
 FieldFullName,CanRead,CanWrite
 UnityEngine.AnimatorControllerParameter.name,True,False
-UnityEngine.LightProbeGroup.probePosition,True,False
+UnityEngine.LightProbeGroup.probePositions,True,False
 UnityEngine.QualitySettings.streamingMipmapsRenderersPerFrame,True,False
 
