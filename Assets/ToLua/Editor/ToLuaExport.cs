@@ -562,7 +562,7 @@ public static class ToLuaExport
     }
 
     //操作符函数无法通过继承metatable实现
-    static void GenBaseOpFunction(List<_MethodBase> list)
+    static void GenBaseOpFunction(List<_MethodBase> methodBases)
     {
         var baseType = type.BaseType;
 
@@ -580,7 +580,7 @@ public static class ToLuaExport
                     {
                         if (baseOp != MetaOp.ToStr)
                         {
-                            list.Add(new _MethodBase(methods[i]));
+                            methodBases.Add(new _MethodBase(methods[i]));
                         }
 
                         op |= baseOp;
@@ -702,32 +702,13 @@ public static class ToLuaExport
             flag = true;
         }
 
-        var list = new List<_MethodBase>();
-        var infos = type.GetMethods(BindingFlags.Instance | binding);
-        for (int i = 0; i < infos.Length; i++)
+        var methodBases = new List<_MethodBase>();
+        foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | binding))
         {
-            list.Add(new _MethodBase(infos[i]));
-        }
-
-        for (int i = list.Count - 1; i >= 0; --i)
-        {
-            var methodBase = list[i];
-
-            //去掉操作符函数
-            var name = methodBase.Name;
-            if (name.StartsWith("op_") || name.StartsWith("add_") || name.StartsWith("remove_"))
-            {
-                if (!IsNeedOp(name))
-                    list.RemoveAt(i);
-
+            if (!ReflectMethods.Included(methodInfo))
                 continue;
-            }
-
-            //扔掉 unity3d 废弃的函数                
-            if (ToLuaTypes.IsUnsupported(methodBase.Method))
-            {
-                list.RemoveAt(i);
-            }
+ 
+            methodBases.Add(new _MethodBase(methodInfo));
         }
 
         var ps = type.GetProperties();
@@ -737,23 +718,23 @@ public static class ToLuaExport
             var propertyInfo = ps[i];
             if (ToLuaTypes.IsUnsupported(propertyInfo))
             {
-                list.RemoveAll((p) => { return p.Method == propertyInfo.GetGetMethod() || p.Method == propertyInfo.GetSetMethod(); });
+                methodBases.RemoveAll((p) => { return p.Method == propertyInfo.GetGetMethod() || p.Method == propertyInfo.GetSetMethod(); });
             }
             else
             {
                 var md = propertyInfo.GetGetMethod();
                 if (md != null)
                 {
-                    int index = list.FindIndex((m) => { return m.Method == md; });
+                    int index = methodBases.FindIndex((m) => { return m.Method == md; });
                     if (index >= 0)
                     {
                         if (md.GetParameters().Length == 0)
                         {
-                            list.RemoveAt(index);
+                            methodBases.RemoveAt(index);
                         }
-                        else if (list[index].HasGetIndex())
+                        else if (methodBases[index].HasGetIndex())
                         {
-                            getItems.Add(list[index]);
+                            getItems.Add(methodBases[index]);
                         }
                     }
                 }
@@ -761,16 +742,16 @@ public static class ToLuaExport
                 md = propertyInfo.GetSetMethod();
                 if (md != null)
                 {
-                    int index = list.FindIndex((m) => { return m.Method == md; });
+                    int index = methodBases.FindIndex((m) => { return m.Method == md; });
                     if (index >= 0)
                     {
                         if (md.GetParameters().Length == 1)
                         {
-                            list.RemoveAt(index);
+                            methodBases.RemoveAt(index);
                         }
-                        else if (list[index].HasSetIndex())
+                        else if (methodBases[index].HasSetIndex())
                         {
-                            setItems.Add(list[index]);
+                            setItems.Add(methodBases[index]);
                         }
                     }
                 }
@@ -791,9 +772,11 @@ public static class ToLuaExport
 
             var addList = new HashSet<MethodInfo>();
 
-            for (int i = 0; i < list.Count; i++)
+            for (int i = 0; i < methodBases.Count; i++)
             {
-                var mds = baseList.FindAll((p) => { return p.Name == list[i].Name; });
+                var methodBase = methodBases[i];
+
+                var mds = baseList.FindAll((p) => { return p.Name == methodBase.Name; });
 
                 for (int j = 0; j < mds.Count; j++)
                 {
@@ -804,27 +787,31 @@ public static class ToLuaExport
 
             foreach (var iter in addList)
             {
-                list.Add(new _MethodBase(iter));
+                methodBases.Add(new _MethodBase(iter));
             }
         }
 
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 0; i < methodBases.Count; i++)
         {
-            GetDelegateTypeFromMethodParams(list[i]);
+            var methodBase = methodBases[i];
+
+            GetDelegateTypeFromMethodParams(methodBase);
         }
 
-        ProcessExtends(list);
-        GenBaseOpFunction(list);
+        ProcessExtends(methodBases);
+        GenBaseOpFunction(methodBases);
 
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 0; i < methodBases.Count; i++)
         {
-            int count = GetDefalutParamCount(list[i].Method);
-            int length = list[i].GetParameters().Length;
+            var methodBase = methodBases[i];
+
+            int count = GetDefalutParamCount(methodBase.Method);
+            int length = methodBase.GetParameters().Length;
 
             for (int j = 0; j < count + 1; j++)
             {
-                var r = new _MethodBase(list[i].Method, length - j);
-                r.BeExtend = list[i].BeExtend;
+                var r = new _MethodBase(methodBase.Method, length - j);
+                r.BeExtend = methodBase.BeExtend;
                 methods.Add(r);
             }
         }
@@ -3485,7 +3472,7 @@ public static class ToLuaExport
         sb.AppendFormat("{0}}}\r\n", head);
     }
 
-    static bool IsNeedOp(string name)
+    public static bool IsNeedOp(string name)
     {
         if (name == "op_Addition")
             op |= MetaOp.Add;
@@ -4012,7 +3999,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void ProcessExtendType(Type extendType, List<_MethodBase> list)
+    static void ProcessExtendType(Type extendType, List<_MethodBase> methodBases)
     {
         if (extendType != null)
         {
@@ -4037,7 +4024,7 @@ public static class ToLuaExport
                     {
                         var mb = new _MethodBase(md);
                         mb.BeExtend = true;
-                        list.Add(mb);
+                        methodBases.Add(mb);
                     }
                 }
             }
@@ -4055,12 +4042,12 @@ public static class ToLuaExport
         return query;
     }
 
-    static void ProcessExtends(List<_MethodBase> list)
+    static void ProcessExtends(List<_MethodBase> methodBases)
     {
         var extendTypes = GetExtensionTypes(type);
         foreach (var extendType in extendTypes)
         {
-            ProcessExtendType(extendType, list);
+            ProcessExtendType(extendType, methodBases);
             var nameSpace = GetNameSpace(extendType, out var _);
 
             if (!string.IsNullOrEmpty(nameSpace))
