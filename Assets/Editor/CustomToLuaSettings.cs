@@ -32,4 +32,5 @@ public class CustomToLuaSettings : ToLuaSettings
     public string IncludedNamespaceCsv => GetCsvPath("Namespaces");
     public string IncludedTypeCsv => GetCsvPath("Types");
     public string IncludedFieldCsv => GetCsvPath("Fields");
+    public string IncludedPropertyCsv => GetCsvPath("Properties");
 }
