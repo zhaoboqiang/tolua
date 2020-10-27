@@ -568,7 +568,7 @@ public static class ToLuaExport
 
         while (baseType != null)
         {
-            if (allTypes.IndexOf(baseType) >= 0)
+            if (allTypes.Contains(baseType))
             {
                 var methods = baseType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
 
@@ -640,7 +640,7 @@ public static class ToLuaExport
     }
 
     //记录所有的导出类型
-    public static List<Type> allTypes = new List<Type>();
+    public static Type[] allTypes;
 
     static bool BeDropMethodType(MethodInfo md)
     {
@@ -648,7 +648,7 @@ public static class ToLuaExport
         if (t == type)
             return true;
 
-        return allTypes.IndexOf(t) < 0;
+        return !allTypes.Contains(t);
     }
 
     //是否为委托类型，没处理废弃
