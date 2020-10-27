@@ -143,7 +143,6 @@ public static class ToLuaMenu
             if (!types.Contains(baseType))
             {
                 types.Add(baseType);
-                //AutoAddBaseType(types, baseType);
             }
         }
     }
