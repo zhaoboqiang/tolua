@@ -20,6 +20,38 @@ namespace LuaInterface.Editor
             return new ToLuaMenu.BindType(t);
         }
 
+        static void AddBaseTypes(List<Type> types, Type type)
+        {
+            var baseType = type.BaseType; 
+            if (baseType == null)
+                return;
+
+            if (baseType.IsInterface)
+            {
+                // Is Interface, use SetBaseType to jump it
+                AddBaseTypes(types, baseType.BaseType);
+            }
+            else 
+            {
+                if (!types.Contains(baseType))
+                {
+                    types.Add(baseType);
+                }
+            }
+        }
+
+        static void AddBaseTypes(List<Type> types)
+        {
+            for (int i = 0; i < types.Count; ++i)
+            {
+                var type = types[i];
+                if (type.IsEnum)
+                    continue;
+
+                AddBaseTypes(types, type);
+            }
+        }
+        
         public static Type[] Types
         {
             get
@@ -40,6 +72,8 @@ namespace LuaInterface.Editor
                         types.Add(type);
                     }
                 }
+
+                AddBaseTypes(types);
 
                 return types.ToArray();
             }

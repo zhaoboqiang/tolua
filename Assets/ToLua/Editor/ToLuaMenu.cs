@@ -127,42 +127,7 @@ public static class ToLuaMenu
         }
     }
 
-    static void AutoAddBaseType(List<Type> types, Type type)
-    {
-        var baseType = type.BaseType; 
-        if (baseType == null)
-            return;
 
-        if (baseType.IsInterface)
-        {
-            // Is Interface, use SetBaseType to jump it
-            AutoAddBaseType(types, baseType.BaseType);
-        }
-        else 
-        {
-            if (!types.Contains(baseType))
-            {
-                types.Add(baseType);
-            }
-        }
-    }
-
-    static Type[] GenBindTypes(Type[] types)
-    {
-        var resultTypes = new List<Type>(types);
-
-        for (int i = 0; i < types.Length; i++)
-        {
-            var type = types[i];
-            if (type.IsEnum)
-                continue;
-
-            AutoAddBaseType(resultTypes, type);
-        }
-
-        return resultTypes.ToArray();
-    }
-	
     private static void GenerateClassWrap(BindType bindType)
     {
         if (!ReflectTypes.IsIncluded(bindType.type))
@@ -196,11 +161,9 @@ public static class ToLuaMenu
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
 
-        var dependentTypes = GenBindTypes(types);
+        BindTypes = (from type in types select new BindType(type)).ToArray();
 
-        BindTypes = (from type in dependentTypes select new BindType(type)).ToArray();
-
-        ToLuaExport.allTypes = dependentTypes;
+        ToLuaExport.allTypes = types;
 
         foreach (var bindType in BindTypes)
             GenerateClassWrap(bindType);
@@ -210,7 +173,7 @@ public static class ToLuaMenu
     }
 
 
-    [MenuItem("Lua/Gen lua wrap file for debug", false, 1)]
+    [MenuItem("Lua/Gen Lua wrap file for debug", false, 1)]
     public static void GenerateClassWrapForDebug()
     {
         GenerateClassWraps(new Type[] {

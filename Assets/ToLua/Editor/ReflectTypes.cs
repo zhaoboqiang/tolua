@@ -60,7 +60,7 @@ namespace LuaInterface.Editor
 
         public static bool IsIncluded(Type type)
         {
-            return (GetPlatformFlags(type) & ToLuaPlatformFlags.All) != ToLuaPlatformFlags.None;
+            return GetPlatformFlags(type) != ToLuaPlatformFlags.None;
         }
 
         public static ToLuaPlatformFlags GetPlatformFlags(Type type)
