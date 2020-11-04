@@ -1,4 +1,8 @@
 FieldFullName,Android,iOS
+System.String.Chars,False,False
+System.IO.Directory.SetAccessControl,False,False
+System.IO.File.GetAccessControl,False,False
+System.IO.File.SetAccessControl,False,False
 UnityEngine.AndroidActivityIndicatorStyle,True,False
 UnityEngine.AudioSettings.GetSpatializerPluginNames,False,False
 UnityEngine.AudioSettings.SetSpatializerPluginName,False,False
