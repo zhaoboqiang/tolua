@@ -37,9 +37,17 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlags(MemberInfo memberInfo)
         {
-            var name = $"{memberInfo.ReflectedType.FullName}.{memberInfo.Name}";
+            try
+            {
+                var name = $"{memberInfo.ReflectedType.FullName}.{memberInfo.Name}";
 
-            return GetPlatformFlags(name);
+                return GetPlatformFlags(name);
+            }
+            catch (Exception e)
+            {
+                Debugger.LogError($"ReflectFields.GetPlatformFlags({memberInfo.Name}) {e.Message}");
+                return ToLuaPlatformFlags.None;
+            }
         }
  
     }

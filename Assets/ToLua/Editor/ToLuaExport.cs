@@ -1231,7 +1231,7 @@ public static class ToLuaExport
                 continue;
             }
 
-            var fieldPlatformFlags = ReflectTypes.GetPlatformFlags(t) & ReflectFields.GetPlatformFlags(t);
+            var fieldPlatformFlags = ReflectTypes.GetPlatformFlags(t);
             if (fieldPlatformFlags == ToLuaPlatformFlags.None)
                 continue;
 
@@ -4077,7 +4077,7 @@ public static class ToLuaExport
 
     public static void GenerateDelegate(Type t, StringBuilder sb)
     {
-        var platformFlags = ReflectTypes.GetPlatformFlags(t) & ReflectFields.GetPlatformFlags(t);
+        var platformFlags = ReflectTypes.GetPlatformFlags(t);
         if (platformFlags == ToLuaPlatformFlags.None)
             return;
 
