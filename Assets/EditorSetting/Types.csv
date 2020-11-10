@@ -21,6 +21,7 @@ TMPro.TMP_FontAssetUtilities,,False,False
 TMPro.TMP_PackageResourceImporter,,False,False
 TMPro.TMP_PackageResourceImporterWindow,,False,False
 UnityEngine.AndroidActivityIndicatorStyle,,True,False
+UnityEngine.AndroidInput,,True,False
 UnityEngine.Animations.AnimationPlayableExtensions,,False,False
 UnityEngine.Animations.AnimationScriptPlayable,,False,False
 UnityEngine.Bounds,ToLua内部支持,False,False
