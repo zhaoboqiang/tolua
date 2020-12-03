@@ -14,7 +14,7 @@ namespace LuaInterface.Editor
             {
                 if (includedNamespaces == null)
                 {
-                    var namespaces = LuaSettingsUtility.LoadCsv<LuaIncludedNamespace>(ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
+                    var namespaces = LuaSettingsUtility.LoadCsv<LuaIncludedNamespace>(ToLuaSettingsUtility.Settings.NamespaceCsv);
                     if (namespaces == null)
                         includedNamespaces = new Dictionary<string, LuaIncludedNamespace>();
                     else
@@ -68,9 +68,9 @@ namespace LuaInterface.Editor
             var values = newNamespaces.Values.ToList();
             values.Sort((lhs, rhs) => lhs.Namespace.CompareTo(rhs.Namespace));
             lines.AddRange(from ns in values
-                           //where !ns.Android || !ns.iOS || !ns.Editor
+                           // where !ns.Android || !ns.iOS || !ns.Editor
                            select $"{ns.Namespace},{ns.Android},{ns.iOS},{ns.Editor}");
-            ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
+            ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.NamespaceCsv);
         }
 
         [MenuItem("Reflect/Update namespaces")]

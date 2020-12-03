@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LuaInterface
+﻿namespace LuaInterface
 {
     public interface ToLuaSettings
     {
@@ -11,10 +8,10 @@ namespace LuaInterface
         string baseLuaDir { get; }
         string injectionFilesPath { get; }
 
-        string IncludedAssemblyCsv { get; } 
-        string IncludedNamespaceCsv { get; } 
-        string IncludedTypeCsv { get; } 
-        string IncludedFieldCsv { get; } 
-        string IncludedPropertyCsv { get; } 
+        string AssemblyCsv { get; } 
+        string NamespaceCsv { get; } 
+        string TypeCsv { get; } 
+        string FieldCsv { get; } 
+        string PropertyCsv { get; } 
     }
 }

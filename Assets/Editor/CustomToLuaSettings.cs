@@ -28,9 +28,9 @@ public class CustomToLuaSettings : ToLuaSettings
 
     private string GetCsvPath(string filename) => Application.dataPath + "/EditorSetting/" + filename + ".csv";
 
-    public string IncludedAssemblyCsv => GetCsvPath("Assemblies");
-    public string IncludedNamespaceCsv => GetCsvPath("Namespaces");
-    public string IncludedTypeCsv => GetCsvPath("Types");
-    public string IncludedFieldCsv => GetCsvPath("Fields");
-    public string IncludedPropertyCsv => GetCsvPath("Properties");
+    public string AssemblyCsv => GetCsvPath("Assemblies");
+    public string NamespaceCsv => GetCsvPath("Namespaces");
+    public string TypeCsv => GetCsvPath("Types");
+    public string FieldCsv => GetCsvPath("Fields");
+    public string PropertyCsv => GetCsvPath("Properties");
 }

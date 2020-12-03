@@ -14,7 +14,7 @@ namespace LuaInterface.Editor
             {
                 if (includedAssemblies == null)
                 {
-                    var assemblies = LuaSettingsUtility.LoadCsv<LuaIncludedAssembly>(ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
+                    var assemblies = LuaSettingsUtility.LoadCsv<LuaIncludedAssembly>(ToLuaSettingsUtility.Settings.AssemblyCsv);
                     if (assemblies == null)
                         includedAssemblies = new Dictionary<string, LuaIncludedAssembly>();
                     else
@@ -68,7 +68,7 @@ namespace LuaInterface.Editor
             var lines = new List<string> { "Name,Android,iOS,Editor" };
             lines.AddRange(from assembly in resultAssemblies
                            select $"{assembly.Name},{assembly.Android},{assembly.iOS},{assembly.Editor}");
-            ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
+            ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.AssemblyCsv);
         }
 
         [MenuItem("Reflect/Update assemblies")]

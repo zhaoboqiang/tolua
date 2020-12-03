@@ -15,7 +15,7 @@ namespace LuaInterface.Editor
             {
                 if (includedProperties == null)
                 {
-                    var fields = LuaSettingsUtility.LoadCsv<LuaIncludedProperty>(ToLuaSettingsUtility.Settings.IncludedPropertyCsv);
+                    var fields = LuaSettingsUtility.LoadCsv<LuaIncludedProperty>(ToLuaSettingsUtility.Settings.PropertyCsv);
                     if (fields == null)
                         includedProperties = new Dictionary<string, LuaIncludedProperty>();
                     else

@@ -15,7 +15,7 @@ namespace LuaInterface.Editor
             {
                 if (includedTypes == null)
                 {
-                    var types = LuaSettingsUtility.LoadCsv<LuaIncludedType>(ToLuaSettingsUtility.Settings.IncludedTypeCsv);
+                    var types = LuaSettingsUtility.LoadCsv<LuaIncludedType>(ToLuaSettingsUtility.Settings.TypeCsv);
                     if (types == null)
                         includedTypes = new Dictionary<string, LuaIncludedType>();
                     else
@@ -119,7 +119,7 @@ namespace LuaInterface.Editor
             lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS || !type.Editor || oldTypes.ContainsKey(type.FullName)
                            select $"{type.FullName},{type.Note},{type.Android},{type.iOS},{type.Editor}");
-            ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
+            ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.TypeCsv);
         }
 
         private static void AddNewType(List<LuaIncludedType> newTypes, Type type, Type outerType)
