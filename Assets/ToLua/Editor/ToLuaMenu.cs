@@ -27,7 +27,7 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Threading.Tasks;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
@@ -135,14 +135,14 @@ public static class ToLuaMenu
 
         var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
 
-        ToLuaExport.Clear();
-        ToLuaExport.className = bindType.name;
-        ToLuaExport.type = bindType.type;
-        ToLuaExport.isStaticClass = bindType.IsStatic;
-        ToLuaExport.baseType = bindType.baseType;
-        ToLuaExport.wrapClassName = bindType.wrapName;
-        ToLuaExport.libClassName = bindType.LibName;
-        ToLuaExport.Generate(wrapperSaveDir);
+        var export = new ToLuaExport();
+        export.className = bindType.name;
+        export.type = bindType.type;
+        export.isStaticClass = bindType.IsStatic;
+        export.baseType = bindType.baseType;
+        export.wrapClassName = bindType.wrapName;
+        export.libClassName = bindType.LibName;
+        export.Generate(wrapperSaveDir);
     }
 
     public static void GenerateClassWraps(Type[] types)
@@ -165,8 +165,7 @@ public static class ToLuaMenu
 
         ToLuaExport.allTypes = types;
 
-        foreach (var bindType in BindTypes)
-            GenerateClassWrap(bindType);
+        Parallel.ForEach(BindTypes, bindType => GenerateClassWrap(bindType));
 
         Debug.Log("Generate lua binding files over");
         AssetDatabase.Refresh();
@@ -196,9 +195,8 @@ public static class ToLuaMenu
             return;
         }
 
-        ToLuaExport.Clear();
-        ToLuaExport.GenDelegates(types);
-        ToLuaExport.Clear();
+        var export = new ToLuaExport();
+        export.GenDelegates(types);
         AssetDatabase.Refresh();
         Debug.Log("Create lua delegate over");
     }
@@ -388,7 +386,8 @@ public static class ToLuaMenu
 
         foreach (var type in wrappedDelegateTypes)
         {
-            ToLuaExport.GenerateDelegate(type, sb);
+            var export = new ToLuaExport();
+            export.GenerateDelegate(type, sb);
         }
 
         sb.AppendLineEx("}\r\n");
@@ -556,10 +555,9 @@ public static class ToLuaMenu
         for (int i = 0; i < files.Length; i++)
             File.Delete(files[i]);
 
-        ToLuaExport.Clear();
         var delegateTypes = new List<Type>();
-        ToLuaExport.GenDelegates(delegateTypes.ToArray());
-        ToLuaExport.Clear();
+        var export = new ToLuaExport();
+        export.GenDelegates(delegateTypes.ToArray());
 
         var sb = new StringBuilder();
         sb.AppendLineEx("using System;");

@@ -54,45 +54,47 @@ public enum ObjAmbig
     All = 3
 }
 
-public static class ToLuaExport
+public class ToLuaExport
 {
-    public static string className = string.Empty;
-    public static Type type = null;
-    public static Type baseType = null;
+    public string className = string.Empty;
+    public Type type = null;
+    public Type baseType = null;
 
-    public static bool isStaticClass = true;
+    public bool isStaticClass = true;
 
-    static HashSet<string> usingList = new HashSet<string>();
-    static MetaOp op = MetaOp.None;
-    static StringBuilder sb = null;
-    static List<_MethodBase> methods = new List<_MethodBase>();
-    static Dictionary<string, int> nameCounter = new Dictionary<string, int>();
-    static FieldInfo[] fields = null;
-    static PropertyInfo[] props = null;
-    static List<PropertyInfo> propList = new List<PropertyInfo>(); //非静态属性
-    static List<PropertyInfo> allProps = new List<PropertyInfo>();
-    static EventInfo[] events = null;
-    static List<EventInfo> eventList = new List<EventInfo>();
-    static List<_MethodBase> ctorList = new List<_MethodBase>();
-    static List<ConstructorInfo> ctorExtList = new List<ConstructorInfo>();
-    static List<_MethodBase> getItems = new List<_MethodBase>(); //特殊属性
-    static List<_MethodBase> setItems = new List<_MethodBase>();
+    HashSet<string> usingList = new HashSet<string>();
+    MetaOp op = MetaOp.None;
+    StringBuilder sb = null;
+    List<_MethodBase> methods = new List<_MethodBase>();
+    Dictionary<string, int> nameCounter = new Dictionary<string, int>();
+    FieldInfo[] fields = null;
+    PropertyInfo[] props = null;
+    List<PropertyInfo> propList = new List<PropertyInfo>(); //非静态属性
+    List<PropertyInfo> allProps = new List<PropertyInfo>();
+    EventInfo[] events = null;
+    List<EventInfo> eventList = new List<EventInfo>();
+    List<_MethodBase> ctorList = new List<_MethodBase>();
+    List<ConstructorInfo> ctorExtList = new List<ConstructorInfo>();
+    List<_MethodBase> getItems = new List<_MethodBase>(); //特殊属性
+    List<_MethodBase> setItems = new List<_MethodBase>();
 
-    static BindingFlags binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase;
+    BindingFlags binding = BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase;
 
-    static ObjAmbig ambig = ObjAmbig.NetObj;
+    ObjAmbig ambig = ObjAmbig.NetObj;
 
     //wrapClaaName + "Wrap" = 导出文件名，导出类名
-    public static string wrapClassName = "";
+    public string wrapClassName = "";
 
-    public static string libClassName = "";
-    public static string extendName = "";
-    public static Type extendType = null;
+    public string libClassName = "";
+    public string extendName = "";
+    public Type extendType = null;
 
-    public static HashSet<Type> eventSet = new HashSet<Type>();
+    public HashSet<Type> eventSet = new HashSet<Type>();
 
-    static ToLuaPlatformFlags platformFlags;
-    static string platformFlagsText;
+    ToLuaPlatformFlags platformFlags;
+    string platformFlagsText;
+
+    private List<string> logs = new List<string>();
 
     class _MethodBase
     {
@@ -131,11 +133,13 @@ public static class ToLuaExport
             return args.Length + c;
         }
 
-        public int GetEqualParamsCount(_MethodBase b)
+        public int GetEqualParamsCount(ToLuaExport export, _MethodBase b)
         {
             int count = 0;
             var list1 = new List<Type>();
             var list2 = new List<Type>();
+
+            var type = export.type;
 
             if (!IsStatic)
                 list1.Add(type);
@@ -144,12 +148,12 @@ public static class ToLuaExport
                 list2.Add(type);
 
             for (int i = 0; i < args.Length; i++)
-                list1.Add(GetParameterType(args[i]));
+                list1.Add(export.GetParameterType(args[i]));
 
             var p = b.args;
 
             for (int i = 0; i < p.Length; i++)
-                list2.Add(GetParameterType(p[i]));
+                list2.Add(export.GetParameterType(p[i]));
 
             for (int i = 0; i < list1.Count; i++)
             {
@@ -162,17 +166,17 @@ public static class ToLuaExport
             return count;
         }
 
-        public string GenParamTypes(int offset = 0)
+        public string GenParamTypes(ToLuaExport export, int offset = 0)
         {
             var sb = new StringBuilder();
             var list = new List<Type>();
 
             if (!method.IsStatic)
-                list.Add(type);
+                list.Add(export.type);
 
             for (int i = 0; i < args.Length; i++)
             {
-                if (IsParams(args[i]))
+                if (export.IsParams(args[i]))
                     continue;
 
                 if (args[i].ParameterType.IsByRef &&
@@ -189,22 +193,22 @@ public static class ToLuaExport
             }
 
             for (int i = offset; i < list.Count - 1; i++)
-                sb.Append(GetTypeOf(list[i], ", "));
+                sb.Append(export.GetTypeOf(list[i], ", "));
 
             if (list.Count > 0)
-                sb.Append(GetTypeOf(list[list.Count - 1], ""));
+                sb.Append(export.GetTypeOf(list[list.Count - 1], ""));
 
             return sb.ToString();
         }
 
-        public bool HasSetIndex()
+        public bool HasSetIndex(ToLuaExport export)
         {
             if (method.Name == "set_Item")
             {
                 return true;
             }
 
-            var attrs = type.GetCustomAttributes(true);
+            var attrs = export.type.GetCustomAttributes(true);
 
             for (int i = 0; i < attrs.Length; i++)
             {
@@ -217,14 +221,14 @@ public static class ToLuaExport
             return false;
         }
 
-        public bool HasGetIndex()
+        public bool HasGetIndex(ToLuaExport export)
         {
             if (method.Name == "get_Item")
             {
                 return true;
             }
 
-            var attrs = type.GetCustomAttributes(true);
+            var attrs = export.type.GetCustomAttributes(true);
 
             for (int i = 0; i < attrs.Length; i++)
             {
@@ -243,7 +247,7 @@ public static class ToLuaExport
             return m != null ? m.ReturnType : null;
         }
 
-        private static string GetIndent(int indentLevel)
+        private string GetIndent(int indentLevel)
         {
             var indent = string.Empty;
             for (int i = 0; i < indentLevel; ++i)
@@ -251,16 +255,16 @@ public static class ToLuaExport
             return indent;
         }
 
-        public string GetTotalName()
+        public string GetTotalName(ToLuaExport export)
         {
             var ss = new string[args.Length];
 
             for (int i = 0; i < args.Length; i++)
             {
-                ss[i] = GetTypeStr(args[i].GetType());
+                ss[i] = export.GetTypeStr(args[i].GetType());
             }
 
-            if (!ToLuaExport.IsGenericMethod(method))
+            if (!export.IsGenericMethod(method))
             {
                 return Name + "(" + string.Join(",", ss) + ")";
             }
@@ -271,7 +275,7 @@ public static class ToLuaExport
 
                 for (int i = 0; i < gts.Length; i++)
                 {
-                    ts[i] = GetTypeStr(gts[i]);
+                    ts[i] = export.GetTypeStr(gts[i]);
                 }
 
                 return Name + "<" + string.Join(",", ts) + ">" + "(" + string.Join(",", ss) + ")";
@@ -280,7 +284,7 @@ public static class ToLuaExport
 
         public bool BeExtend = false;
 
-        public int ProcessParams(int tab, bool beConstruct, int checkTypePos)
+        public int ProcessParams(ToLuaExport export, int tab, bool beConstruct, int checkTypePos)
         {
             var parameters = args;
 
@@ -293,25 +297,30 @@ public static class ToLuaExport
 
             var count = parameters.Length;
             var indent = GetIndent(tab);
-            var methodType = GetMethodType(method, out var pi);
+            var methodType = export.GetMethodType(method, out var pi);
             var offset = ((method.IsStatic && !BeExtend) || beConstruct) ? 1 : 2;
 
             if (method.Name == "op_Equality")
                 checkTypePos = -1;
 
+            var type = export.type;
+            var className = export.className;
+
+            var sb = export.sb;
+
             if ((!method.IsStatic && !beConstruct) || BeExtend)
             {
                 if (checkTypePos > 0)
                 {
-                    CheckObject(indent, type, className, 1);
+                    export.CheckObject(indent, type, className, 1);
                 }
                 else
                 {
                     if (method.Name == "Equals")
                     {
-                        if (!type.IsValueType && checkTypePos > 0)
+                        if (!export.type.IsValueType && checkTypePos > 0)
                         {
-                            CheckObject(indent, type, className, 1);
+                            export.CheckObject(indent, type, className, 1);
                         }
                         else
                         {
@@ -320,11 +329,11 @@ public static class ToLuaExport
                     }
                     else if (checkTypePos > 0) // && methodType == 0)
                     {
-                        CheckObject(indent, type, className, 1);
+                        export.CheckObject(indent, type, className, 1);
                     }
                     else
                     {
-                        ToObject(indent, type, className, 1);
+                        export.ToObject(indent, type, className, 1);
                     }
                 }
             }
@@ -340,9 +349,9 @@ public static class ToLuaExport
                 var arg = "arg" + j;
                 bool beOutArg = param.ParameterType.IsByRef &&
                                 ((param.Attributes & ParameterAttributes.Out) != ParameterAttributes.None);
-                bool beParams = IsParams(param);
+                bool beParams = export.IsParams(param);
                 Type t = GetGenericBaseType(method, param.ParameterType);
-                ProcessArg(t, indent, arg, offset + j, j >= checkTypePos, beParams, beOutArg);
+                export.ProcessArg(t, indent, arg, offset + j, j >= checkTypePos, beParams, beOutArg);
             }
 
             for (int j = 0; j < count; j++)
@@ -365,7 +374,7 @@ public static class ToLuaExport
                     }
 
                     refList.Add("arg" + j);
-                    refTypes.Add(GetRefBaseType(param.ParameterType));
+                    refTypes.Add(export.GetRefBaseType(param.ParameterType));
                 }
 
                 sbArgs.Append(j);
@@ -378,12 +387,12 @@ public static class ToLuaExport
 
             if (beConstruct)
             {
-                sb.AppendFormat("{2}var obj = new {0}({1});\r\n", className, sbArgs.ToString(), indent);
-                var str = GetPushFunction(type);
-                sb.AppendFormat("{0}ToLua.{1}(L, obj);\r\n", indent, str);
+                export.sb.AppendFormat("{2}var obj = new {0}({1});\r\n", className, sbArgs.ToString(), indent);
+                var str = export.GetPushFunction(type);
+                export.sb.AppendFormat("{0}ToLua.{1}(L, obj);\r\n", indent, str);
 
                 for (int i = 0; i < refList.Count; i++)
-                    GenPushStr(refTypes[i], refList[i], indent);
+                    export.GenPushStr(refTypes[i], refList[i], indent);
 
                 return refList.Count + 1;
             }
@@ -393,7 +402,7 @@ public static class ToLuaExport
 
             if (retType == typeof(void))
             {
-                if (HasSetIndex())
+                if (HasSetIndex(export))
                 {
                     if (methodType == 2)
                     {
@@ -424,13 +433,13 @@ public static class ToLuaExport
             else
             {
                 Type genericType = GetGenericBaseType(method, retType);
-                string ret = GetTypeStr(genericType);
+                string ret = export.GetTypeStr(genericType);
 
                 if (method.Name.StartsWith("op_"))
                 {
-                    CallOpFunction(method.Name, tab, ret);
+                    export.CallOpFunction(method.Name, tab, ret);
                 }
-                else if (HasGetIndex())
+                else if (HasGetIndex(export))
                 {
                     if (methodType == 2)
                     {
@@ -466,7 +475,7 @@ public static class ToLuaExport
                 }
 
                 bool isbuffer = IsByteBuffer();
-                GenPushStr(retType, "o", indent, isbuffer);
+                export.GenPushStr(retType, "o", indent, isbuffer);
             }
 
             for (int i = 0; i < refList.Count; i++)
@@ -477,7 +486,7 @@ public static class ToLuaExport
                 }
                 else
                 {
-                    GenPushStr(refTypes[i], refList[i], indent);
+                    export.GenPushStr(refTypes[i], refList[i], indent);
                 }
             }
 
@@ -507,12 +516,7 @@ public static class ToLuaExport
         }
     }
 
-    static ToLuaExport()
-    {
-        Debugger.useLog = true;
-    }
-
-    public static void Clear()
+    public ToLuaExport()
     {
         className = null;
         type = null;
@@ -541,7 +545,7 @@ public static class ToLuaExport
         setItems.Clear();
     }
 
-    private static MetaOp GetOp(string name)
+    private MetaOp GetOp(string name)
     {
         if (name == "op_Addition")
             return MetaOp.Add;
@@ -562,7 +566,7 @@ public static class ToLuaExport
     }
 
     //操作符函数无法通过继承metatable实现
-    static void GenBaseOpFunction(List<_MethodBase> methodBases)
+    void GenBaseOpFunction(List<_MethodBase> methodBases)
     {
         var baseType = type.BaseType;
 
@@ -592,7 +596,7 @@ public static class ToLuaExport
         }
     }
 
-    public static void Generate(string dir)
+    public void Generate(string dir)
     {
 #if !EXPORT_INTERFACE
 
@@ -602,7 +606,6 @@ public static class ToLuaExport
 
 #endif
 
-        //Debugger.Log("Begin Generate lua Wrap for class {0}", className);        
         sb = new StringBuilder();
         usingList.Add("System");
 
@@ -642,7 +645,7 @@ public static class ToLuaExport
     //记录所有的导出类型
     public static Type[] allTypes;
 
-    static bool BeDropMethodType(MethodInfo md)
+    bool BeDropMethodType(MethodInfo md)
     {
         var t = md.DeclaringType;
         if (t == type)
@@ -660,17 +663,17 @@ public static class ToLuaExport
         return true;
     }
 
-    static void BeginPlatformMacro(string flags)
+    void BeginPlatformMacro(string flags)
     {
         ToLuaPlatformUtility.BeginPlatformMacro(sb, flags);
     }
 
-    static void EndPlatformMacro(string flags)
+    void EndPlatformMacro(string flags)
     {
         ToLuaPlatformUtility.EndPlatformMacro(sb, flags);
     }
 
-    static bool BeginCodeGen()
+    bool BeginCodeGen()
     {
         if (platformFlags == ToLuaPlatformFlags.None)
             return false;
@@ -683,7 +686,7 @@ public static class ToLuaExport
         return true;
     }
 
-    static void EndCodeGen(string dir)
+    void EndCodeGen(string dir)
     {
         sb.AppendLineEx("}\r\n");
 
@@ -692,7 +695,7 @@ public static class ToLuaExport
         SaveFile(dir + wrapClassName + "Wrap.cs");
     }
 
-    static void InitMethods()
+    void InitMethods()
     {
         bool flag = false;
 
@@ -705,6 +708,10 @@ public static class ToLuaExport
         var methodBases = new List<_MethodBase>();
         foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | binding))
         {
+            var name = methodInfo.Name;
+            if ((name.StartsWith("op_") || name.StartsWith("add_") || name.StartsWith("remove_")) && !IsNeedOp(name))
+                continue;
+
             if (!ReflectMethods.Included(methodInfo))
                 continue;
  
@@ -732,7 +739,7 @@ public static class ToLuaExport
                         {
                             methodBases.RemoveAt(index);
                         }
-                        else if (methodBases[index].HasGetIndex())
+                        else if (methodBases[index].HasGetIndex(this))
                         {
                             getItems.Add(methodBases[index]);
                         }
@@ -749,7 +756,7 @@ public static class ToLuaExport
                         {
                             methodBases.RemoveAt(index);
                         }
-                        else if (methodBases[index].HasSetIndex())
+                        else if (methodBases[index].HasSetIndex(this))
                         {
                             setItems.Add(methodBases[index]);
                         }
@@ -817,7 +824,7 @@ public static class ToLuaExport
         }
     }
 
-    static void InitPropertyList()
+    void InitPropertyList()
     {
         props = type.GetProperties(
             BindingFlags.GetProperty | BindingFlags.SetProperty | BindingFlags.Instance | binding);
@@ -916,7 +923,7 @@ public static class ToLuaExport
         }
     }
 
-    static void SaveFile(string file)
+    void SaveFile(string file)
     {
         using (var textWriter = new StreamWriter(File.Create(file), Encoding.UTF8))
         {
@@ -944,7 +951,7 @@ public static class ToLuaExport
         }
     }
 
-    static string GetMethodName(MethodBase md)
+    string GetMethodName(MethodBase md)
     {
         if (md.Name.StartsWith("op_"))
         {
@@ -965,7 +972,7 @@ public static class ToLuaExport
         return md.Name;
     }
 
-    static bool HasGetIndex(MemberInfo md)
+    bool HasGetIndex(MemberInfo md)
     {
         if (md.Name == "get_Item")
             return true;
@@ -983,7 +990,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static bool HasSetIndex(MemberInfo md)
+    bool HasSetIndex(MemberInfo md)
     {
         if (md.Name == "set_Item")
             return true;
@@ -1001,7 +1008,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static bool IsThisArray(MethodBase md, int count)
+    bool IsThisArray(MethodBase md, int count)
     {
         var pis = md.GetParameters();
 
@@ -1014,12 +1021,12 @@ public static class ToLuaExport
         return false;
     }
 
-    static string GetRegisterFunctionName(string name)
+    string GetRegisterFunctionName(string name)
     {
         return name == "Register" ? "_Register" : name;
     }
 
-    static void RegisterMethod(MethodBase methodBase, string methodName, string methodPlatformFlagsText)
+    void RegisterMethod(MethodBase methodBase, string methodName, string methodPlatformFlagsText)
     {
         BeginPlatformMacro(methodPlatformFlagsText);
 
@@ -1034,7 +1041,7 @@ public static class ToLuaExport
         EndPlatformMacro(methodPlatformFlagsText);
     }
 
-    static void RegisterMethods()
+    void RegisterMethods()
     {
         //注册库函数
         for (int i = 0; i < methods.Count; i++)
@@ -1067,7 +1074,7 @@ public static class ToLuaExport
 
     }
 
-    static void RegisterConstructor()
+    void RegisterConstructor()
     {
         if (ctorList.Count > 0 || type.IsValueType || ctorExtList.Count > 0)
         {
@@ -1075,7 +1082,7 @@ public static class ToLuaExport
         }
     }
 
-    static void RegisterIndexer()
+    void RegisterIndexer()
     {
         if (getItems.Count > 0 || setItems.Count > 0)
         {
@@ -1083,7 +1090,7 @@ public static class ToLuaExport
         }
     }
 
-    static void RegisterOpItems()
+    void RegisterOpItems()
     {
         if ((op & MetaOp.Add) != 0)
             sb.AppendLineEx("\t\tL.RegFunction(\"__add\", op_Addition);");
@@ -1107,7 +1114,7 @@ public static class ToLuaExport
             sb.AppendLineEx("\t\tL.RegFunction(\"__tostring\", ToLua.op_ToString);");
     }
 
-    static bool IsItemThis(PropertyInfo info)
+    bool IsItemThis(PropertyInfo info)
     {
         var md = info.GetGetMethod();
         if (md != null)
@@ -1120,21 +1127,21 @@ public static class ToLuaExport
         return true;
     }
 
-    static private bool CanRead(PropertyInfo propertyInfo)
+    private bool CanRead(PropertyInfo propertyInfo)
     {
         var propertyFieldSetting = ReflectProperties.Lookup(propertyInfo);
 
         return propertyFieldSetting.CanRead && propertyInfo.CanRead && propertyInfo.GetGetMethod(true).IsPublic;
     }
 
-    static private bool CanWrite(PropertyInfo propertyInfo)
+    private bool CanWrite(PropertyInfo propertyInfo)
     {
         var propertyFieldSetting = ReflectProperties.Lookup(propertyInfo);
 
         return propertyFieldSetting.CanWrite && propertyInfo.CanWrite && propertyInfo.GetSetMethod(true).IsPublic;
     }
 
-    static void RegisterProperties()
+    void RegisterProperties()
     {
         foreach (var field in fields)
         {
@@ -1218,7 +1225,7 @@ public static class ToLuaExport
         }
     }
 
-    static void RegisterEvents()
+    void RegisterEvents()
     {
         var list = new List<Type>();
 
@@ -1253,7 +1260,7 @@ public static class ToLuaExport
         }
     }
 
-    static bool BeginRegisterClass()
+    bool BeginRegisterClass()
     {
         sb.AppendLineEx("\tpublic static void Register(LuaState L)");
         sb.AppendLineEx("\t{");
@@ -1288,7 +1295,7 @@ public static class ToLuaExport
         return true;
     }
 
-    static void EndRegisterClass()
+    void EndRegisterClass()
     {
         if (!isStaticClass)
         {
@@ -1302,7 +1309,7 @@ public static class ToLuaExport
         sb.AppendLineEx("\t}");
     }
 
-    static void RegisterClass()
+    void RegisterClass()
     {
         if (BeginRegisterClass())
         {
@@ -1317,12 +1324,12 @@ public static class ToLuaExport
         }
     }
 
-    static bool IsParams(ParameterInfo param)
+    bool IsParams(ParameterInfo param)
     {
         return param.GetCustomAttributes(typeof(ParamArrayAttribute), false).Length > 0;
     }
 
-    static void GenFunction(_MethodBase m)
+    void GenFunction(_MethodBase m)
     {
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
@@ -1365,7 +1372,7 @@ public static class ToLuaExport
                 sb.AppendLineEx("\t\t\tint count = LuaDLL.lua_gettop(L);");
             }
 
-            rc += m.ProcessParams(3, false, int.MaxValue);
+            rc += m.ProcessParams(this, 3, false, int.MaxValue);
             sb.AppendFormat("\t\t\treturn {0};\r\n", rc);
             EndTry();
         }
@@ -1376,7 +1383,7 @@ public static class ToLuaExport
     }
 
     //没有未知类型的模版类型List<int> 返回false, List<T>返回true
-    static bool IsGenericConstraintType(Type t)
+    bool IsGenericConstraintType(Type t)
     {
         if (!t.IsGenericType)
             return t.IsGenericParameter || t == typeof(System.ValueType);
@@ -1397,7 +1404,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static bool IsGenericConstraints(Type[] constraints)
+    bool IsGenericConstraints(Type[] constraints)
     {
         for (int i = 0; i < constraints.Length; i++)
         {
@@ -1410,7 +1417,7 @@ public static class ToLuaExport
         return true;
     }
 
-    static bool IsGenericMethod(MethodBase md)
+    bool IsGenericMethod(MethodBase md)
     {
         if (md.IsGenericMethod)
         {
@@ -1443,7 +1450,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void GenerateMethods()
+    void GenerateMethods()
     {
         var set = new HashSet<string>();
 
@@ -1454,9 +1461,9 @@ public static class ToLuaExport
             if (IsGenericMethod(m.Method))
             {
                 var typeName = LuaMisc.GetTypeName(type);
-                var totalName = m.GetTotalName();
+                var totalName = m.GetTotalName(this);
 
-                Debugger.Log($"Generic Method {typeName}.{totalName} cannot be export to lua");
+                logs.Add($"Generic Method {typeName}.{totalName} cannot be export to lua");
                 continue;
             }
 
@@ -1464,9 +1471,9 @@ public static class ToLuaExport
             if (!nameCounter.TryGetValue(name, out var count))
             {
                 var typeName = LuaMisc.GetTypeName(type);
-                var totalName = m.GetTotalName();
+                var totalName = m.GetTotalName(this);
 
-                Debugger.Log($"Not register method {typeName}.{totalName}");
+                logs.Add($"Not register method {typeName}.{totalName}");
                 continue;
             }
 
@@ -1496,7 +1503,7 @@ public static class ToLuaExport
         }
     }
 
-    static bool IsSealedType(Type t)
+    bool IsSealedType(Type t)
     {
         if (t.IsSealed)
             return true;
@@ -1510,7 +1517,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static bool IsIEnumerator(Type t)
+    bool IsIEnumerator(Type t)
     {
         if (t == typeof(IEnumerator) || t == typeof(CharEnumerator))
             return true;
@@ -1530,7 +1537,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static string GetPushFunction(Type t, bool isByteBuffer = false)
+    string GetPushFunction(Type t, bool isByteBuffer = false)
     {
         if (t.IsEnum || t.IsPrimitive || t == typeof(string) ||
             t == typeof(LuaTable) || t == typeof(LuaCSFunction) || t == typeof(LuaThread) || t == typeof(LuaFunction) ||
@@ -1570,7 +1577,7 @@ public static class ToLuaExport
         return "PushObject";
     }
 
-    static void DefaultConstruct()
+    void DefaultConstruct()
     {
         sb.AppendLineEx("\r\n\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendFormat("\tstatic int _Create{0}(IntPtr L)\r\n", wrapClassName);
@@ -1581,7 +1588,7 @@ public static class ToLuaExport
         sb.AppendLineEx("\t}");
     }
 
-    static string GetCountStr(int count)
+    string GetCountStr(int count)
     {
         if (count != 0)
             return $"count - {count}";
@@ -1589,7 +1596,7 @@ public static class ToLuaExport
         return "count";
     }
 
-    static void GenOutFunction()
+    void GenOutFunction()
     {
         if (isStaticClass)
             return;
@@ -1602,7 +1609,7 @@ public static class ToLuaExport
         sb.AppendLineEx("\t}");
     }
 
-    static int GetDefalutParamCount(MethodBase md)
+    int GetDefalutParamCount(MethodBase md)
     {
         int count = 0;
         var infos = md.GetParameters();
@@ -1618,7 +1625,7 @@ public static class ToLuaExport
         return count;
     }
 
-    static void InitCtorList()
+    void InitCtorList()
     {
         if (isStaticClass || type.IsAbstract || typeof(MonoBehaviour).IsAssignableFrom(type))
             return;
@@ -1682,7 +1689,7 @@ public static class ToLuaExport
         }
     }
 
-    static void GenerateConstructor()
+    void GenerateConstructor()
     {
         if (ctorExtList.Count > 0)
         {
@@ -1730,7 +1737,7 @@ public static class ToLuaExport
 
             if (paramInfos.Length > 1)
             {
-                string strParams = md.GenParamTypes(1);
+                string strParams = md.GenParamTypes(this, 1);
                 sb.AppendFormat(
                     "\t\t\tif (TypeChecker.CheckTypes<{0}>(L, 1) && TypeChecker.CheckParamsType<{1}>(L, {2}, {3}))\r\n",
                     strParams, str, paramInfos.Length, GetCountStr(paramInfos.Length - 1));
@@ -1751,14 +1758,14 @@ public static class ToLuaExport
             }
             else
             {
-                string strParams = md.GenParamTypes(checkTypeMap[0]);
+                string strParams = md.GenParamTypes(this, checkTypeMap[0]);
                 sb.AppendFormat("\t\t\tif (count == {0} && TypeChecker.CheckTypes<{1}>(L, {2}))\r\n", paramInfos.Length,
                     strParams, checkTypeMap[0]);
             }
         }
 
         sb.AppendLineEx("\t\t\t{");
-        int rc = md.ProcessParams(4, true, checkTypeMap[0] - 1);
+        int rc = md.ProcessParams(this, 4, true, checkTypeMap[0] - 1);
         sb.AppendFormat("\t\t\t\treturn {0};\r\n", rc);
         sb.AppendLineEx("\t\t\t}");
 
@@ -1770,7 +1777,7 @@ public static class ToLuaExport
 
             if (!HasOptionalParam(md.GetParameters()))
             {
-                string strParams = md.GenParamTypes(checkTypeMap[i]);
+                string strParams = md.GenParamTypes(this, checkTypeMap[i]);
 
                 if (paramInfos.Length + 1 > checkTypeMap[i])
                 {
@@ -1788,7 +1795,7 @@ public static class ToLuaExport
 
                 if (paramInfos.Length > 1)
                 {
-                    string strParams = md.GenParamTypes(1);
+                    string strParams = md.GenParamTypes(this, 1);
                     sb.AppendFormat(
                         "\t\t\telse if (TypeChecker.CheckTypes<{0}>(L, 1) && TypeChecker.CheckParamsType<{1}>(L, {2}, {3}))\r\n",
                         strParams, str, paramInfos.Length, GetCountStr(paramInfos.Length - 1));
@@ -1801,7 +1808,7 @@ public static class ToLuaExport
             }
 
             sb.AppendLineEx("\t\t\t{");
-            rc = md.ProcessParams(4, true, checkTypeMap[i] - 1);
+            rc = md.ProcessParams(this, 4, true, checkTypeMap[i] - 1);
             sb.AppendFormat("\t\t\t\treturn {0};\r\n", rc);
             sb.AppendLineEx("\t\t\t}");
         }
@@ -1825,9 +1832,8 @@ public static class ToLuaExport
         sb.AppendLineEx("\t}");
     }
 
-
     //this[] 非静态函数
-    static void GenerateIndexer()
+    void GenerateIndexer()
     {
         int flag = 0;
 
@@ -1843,7 +1849,7 @@ public static class ToLuaExport
                 var m = getItems[0];
                 int count = m.GetParameters().Length + 1;
                 sb.AppendFormat("\t\t\tToLua.CheckArgsCount(L, {0});\r\n", count);
-                m.ProcessParams(3, false, int.MaxValue);
+                m.ProcessParams(this, 3, false, int.MaxValue);
                 sb.AppendLineEx("\t\t\treturn 1;\r\n");
             }
             else
@@ -1882,7 +1888,7 @@ public static class ToLuaExport
                 var m = setItems[0];
                 int count = m.GetParameters().Length + 1;
                 sb.AppendFormat("\t\t\tToLua.CheckArgsCount(L, {0});\r\n", count);
-                m.ProcessParams(3, false, int.MaxValue);
+                m.ProcessParams(this, 3, false, int.MaxValue);
                 sb.AppendLineEx("\t\t\treturn 0;\r\n");
             }
             else
@@ -1927,7 +1933,7 @@ public static class ToLuaExport
         }
     }
 
-    static int GetOptionalParamPos(ParameterInfo[] infos)
+    int GetOptionalParamPos(ParameterInfo[] infos)
     {
         for (int i = 0; i < infos.Length; i++)
         {
@@ -1940,12 +1946,12 @@ public static class ToLuaExport
         return -1;
     }
 
-    static bool Is64bit(Type t)
+    bool Is64bit(Type t)
     {
         return t == typeof(long) || t == typeof(ulong);
     }
 
-    static int Compare(_MethodBase lhs, _MethodBase rhs)
+    int Compare(_MethodBase lhs, _MethodBase rhs)
     {
         int off1 = lhs.IsStatic ? 0 : 1;
         int off2 = rhs.IsStatic ? 0 : 1;
@@ -2079,7 +2085,7 @@ public static class ToLuaExport
         }
     }
 
-    static bool HasOptionalParam(ParameterInfo[] infos)
+    bool HasOptionalParam(ParameterInfo[] infos)
     {
         for (int i = 0; i < infos.Length; i++)
         {
@@ -2092,7 +2098,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void CheckObject(string head, Type type, string className, int pos)
+    void CheckObject(string head, Type type, string className, int pos)
     {
         if (type == typeof(object))
         {
@@ -2119,7 +2125,7 @@ public static class ToLuaExport
         }
     }
 
-    static void ToObject(string head, Type type, string className, int pos)
+    void ToObject(string head, Type type, string className, int pos)
     {
         if (type == typeof(object))
         {
@@ -2131,13 +2137,13 @@ public static class ToLuaExport
         }
     }
 
-    static void BeginTry()
+    void BeginTry()
     {
         sb.AppendLineEx("\t\ttry");
         sb.AppendLineEx("\t\t{");
     }
 
-    static void EndTry()
+    void EndTry()
     {
         sb.AppendLineEx("\t\t}");
         sb.AppendLineEx("\t\tcatch (Exception e)");
@@ -2146,7 +2152,7 @@ public static class ToLuaExport
         sb.AppendLineEx("\t\t}");
     }
 
-    static Type GetRefBaseType(Type argType)
+    Type GetRefBaseType(Type argType)
     {
         if (argType.IsByRef)
         {
@@ -2156,7 +2162,7 @@ public static class ToLuaExport
         return argType;
     }
 
-    static void ProcessArg(Type varType, string indent, string arg, int stackPos, bool beCheckTypes = false,
+    void ProcessArg(Type varType, string indent, string arg, int stackPos, bool beCheckTypes = false,
         bool beParams = false, bool beOutArg = false)
     {
         varType = GetRefBaseType(varType);
@@ -2446,7 +2452,7 @@ public static class ToLuaExport
         }
     }
 
-    static int GetMethodType(MethodBase md, out PropertyInfo pi)
+    int GetMethodType(MethodBase md, out PropertyInfo pi)
     {
         pi = null;
 
@@ -2522,7 +2528,7 @@ public static class ToLuaExport
         return GetGenericParameterType(methodBase as MethodInfo, parameterType);
     }
 
-    static bool IsNumberEnum(Type t)
+    bool IsNumberEnum(Type t)
     {
         if (t == typeof(BindingFlags))
         {
@@ -2532,7 +2538,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void GenPushStr(Type t, string arg, string head, bool isByteBuffer = false)
+    void GenPushStr(Type t, string arg, string head, bool isByteBuffer = false)
     {
         if (t == typeof(int))
         {
@@ -2576,7 +2582,7 @@ public static class ToLuaExport
         }
     }
 
-    static bool CompareParmsCount(_MethodBase l, _MethodBase r)
+    bool CompareParmsCount(_MethodBase l, _MethodBase r)
     {
         if (l == r)
         {
@@ -2593,7 +2599,7 @@ public static class ToLuaExport
     }
 
     //decimal 类型扔掉了
-    static Dictionary<Type, int> typeSize = new Dictionary<Type, int>()
+    Dictionary<Type, int> typeSize = new Dictionary<Type, int>()
     {
         { typeof(char), 2 },
         { typeof(byte), 3 },
@@ -2610,7 +2616,7 @@ public static class ToLuaExport
     };
 
     //-1 不存在替换, 1 保留左面， 2 保留右面
-    static int CompareMethod(_MethodBase l, _MethodBase r)
+    int CompareMethod(_MethodBase l, _MethodBase r)
     {
         int s = 0;
 
@@ -2678,7 +2684,7 @@ public static class ToLuaExport
         return s;
     }
 
-    static void Push(List<_MethodBase> list, _MethodBase r)
+    void Push(List<_MethodBase> list, _MethodBase r)
     {
         string name = GetMethodName(r.Method);
         int index = list.FindIndex((p) => { return GetMethodName(p.Method) == name && CompareMethod(p, r) >= 0; });
@@ -2687,16 +2693,14 @@ public static class ToLuaExport
         {
             if (CompareMethod(list[index], r) == 2)
             {
-                Debugger.LogWarning("{0}.{1} has been dropped as function {2} more match lua", className,
-                    list[index].GetTotalName(), r.GetTotalName());
+                logs.Add($"{className}.{list[index].GetTotalName(this)} has been dropped as function {r.GetTotalName(this)} more match lua");
                 list.RemoveAt(index);
                 list.Add(r);
                 return;
             }
             else
             {
-                Debugger.LogWarning("{0}.{1} has been dropped as function {2} more match lua", className,
-                    r.GetTotalName(), list[index].GetTotalName());
+                logs.Add($"{className}.{r.GetTotalName(this)} has been dropped as function {list[index].GetTotalName(this)} more match lua");
                 return;
             }
         }
@@ -2704,7 +2708,7 @@ public static class ToLuaExport
         list.Add(r);
     }
 
-    static void GenOverrideFuncBody(_MethodBase md, bool beIf, int checkTypeOffset)
+    void GenOverrideFuncBody(_MethodBase md, bool beIf, int checkTypeOffset)
     {
         int offset = md.IsStatic ? 0 : 1;
         int ret = md.GetReturnType() == typeof(void) ? 0 : 1;
@@ -2718,7 +2722,7 @@ public static class ToLuaExport
 
             if (paramInfos.Length + offset > 1)
             {
-                string strParams = md.GenParamTypes(0);
+                string strParams = md.GenParamTypes(this, 0);
                 sb.AppendFormat(
                     "\t\t\t{0}(TypeChecker.CheckTypes<{1}>(L, 1) && TypeChecker.CheckParamsType<{2}>(L, {3}, {4}))\r\n",
                     strIf, strParams, str, paramInfos.Length + offset, GetCountStr(paramInfos.Length + offset - 1));
@@ -2735,7 +2739,7 @@ public static class ToLuaExport
 
             if (paramInfos.Length + offset > checkTypeOffset)
             {
-                string strParams = md.GenParamTypes(checkTypeOffset);
+                string strParams = md.GenParamTypes(this, checkTypeOffset);
                 sb.AppendFormat("\t\t\t{0}(count == {1} && TypeChecker.CheckTypes<{2}>(L, {3}))\r\n", strIf,
                     paramInfos.Length + offset, strParams, checkTypeOffset + 1);
             }
@@ -2746,12 +2750,12 @@ public static class ToLuaExport
         }
 
         sb.AppendLineEx("\t\t\t{");
-        int count = md.ProcessParams(4, false, checkTypeOffset);
+        int count = md.ProcessParams(this, 4, false, checkTypeOffset);
         sb.AppendFormat("\t\t\t\treturn {0};\r\n", ret + count);
         sb.AppendLineEx("\t\t\t}");
     }
 
-    static int[] CheckCheckTypePos<T>(List<T> list) where T : _MethodBase
+    int[] CheckCheckTypePos<T>(List<T> list) where T : _MethodBase
     {
         var map = new int[list.Count];
 
@@ -2785,7 +2789,7 @@ public static class ToLuaExport
 
                 if (c1 == c2)
                 {
-                    count = Mathf.Min(count, list[i].GetEqualParamsCount(list[j]));
+                    count = Mathf.Min(count, list[i].GetEqualParamsCount(this, list[j]));
                 }
                 else
                 {
@@ -2805,7 +2809,7 @@ public static class ToLuaExport
         return map;
     }
 
-    static void GenOverrideDefinedFunc(MethodBase method)
+    void GenOverrideDefinedFunc(MethodBase method)
     {
         string name = GetMethodName(method);
         var field = extendType.GetField(name + "Defined");
@@ -2814,7 +2818,7 @@ public static class ToLuaExport
         return;
     }
 
-    static _MethodBase GenOverrideFunc(string name)
+    _MethodBase GenOverrideFunc(string name)
     {
         var methodBases = new List<_MethodBase>();
 
@@ -2892,7 +2896,7 @@ public static class ToLuaExport
     }
 
     //获取类型名字
-    public static string GetTypeStr(Type t)
+    public string GetTypeStr(Type t)
     {
         if (t.IsByRef)
         {
@@ -2916,14 +2920,14 @@ public static class ToLuaExport
         return LuaMisc.GetTypeName(t);
     }
 
-    public static string GetTypeFullName(Type type)
+    public string GetTypeFullName(Type type)
     {
         var typeName = GetTypeStr(type);
         return ConvertToLibSign(typeName);
     }
 
     //获取 typeof(string) 这样的名字
-    static string GetTypeOf(Type t, string sep)
+    string GetTypeOf(Type t, string sep)
     {
         string str;
 
@@ -2940,7 +2944,7 @@ public static class ToLuaExport
         return str;
     }
 
-    static string GenParamTypes(ParameterInfo[] p, MethodBase mb, int offset = 0)
+    string GenParamTypes(ParameterInfo[] p, MethodBase mb, int offset = 0)
     {
         var sb = new StringBuilder();
         var list = new List<Type>();
@@ -2982,7 +2986,7 @@ public static class ToLuaExport
         return sb.ToString();
     }
 
-    static void CheckObjectNull()
+    void CheckObjectNull()
     {
         if (type.IsValueType)
         {
@@ -2994,7 +2998,7 @@ public static class ToLuaExport
         }
     }
 
-    static void GenGetFieldStr(MemberInfo memberInfo, Type varType, bool isStatic, bool isByteBuffer, bool beOverride = false)
+    void GenGetFieldStr(MemberInfo memberInfo, Type varType, bool isStatic, bool isByteBuffer, bool beOverride = false)
     {
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
@@ -3042,7 +3046,7 @@ public static class ToLuaExport
         EndPlatformMacro(fieldPlatformFlagsText);
     }
 
-    static void GenGetEventStr(MemberInfo memberInfo, Type varType)
+    void GenGetEventStr(MemberInfo memberInfo, Type varType)
     {
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
@@ -3064,7 +3068,7 @@ public static class ToLuaExport
         EndPlatformMacro(fieldPlatformFlagsText);
     }
 
-    static void GenIndexFunc()
+    void GenIndexFunc()
     {
         for (int i = 0; i < fields.Length; i++)
         {
@@ -3100,7 +3104,7 @@ public static class ToLuaExport
         }
     }
 
-    static void GenSetFieldStr(MemberInfo memberInfo, Type varType, bool isStatic, bool beOverride = false)
+    void GenSetFieldStr(MemberInfo memberInfo, Type varType, bool isStatic, bool beOverride = false)
     {
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
@@ -3152,7 +3156,7 @@ public static class ToLuaExport
         EndPlatformMacro(fieldPlatformFlagsText);
     }
 
-    static void GenSetEventStr(MemberInfo memberInfo, Type varType, bool isStatic)
+    void GenSetEventStr(MemberInfo memberInfo, Type varType, bool isStatic)
     {
         var fieldPlatformFlags = ReflectFields.GetPlatformFlags(memberInfo);
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
@@ -3206,7 +3210,7 @@ public static class ToLuaExport
         EndPlatformMacro(fieldPlatformFlagsText);
     }
 
-    static void GenNewIndexFunc()
+    void GenNewIndexFunc()
     {
         for (int i = 0; i < fields.Length; i++)
         {
@@ -3241,7 +3245,7 @@ public static class ToLuaExport
         }
     }
 
-    static void GenLuaFunctionRetValue(StringBuilder sb, Type t, string head, string name, bool beDefined = false)
+    void GenLuaFunctionRetValue(StringBuilder sb, Type t, string head, string name, bool beDefined = false)
     {
         if (t == typeof(bool))
         {
@@ -3334,12 +3338,10 @@ public static class ToLuaExport
             var type = GetTypeStr(t);
             name = beDefined ? name : type + " " + name;
             sb.AppendFormat("{0}{1} = ({2})func.CheckObject(typeof({2}));\r\n", head, name, type);
-
-            //Debugger.LogError("GenLuaFunctionCheckValue undefined type:" + t.FullName);
         }
     }
 
-    public static bool IsByteBuffer(Type type)
+    public bool IsByteBuffer(Type type)
     {
         var attrs = type.GetCustomAttributes(true);
 
@@ -3356,7 +3358,7 @@ public static class ToLuaExport
         return false;
     }
 
-    public static bool IsByteBuffer(MemberInfo mb)
+    public bool IsByteBuffer(MemberInfo mb)
     {
         var attrs = mb.GetCustomAttributes(true);
 
@@ -3373,7 +3375,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void GenDelegateBody(StringBuilder sb, Type t, string head, bool hasSelf = false)
+    void GenDelegateBody(StringBuilder sb, Type t, string head, bool hasSelf = false)
     {
         var mi = t.GetMethod("Invoke");
         var pi = mi.GetParameters();
@@ -3472,7 +3474,7 @@ public static class ToLuaExport
         sb.AppendFormat("{0}}}\r\n", head);
     }
 
-    public static bool IsNeedOp(string name)
+    public bool IsNeedOp(string name)
     {
         if (name == "op_Addition")
             op |= MetaOp.Add;
@@ -3494,7 +3496,7 @@ public static class ToLuaExport
         return true;
     }
 
-    static void CallOpFunction(string name, int count, string ret)
+    void CallOpFunction(string name, int count, string ret)
     {
         var head = string.Empty;
 
@@ -3515,7 +3517,7 @@ public static class ToLuaExport
             sb.AppendFormat("{0}{1} o = -arg0;\r\n", head, ret);
     }
 
-    public static bool HasAttribute(MemberInfo mb, Type atrtype)
+    public bool HasAttribute(MemberInfo mb, Type atrtype)
     {
         var attrs = mb.GetCustomAttributes(true);
 
@@ -3531,7 +3533,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void GenerateEnum()
+    void GenerateEnum()
     {
         fields = type.GetFields(BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static);
         var list = from field in fields
@@ -3718,7 +3720,7 @@ public static class ToLuaExport
     }
 ";
 
-    static string GetDelegateParams(MethodInfo mi)
+    string GetDelegateParams(MethodInfo mi)
     {
         var parameters = mi.GetParameters();
         var list = new List<string>();
@@ -3747,7 +3749,7 @@ public static class ToLuaExport
         return string.Join(", ", list.ToArray());
     }
 
-    static string GetReturnValue(Type t)
+    string GetReturnValue(Type t)
     {
         if (t.IsPrimitive)
         {
@@ -3762,7 +3764,7 @@ public static class ToLuaExport
         return $"default({GetTypeStr(t)})";
     }
 
-    static string GetDefaultDelegateBody(MethodInfo md)
+    string GetDefaultDelegateBody(MethodInfo md)
     {
         var str = "\r\n\t\t\t{\r\n";
         bool flag = false;
@@ -3802,7 +3804,7 @@ public static class ToLuaExport
         }
     }
 
-    private static void ForEachDelegates(Type[] delegateTypes, Action<Type, string, string> action, bool multiLine = false)
+    private void ForEachDelegates(Type[] delegateTypes, Action<Type, string, string> action, bool multiLine = false)
     {
         if (delegateTypes.Length > 0)
         {
@@ -3833,7 +3835,7 @@ public static class ToLuaExport
         }
     }
 
-    public static void GenDelegates(Type[] delegateTypes)
+    public void GenDelegates(Type[] delegateTypes)
     {
         usingList.Add("System");
         usingList.Add("System.Collections.Generic");
@@ -3921,11 +3923,9 @@ public static class ToLuaExport
 
         sb.AppendLineEx("}\r\n");
         SaveFile(ToLuaSettingsUtility.Settings.SaveDir + "LuaDelegates.cs");
-
-        Clear();
     }
 
-    static bool IsUseDefinedAttributee(MemberInfo mb)
+    bool IsUseDefinedAttributee(MemberInfo mb)
     {
         var attrs = mb.GetCustomAttributes(false);
 
@@ -3942,7 +3942,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static bool IsMethodEqualExtend(MethodBase a, MethodBase b)
+    bool IsMethodEqualExtend(MethodBase a, MethodBase b)
     {
         if (a.Name != b.Name)
             return false;
@@ -3984,7 +3984,7 @@ public static class ToLuaExport
         return true;
     }
 
-    static bool IsGenericType(MethodInfo md, Type t)
+    bool IsGenericType(MethodInfo md, Type t)
     {
         var list = md.GetGenericArguments();
 
@@ -3999,7 +3999,7 @@ public static class ToLuaExport
         return false;
     }
 
-    static void ProcessExtendType(Type extendType, List<_MethodBase> methodBases)
+    void ProcessExtendType(Type extendType, List<_MethodBase> methodBases)
     {
         if (extendType != null)
         {
@@ -4031,7 +4031,7 @@ public static class ToLuaExport
         }
     }
 
-    private static IEnumerable<Type> GetExtensionTypes(Type extendedType)
+    private IEnumerable<Type> GetExtensionTypes(Type extendedType)
     {
         var query = from type in allTypes
                     where type.IsSealed && !type.IsGenericType && !type.IsNested
@@ -4042,7 +4042,7 @@ public static class ToLuaExport
         return query;
     }
 
-    static void ProcessExtends(List<_MethodBase> methodBases)
+    void ProcessExtends(List<_MethodBase> methodBases)
     {
         var extendTypes = GetExtensionTypes(type);
         foreach (var extendType in extendTypes)
@@ -4057,7 +4057,7 @@ public static class ToLuaExport
         }
     }
 
-    static void GetDelegateTypeFromMethodParams(_MethodBase m)
+    void GetDelegateTypeFromMethodParams(_MethodBase m)
     {
         if (m.IsGenericMethod)
             return;
@@ -4075,7 +4075,7 @@ public static class ToLuaExport
         }
     }
 
-    public static void GenerateDelegate(Type t, StringBuilder sb)
+    public void GenerateDelegate(Type t, StringBuilder sb)
     {
         var platformFlags = ReflectTypes.GetPlatformFlags(t);
         if (platformFlags == ToLuaPlatformFlags.None)
@@ -4122,7 +4122,7 @@ public static class ToLuaExport
         EndPlatformMacro(platformFlagsText);
     }
 
-    static void GenEventFunctions()
+    void GenEventFunctions()
     {
         foreach (Type t in eventSet)
         {
@@ -4239,7 +4239,7 @@ public static class ToLuaExport
         return space;
     }
 
-    static Type GetParameterType(ParameterInfo info)
+    public Type GetParameterType(ParameterInfo info)
     {
         if (info.ParameterType == extendType)
             return type;

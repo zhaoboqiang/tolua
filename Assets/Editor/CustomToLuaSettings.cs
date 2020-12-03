@@ -19,14 +19,16 @@ public class CustomToLuaSettings : ToLuaSettings
         });
     }
 
-    public string SaveDir => Application.dataPath + "/Source/Generate/";
+    private static string dataPath = Application.dataPath;
+
+    public string SaveDir => dataPath + "/Source/Generate/";
     public string WrapperSaveDir => SaveDir + "/Wrappers/";
 
-    public string ToluaBaseType => Application.dataPath + "/ToLua/BaseType/";
-    public string baseLuaDir => Application.dataPath + "/ToLua/Lua/";
-    public string injectionFilesPath => Application.dataPath + "/ToLua/Injection/";
+    public string ToluaBaseType => dataPath + "/ToLua/BaseType/";
+    public string baseLuaDir => dataPath + "/ToLua/Lua/";
+    public string injectionFilesPath => dataPath + "/ToLua/Injection/";
 
-    private string GetCsvPath(string filename) => Application.dataPath + "/EditorSetting/" + filename + ".csv";
+    private string GetCsvPath(string filename) => dataPath + "/EditorSetting/" + filename + ".csv";
 
     public string AssemblyCsv => GetCsvPath("Assemblies");
     public string NamespaceCsv => GetCsvPath("Namespaces");

@@ -21,10 +21,6 @@ namespace LuaInterface.Editor
  
         public static bool Included(MethodInfo methodInfo)
         {
-            var name = methodInfo.Name;
-            if ((name.StartsWith("op_") || name.StartsWith("add_") || name.StartsWith("remove_")) && !ToLuaExport.IsNeedOp(name))
-                return false; 
-
             if (ToLuaTypes.IsUnsupported(methodInfo))
                 return false; 
  
