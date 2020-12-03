@@ -24,6 +24,11 @@ namespace LuaInterface.Editor
             }
         }
 
+        public static void Reset()
+        {
+            includedNamespaces = null;
+        }
+
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
             var flags = ToLuaPlatformFlags.All; // deny list

@@ -127,6 +127,14 @@ public static class ToLuaMenu
         }
     }
 
+    private static void Reset()
+    {
+        ReflectAssemblies.Reset();
+        ReflectFields.Reset();
+        ReflectNamespaces.Reset();
+        ReflectProperties.Reset();
+        ReflectTypes.Reset();
+    }
 
     private static void GenerateClassWrap(BindType bindType)
     {
@@ -160,6 +168,8 @@ public static class ToLuaMenu
         var wrapperSaveDir = ToLuaSettingsUtility.Settings.WrapperSaveDir;
         if (!File.Exists(wrapperSaveDir))
             Directory.CreateDirectory(wrapperSaveDir);
+
+        Reset();
 
         BindTypes = (from type in types select new BindType(type)).ToArray();
 

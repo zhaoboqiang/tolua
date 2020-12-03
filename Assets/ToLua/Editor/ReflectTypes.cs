@@ -25,6 +25,11 @@ namespace LuaInterface.Editor
             }
         }
 
+        public static void Reset()
+        {
+            includedTypes = null;
+        }
+
         private static bool IsTypeIncluded(Type type)
         {
             if (type.IsGenericTypeDefinition)

@@ -27,11 +27,12 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 using LuaInterface;
-using LuaInterface.Editor;
 using System.Linq;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+namespace LuaInterface.Editor
+{
 [System.Flags]
 public enum MetaOp
 {
@@ -4246,4 +4247,5 @@ public class ToLuaExport
 
         return info.ParameterType;
     }
+}
 }

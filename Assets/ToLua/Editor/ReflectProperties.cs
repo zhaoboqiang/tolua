@@ -25,6 +25,11 @@ namespace LuaInterface.Editor
             }
         }
 
+        public static void Reset()
+        {
+            includedProperties = null;
+        }
+
         public static LuaIncludedProperty Lookup(string name)
         {
             var property = new LuaIncludedProperty();
