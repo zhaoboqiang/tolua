@@ -16,6 +16,7 @@ namespace LuaInterface
         public string Name;
         public bool Android;
         public bool iOS;
+        public bool Editor;
     }
 
     [Serializable]
@@ -24,6 +25,7 @@ namespace LuaInterface
         public string Namespace;
         public bool Android;
         public bool iOS;
+        public bool Editor;
     }
 
     [Serializable]
@@ -33,6 +35,7 @@ namespace LuaInterface
         public string Note;
         public bool Android;
         public bool iOS;
+        public bool Editor;
     }
 
     [Serializable]
@@ -41,6 +44,7 @@ namespace LuaInterface
         public string FieldFullName;
         public bool Android;
         public bool iOS;
+        public bool Editor;
     }
 
     [Serializable]

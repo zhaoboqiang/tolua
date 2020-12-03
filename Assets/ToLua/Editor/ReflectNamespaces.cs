@@ -32,7 +32,7 @@ namespace LuaInterface.Editor
                 return flags;
 
             if (IncludedNamespaces.TryGetValue(name, out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
         }
@@ -64,15 +64,14 @@ namespace LuaInterface.Editor
             }
 
             // save configurations
-            var lines = new List<string> { "Namespace,Android,iOS" };
+            var lines = new List<string> { "Namespace,Android,iOS,Editor" };
             var values = newNamespaces.Values.ToList();
             values.Sort((lhs, rhs) => lhs.Namespace.CompareTo(rhs.Namespace));
             lines.AddRange(from ns in values
-                           //where !ns.Android || !ns.iOS
-                           select $"{ns.Namespace},{ns.Android},{ns.iOS}");
+                           //where !ns.Android || !ns.iOS || !ns.Editor
+                           select $"{ns.Namespace},{ns.Android},{ns.iOS},{ns.Editor}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedNamespaceCsv);
         }
-
 
         [MenuItem("Reflect/Update namespaces")]
         public static void UpdateNamespaces()
@@ -93,7 +92,7 @@ namespace LuaInterface.Editor
                     if (newNamespaces.ContainsKey(ns))
                         continue;
 
-                    newNamespaces.Add(ns, new LuaIncludedNamespace { Namespace = ns, Android = true, iOS = true });
+                    newNamespaces.Add(ns, new LuaIncludedNamespace { Namespace = ns, Android = true, iOS = true, Editor = true });
                 }
             }
 

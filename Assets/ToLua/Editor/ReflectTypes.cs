@@ -48,7 +48,7 @@ namespace LuaInterface.Editor
         public static ToLuaPlatformFlags GetPlatformFlagsFromCsv(Type type, ToLuaPlatformFlags flags)
         {
             if (IncludedTypes.TryGetValue(ToLuaTypes.GetName(type), out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
         }
@@ -115,10 +115,10 @@ namespace LuaInterface.Editor
             resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // Save configurations
-            var lines = new List<string> { "FullName,Note,Android,iOS" };
+            var lines = new List<string> { "FullName,Note,Android,iOS,Editor" };
             lines.AddRange(from type in resultTypes
-                           where !type.Android || !type.iOS || oldTypes.ContainsKey(type.FullName)
-                           select $"{type.FullName},{type.Note},{type.Android},{type.iOS}");
+                           where !type.Android || !type.iOS || !type.Editor || oldTypes.ContainsKey(type.FullName)
+                           select $"{type.FullName},{type.Note},{type.Android},{type.iOS},{type.Editor}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedTypeCsv);
         }
 
@@ -128,7 +128,8 @@ namespace LuaInterface.Editor
             {
                 FullName = type.FullName,
                 Android = true,
-                iOS = true
+                iOS = true,
+                Editor = true
             });
         }
 

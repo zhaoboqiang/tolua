@@ -29,7 +29,7 @@ namespace LuaInterface.Editor
             var flags = ToLuaPlatformFlags.None; // allow list
 
             if (IncludedAssemblies.TryGetValue(name, out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
         }
@@ -65,12 +65,11 @@ namespace LuaInterface.Editor
             resultAssemblies.Sort((lhs, rhs) => lhs.Name.CompareTo(rhs.Name));
 
             // save configurations
-            var lines = new List<string> { "Name,Android,iOS" };
+            var lines = new List<string> { "Name,Android,iOS,Editor" };
             lines.AddRange(from assembly in resultAssemblies
-                           select $"{assembly.Name},{assembly.Android},{assembly.iOS}");
+                           select $"{assembly.Name},{assembly.Android},{assembly.iOS},{assembly.Editor}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.IncludedAssemblyCsv);
         }
-
 
         [MenuItem("Reflect/Update assemblies")]
         public static void UpdateAssemblies()
@@ -83,7 +82,7 @@ namespace LuaInterface.Editor
             {
                 var assemblyName = assembly.GetName().Name;
 
-                newAssemblies.Add(new LuaIncludedAssembly { Name = assemblyName, Android = true, iOS = true });
+                newAssemblies.Add(new LuaIncludedAssembly { Name = assemblyName, Android = true, iOS = true, Editor = true });
             }
 
             UpdateCsv(newAssemblies);

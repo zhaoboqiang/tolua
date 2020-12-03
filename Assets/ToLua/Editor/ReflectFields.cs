@@ -30,7 +30,7 @@ namespace LuaInterface.Editor
             var flags = ToLuaPlatformFlags.All; // deny list
 
             if (IncludedFields.TryGetValue(name, out var value))
-                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Android || value.iOS);
+                flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
         }
