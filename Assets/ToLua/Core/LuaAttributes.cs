@@ -45,13 +45,6 @@ namespace LuaInterface
         }
     }
 
-    public class OverrideDefinedAttribute: System.Attribute
-    {
-        public OverrideDefinedAttribute()
-        {
-        }
-    }
-    
     public sealed class LuaByteBufferAttribute : Attribute
     {                
         public LuaByteBufferAttribute()

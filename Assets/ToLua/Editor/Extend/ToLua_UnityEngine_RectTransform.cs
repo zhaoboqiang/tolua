@@ -23,16 +23,4 @@ public class ToLua_UnityEngine_RectTransform
                 ToLua.Push(L, arg0);
                 return 1;
             }";
-
-    [OverrideDefined]
-    public Vector3[] GetLocalCorners()
-    {
-        return null;
-    }
-
-    [OverrideDefined]
-    public Vector3[] GetWorldCorners()
-    {
-        return null;
-    }
 }

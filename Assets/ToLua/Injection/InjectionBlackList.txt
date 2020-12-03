@@ -1,7 +1,6 @@
 LuaInterface.MonoPInvokeCallbackAttribute
 LuaInterface.NoToLuaAttribute
 LuaInterface.UseDefinedAttribute
-LuaInterface.OverrideDefinedAttribute
 LuaInterface.LuaByteBufferAttribute
 LuaInterface.LuaRenameAttribute
 LuaInterface.LuaBaseRef
