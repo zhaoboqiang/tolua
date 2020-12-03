@@ -148,12 +148,12 @@ public class ToLuaExport
                 list2.Add(type);
 
             for (int i = 0; i < args.Length; i++)
-                list1.Add(export.GetParameterType(args[i]));
+                list1.Add(args[i].ParameterType);
 
             var p = b.args;
 
             for (int i = 0; i < p.Length; i++)
-                list2.Add(export.GetParameterType(p[i]));
+                list2.Add(p[i].ParameterType);
 
             for (int i = 0; i < list1.Count; i++)
             {
@@ -2607,12 +2607,12 @@ public class ToLuaExport
 
             for (int i = 0; i < lp.Length; i++)
             {
-                ll.Add(GetParameterType(lp[i]));
+                ll.Add(lp[i].ParameterType);
             }
 
             for (int i = 0; i < rp.Length; i++)
             {
-                lr.Add(GetParameterType(rp[i]));
+                lr.Add(rp[i].ParameterType);
             }
 
             for (int i = 0; i < ll.Count; i++)
@@ -3912,10 +3912,10 @@ public class ToLuaExport
             lr.Add(type);
 
         for (int i = 0; i < lp.Length; i++)
-            ll.Add(GetParameterType(lp[i]));
+            ll.Add(lp[i].ParameterType);
 
         for (int i = 0; i < rp.Length; i++)
-            lr.Add(GetParameterType(rp[i]));
+            lr.Add(rp[i].ParameterType);
 
         for (int i = 0; i < ll.Count; i++)
         {
@@ -4181,11 +4181,6 @@ public class ToLuaExport
         }
 
         return space;
-    }
-
-    public Type GetParameterType(ParameterInfo info)
-    {
-        return info.ParameterType;
     }
 }
 }
