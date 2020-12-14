@@ -374,7 +374,7 @@ public static class ToLuaMenu
             if (node.value == null)
                 return;
 
-            sb.Append($"\t\tL.BeginModule(\"{node.value}\");\r\n");
+            sb.Append($"\t\tL.BeginModule(\"{node.value}\");\r");
             var space = GetSpaceNameFromTree(node);
 
             GenRegisterInfo(space, sb, delegateTypes, wrappedDelegateTypes);
@@ -400,7 +400,7 @@ public static class ToLuaMenu
             export.GenerateDelegate(type, sb);
         }
 
-        sb.AppendLineEx("}\r\n");
+        sb.AppendLineEx("}\r");
         var file = ToLuaSettingsUtility.Settings.SaveDir + "LuaBinder.cs";
 
         using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
@@ -432,7 +432,7 @@ public static class ToLuaMenu
 
             ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
 
-            sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r\n");
+            sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r");
 
             ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
         }
@@ -454,7 +454,7 @@ public static class ToLuaMenu
             var typeFullName = ToLuaExport.GetTypeFullName(type);
 
             ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
-            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1}); // [GenRegisterInfo]\r\n", funcName, typeFullName);
+            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1}); // [GenRegisterInfo]\r", funcName, typeFullName);
             ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
 
             wrappedDelegateTypes.Add(type);
