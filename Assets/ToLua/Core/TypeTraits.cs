@@ -29,10 +29,7 @@ namespace LuaInterface
     {
         static public Func<IntPtr, int, bool> Check = DefaultCheck;
         static public Type type = typeof(T);
-        static public bool IsValueType = type.IsValueType;
-        static public bool IsArray = type.IsArray;
 
-        static string typeName = string.Empty;
         static int nilType = -1;
         static int metaref = -1;
 
@@ -46,12 +43,7 @@ namespace LuaInterface
 
         static public string GetTypeName()
         {
-            if (typeName == string.Empty)
-            {
-                typeName = LuaMisc.GetTypeName(type);
-            }
-
-            return typeName;
+            return LuaMisc.GetTypeName(type);
         }
 
         static public int GetLuaReference(IntPtr L)
@@ -95,11 +87,9 @@ namespace LuaInterface
         static bool IsNilType()
         {
             if (nilType != -1)
-            {
                 return nilType != 0;
-            }
 
-            if (!IsValueType)
+            if (!type.IsValueType)
             {
                 nilType = 1;
                 return true;
@@ -131,7 +121,7 @@ namespace LuaInterface
                 }
                 else
                 {
-                    return !IsValueType;
+                    return !type.IsValueType;
                 }
             }
 
@@ -141,22 +131,18 @@ namespace LuaInterface
         static bool IsUserTable(IntPtr L, int pos)
         {
             if (type == typeof(LuaTable))
-            {
                 return true;
-            }
-            else if (type.IsArray)
+
+            if (type.IsArray)
             {
                 if (type.GetElementType().IsArray || type.GetArrayRank() > 1)
-                {
                     return false;
-                }
 
                 return true;
             }
-            else if (LuaDLL.tolua_isvptrtable(L, pos))
-            {
+
+            if (LuaDLL.tolua_isvptrtable(L, pos))
                 return IsUserData(L, pos);
-            }
 
             return false;
         }
@@ -256,10 +242,11 @@ namespace LuaInterface
 
         static Action<IntPtr, T> SelectPush()
         {
-            if (TypeTraits<T>.IsValueType)
+            var type = TypeTraits<T>.type;
+            if (type.IsValueType)
                 return PushValue;
 
-            if (TypeTraits<T>.IsArray)
+            if (type.IsArray)
                 return PushArray;
 
             return PushObject;
@@ -311,12 +298,12 @@ namespace LuaInterface
                     LuaDLL.luaL_argerror(L, stackPos, string.Format("{0} expected, got {1}", TypeTraits<T>.GetTypeName(), obj.GetType().FullName));
                 }
 
-                if (!TypeTraits<T>.IsValueType)
+                if (!TypeTraits<T>.type.IsValueType)
                 {
                     return default(T);
                 }
             }
-            else if (LuaDLL.lua_isnil(L, stackPos) && !TypeTraits<T>.IsValueType)
+            else if (LuaDLL.lua_isnil(L, stackPos) && !TypeTraits<T>.type.IsValueType)
             {
                 return default(T);
             }
