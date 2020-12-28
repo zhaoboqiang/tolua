@@ -2115,6 +2115,15 @@ public class ToLuaExport
         sb.AppendLineEx("\t\t}");
     }
 
+    void EndTry(string o, string msg)
+    {
+        sb.AppendLineEx("\t\t}");
+        sb.AppendLineEx("\t\tcatch (Exception e)");
+        sb.AppendLineEx("\t\t{");
+        sb.AppendLineEx($"\t\t\treturn LuaDLL.toluaL_exception(L, e, {o}, {msg}");
+        sb.AppendLineEx("\t\t}");
+    }
+
     Type GetRefBaseType(Type argType)
     {
         if (argType.IsByRef)
@@ -3079,12 +3088,7 @@ public class ToLuaExport
             }
 
             sb.AppendLineEx("\t\t\treturn 0;");
-            sb.AppendLineEx("\t\t}");
-            sb.AppendLineEx("\t\tcatch(Exception e)");
-            sb.AppendLineEx("\t\t{");
-            sb.AppendFormat(
-                "\t\t\treturn LuaDLL.toluaL_exception(L, e, o, \"attempt to index {0} on a nil value\");\r", fieldName);
-            sb.AppendLineEx("\t\t}");
+            EndTry("o", $"\"attempt to index {fieldName} on a nil value\");\r");
         }
         else
         {
