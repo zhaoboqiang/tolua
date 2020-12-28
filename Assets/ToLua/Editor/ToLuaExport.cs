@@ -327,7 +327,7 @@ public class ToLuaExport
                             sb.AppendFormat("{0}var obj = ({1})ToLua.ToObject(L, 1);\r", indent, className);
                         }
                     }
-                    else if (checkTypePos > 0) // && methodType == 0)
+                    else if (checkTypePos > 0)
                     {
                         export.CheckObject(indent, type, className, 1);
                     }
@@ -410,24 +410,24 @@ public class ToLuaExport
                         var ss = str.Split(',');
                         str = string.Join(",", ss, 0, ss.Length - 1);
 
-                        sb.AppendFormat("{0}{1}[{2}] ={3};\r", indent, obj, str, ss[ss.Length - 1]);
+                        sb.AppendFormat($"{indent}{obj}[{str}] = {ss[ss.Length - 1]};\r");
                     }
                     else if (methodType == 1)
                     {
-                        sb.AppendFormat("{0}{1}.Item = arg0;\r", indent, obj, pi.Name);
+                        sb.AppendFormat($"{indent}{obj}.Item = arg0;\r");
                     }
                     else
                     {
-                        sb.AppendFormat("{0}{1}.{2}({3});\r", indent, obj, method.Name, sbArgs.ToString());
+                        sb.AppendFormat($"{indent}{obj}.{method.Name}({sbArgs.ToString()});\r");
                     }
                 }
                 else if (methodType == 1)
                 {
-                    sb.AppendFormat("{0}{1}.{2} = arg0;\r", indent, obj, pi.Name);
+                    sb.AppendFormat($"{indent}{obj}.{pi.Name} = arg0;\r");
                 }
                 else
                 {
-                    sb.AppendFormat("{3}{0}.{1}({2});\r", obj, method.Name, sbArgs.ToString(), indent);
+                    sb.AppendFormat($"{indent}{obj}.{method.Name}({sbArgs.ToString()});\r");
                 }
             }
             else
@@ -443,15 +443,15 @@ public class ToLuaExport
                 {
                     if (methodType == 2)
                     {
-                        sb.AppendFormat("{0}{1} o = {2}[{3}];\r", indent, ret, obj, sbArgs.ToString());
+                        sb.AppendFormat($"{indent}{ret} o = {obj}[{sbArgs.ToString()}];\r");
                     }
                     else if (methodType == 1)
                     {
-                        sb.AppendFormat("{0}{1} o = {2}.Item;\r", indent, ret, obj);
+                        sb.AppendFormat($"{indent}{ret} o = {obj}.Item;\r");
                     }
                     else
                     {
-                        sb.AppendFormat("{0}{1} o = {2}.{3}({4});\r", indent, ret, obj, method.Name, sbArgs.ToString());
+                        sb.AppendFormat($"{indent}{ret} o = {obj}.{method.Name}({sbArgs.ToString()});\r");
                     }
                 }
                 else if (method.Name == "Equals")
@@ -467,11 +467,11 @@ public class ToLuaExport
                 }
                 else if (methodType == 1)
                 {
-                    sb.AppendFormat("{0}{1} o = {2}.{3};\r", indent, ret, obj, pi.Name);
+                    sb.AppendFormat($"{indent}{ret} o = {obj}.{pi.Name};\r");
                 }
                 else
                 {
-                    sb.AppendFormat("{0}{1} o = {2}.{3}({4});\r", indent, ret, obj, method.Name, sbArgs.ToString());
+                    sb.AppendFormat($"{indent}{ret} o = {obj}.{method.Name}({sbArgs.ToString()});\r");
                 }
 
                 bool isbuffer = IsByteBuffer();
@@ -482,7 +482,7 @@ public class ToLuaExport
             {
                 if (refTypes[i] == typeof(RaycastHit) && method.Name == "Raycast" && (type == typeof(Physics) || type == typeof(Collider)))
                 {
-                    sb.AppendFormat("{0}if (o) ToLua.Push(L, {1}); else LuaDLL.lua_pushnil(L);\r", indent, refList[i]);
+                    sb.AppendFormat($"{indent}if (o) ToLua.Push(L, {refList[i]}); else LuaDLL.lua_pushnil(L);\r");
                 }
                 else
                 {
@@ -2415,7 +2415,7 @@ public class ToLuaExport
 
         if (!md.IsSpecialName)
         {
-            return 0;
+            return 0; // normal method
         }
 
         int methodType = 0;
@@ -2423,21 +2423,21 @@ public class ToLuaExport
 
         if (pos >= 0)
         {
-            methodType = 1;
+            methodType = 1; // properties
             pi = allProps[pos];
 
             if (md == pi.GetGetMethod())
             {
                 if (md.GetParameters().Length > 0)
                 {
-                    methodType = 2;
+                    methodType = 2; // get method
                 }
             }
             else if (md == pi.GetSetMethod())
             {
                 if (md.GetParameters().Length > 1)
                 {
-                    methodType = 2;
+                    methodType = 2; // set method
                 }
             }
         }
