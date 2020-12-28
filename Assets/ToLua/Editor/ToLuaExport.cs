@@ -2145,123 +2145,120 @@ public class ToLuaExport
         {
             if (varType.IsValueType)
             {
-                sb.AppendFormat("{0}{1} {2};\r", indent, typeName, arg);
+                sb.AppendFormat($"{indent}{typeName} {arg};\r");
             }
             else
             {
-                sb.AppendFormat("{0}{1} {2} = null;\r", indent, typeName, arg);
+                sb.AppendFormat($"{indent}{typeName} {arg} = null;\r");
             }
         }
         else if (varType == typeof(bool))
         {
             string chkstr = beCheckTypes ? "lua_toboolean" : "luaL_checkboolean";
-            sb.AppendFormat("{0}bool {1} = LuaDLL.{2}(L, {3});\r", indent, arg, chkstr, stackPos);
+            sb.AppendFormat($"{indent}var {arg} = LuaDLL.{chkstr}(L, {stackPos});\r");
         }
         else if (varType == typeof(string))
         {
-            sb.AppendFormat("{0}string {1} = ToLua.{2}String(L, {3});\r", indent, arg, checkStr, stackPos);
+            sb.AppendFormat($"{indent}string {arg} = ToLua.{checkStr}String(L, {stackPos});\r");
         }
         else if (varType == typeof(IntPtr))
         {
-            sb.AppendFormat("{0}{1} {2} = ToLua.CheckIntPtr(L, {3});\r", indent, typeName, arg, stackPos);
+            sb.AppendFormat($"{indent}{typeName} {arg} = ToLua.CheckIntPtr(L, {stackPos});\r");
         }
         else if (varType == typeof(long))
         {
             string chkstr = beCheckTypes ? "tolua_toint64" : "tolua_checkint64";
-            sb.AppendFormat("{0}{1} {2} = LuaDLL.{3}(L, {4});\r", indent, typeName, arg, chkstr, stackPos);
+            sb.AppendFormat($"{indent}{typeName} {arg} = LuaDLL.{chkstr}(L, {stackPos});\r");
         }
         else if (varType == typeof(ulong))
         {
             string chkstr = beCheckTypes ? "tolua_touint64" : "tolua_checkuint64";
-            sb.AppendFormat("{0}{1} {2} = LuaDLL.{3}(L, {4});\r", indent, typeName, arg, chkstr, stackPos);
+            sb.AppendFormat($"{indent}{typeName} {arg} = LuaDLL.{chkstr}(L, {stackPos});\r");
         }
         else if (varType.IsPrimitive || IsNumberEnum(varType))
         {
             string chkstr = beCheckTypes ? "lua_tonumber" : "luaL_checknumber";
-            sb.AppendFormat("{0}{1} {2} = ({1})LuaDLL.{3}(L, {4});\r", indent, typeName, arg, chkstr, stackPos);
+            sb.AppendFormat($"{indent}{typeName} {arg} = ({typeName})LuaDLL.{chkstr}(L, {stackPos});\r");
         }
         else if (varType == typeof(LuaFunction))
         {
-            sb.AppendFormat("{0}LuaFunction {1} = ToLua.{2}LuaFunction(L, {3});\r", indent, arg, checkStr, stackPos);
+            sb.AppendFormat($"{indent}LuaFunction {arg} = ToLua.{checkStr}LuaFunction(L, {stackPos});\r");
         }
         else if (varType.IsSubclassOf(typeof(System.MulticastDelegate)))
         {
             if (beCheckTypes)
             {
-                sb.AppendFormat("{0}{1} {2} = ({1})ToLua.ToObject(L, {3});\r", indent, typeName, arg, stackPos);
+                sb.AppendFormat($"{indent}{typeName} {arg} = ({typeName})ToLua.ToObject(L, {stackPos});\r");
             }
             else
             {
-                sb.AppendFormat("{0}{1} {2} = ({1})ToLua.CheckDelegate<{1}>(L, {3});\r", indent, typeName, arg, stackPos);
+                sb.AppendFormat($"{indent}{typeName} {arg} = ({typeName})ToLua.CheckDelegate<{typeName}>(L, {stackPos});\r");
             }
         }
         else if (varType == typeof(LuaTable))
         {
-            sb.AppendFormat("{0}LuaTable {1} = ToLua.{2}LuaTable(L, {3});\r", indent, arg, checkStr, stackPos);
+            sb.AppendFormat($"{indent}LuaTable {arg} = ToLua.{checkStr}LuaTable(L, {stackPos});\r");
         }
         else if (varType == typeof(Vector2))
         {
-            sb.AppendFormat("{0}UnityEngine.Vector2 {1} = ToLua.ToVector2(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Vector2 {arg} = ToLua.ToVector2(L, {stackPos});\r");
         }
         else if (varType == typeof(Vector3))
         {
-            sb.AppendFormat("{0}UnityEngine.Vector3 {1} = ToLua.ToVector3(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Vector3 {arg} = ToLua.ToVector3(L, {stackPos});\r");
         }
         else if (varType == typeof(Vector4))
         {
-            sb.AppendFormat("{0}UnityEngine.Vector4 {1} = ToLua.ToVector4(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Vector4 {arg} = ToLua.ToVector4(L, {stackPos});\r");
         }
         else if (varType == typeof(Quaternion))
         {
-            sb.AppendFormat("{0}UnityEngine.Quaternion {1} = ToLua.ToQuaternion(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Quaternion {arg} = ToLua.ToQuaternion(L, {stackPos});\r");
         }
         else if (varType == typeof(Color))
         {
-            sb.AppendFormat("{0}UnityEngine.Color {1} = ToLua.ToColor(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Color {arg} = ToLua.ToColor(L, {stackPos});\r");
         }
         else if (varType == typeof(Ray))
         {
-            sb.AppendFormat("{0}UnityEngine.Ray {1} = ToLua.ToRay(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Ray {arg} = ToLua.ToRay(L, {stackPos});\r");
         }
         else if (varType == typeof(Bounds))
         {
-            sb.AppendFormat("{0}UnityEngine.Bounds {1} = ToLua.ToBounds(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.Bounds {arg} = ToLua.ToBounds(L, {stackPos});\r");
         }
         else if (varType == typeof(LayerMask))
         {
-            sb.AppendFormat("{0}UnityEngine.LayerMask {1} = ToLua.ToLayerMask(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}UnityEngine.LayerMask {arg} = ToLua.ToLayerMask(L, {stackPos});\r");
         }
         else if (varType == typeof(object))
         {
-            sb.AppendFormat("{0}object {1} = ToLua.ToVarObject(L, {2});\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}object {arg} = ToLua.ToVarObject(L, {stackPos});\r");
         }
         else if (varType == typeof(LuaByteBuffer))
         {
-            sb.AppendFormat("{0}LuaByteBuffer {1} = new LuaByteBuffer(ToLua.CheckByteBuffer(L, {2}));\r", indent, arg, stackPos);
+            sb.AppendFormat($"{indent}LuaByteBuffer {arg} = new LuaByteBuffer(ToLua.CheckByteBuffer(L, {stackPos}));\r");
         }
         else if (varType == typeof(Type))
         {
             if (beCheckTypes)
             {
-                sb.AppendFormat("{0}System.Type {1} = (System.Type)ToLua.ToObject(L, {2});\r", indent, arg, stackPos);
+                sb.AppendFormat($"{indent}System.Type {arg} = (System.Type)ToLua.ToObject(L, {stackPos});\r");
             }
             else
             {
-                sb.AppendFormat("{0}System.Type {1} = ToLua.CheckMonoType(L, {2});\r", indent, arg, stackPos);
+                sb.AppendFormat($"{indent}System.Type {arg} = ToLua.CheckMonoType(L, {stackPos});\r");
             }
         }
         else if (IsIEnumerator(varType))
         {
             if (beCheckTypes)
             {
-                sb.AppendFormat(
-                    "{0}System.Collections.IEnumerator {1} = (System.Collections.IEnumerator)ToLua.ToObject(L, {2});\r",
-                    indent, arg, stackPos);
+                sb.AppendFormat($"{indent}System.Collections.IEnumerator {arg} = (System.Collections.IEnumerator)ToLua.ToObject(L, {stackPos});\r");
             }
             else
             {
-                sb.AppendFormat("{0}System.Collections.IEnumerator {1} = ToLua.CheckIter(L, {2});\r", indent, arg,
-                    stackPos);
+                sb.AppendFormat($"{0}System.Collections.IEnumerator {arg} = ToLua.CheckIter(L, {stackPos});\r");
             }
         }
         else if (varType.IsArray && varType.GetArrayRank() == 1)
@@ -2356,69 +2353,57 @@ public class ToLuaExport
             {
                 if (beParams)
                 {
-                    if (!isObject)
+                    if (isObject)
                     {
-                        sb.AppendFormat("{0}{1}[] {2} = ToLua.{3}<{1}>(L, {4}, {5});\r", indent, atstr, arg, fname, stackPos, GetCountStr(stackPos - 1));
+                        sb.AppendFormat($"{indent}var {arg} = ToLua.{fname}(L, {stackPos}, {GetCountStr(stackPos - 1)});\r");
                     }
                     else
                     {
-                        sb.AppendFormat("{0}object[] {1} = ToLua.{2}(L, {3}, {4});\r", indent, arg, fname, stackPos, GetCountStr(stackPos - 1));
+                        sb.AppendFormat($"{indent}var {arg} = ToLua.{fname}<{atstr}>(L, {stackPos}, {GetCountStr(stackPos - 1)});\r");
                     }
                 }
                 else
                 {
-                    sb.AppendFormat("{0}{1}[] {2} = ToLua.{3}<{1}>(L, {4});\r", indent, atstr, arg, fname, stackPos);
+                    sb.AppendFormat($"{indent}var {arg} = ToLua.{fname}<{atstr}>(L, {stackPos});\r");
                 }
             }
             else
             {
                 if (beParams)
                 {
-                    sb.AppendFormat("{0}{1}[] {2} = ToLua.{3}(L, {4}, {5});\r", indent, atstr, arg, fname, stackPos,
-                        GetCountStr(stackPos - 1));
+                    sb.AppendFormat($"{indent}{atstr}[] {arg} = ToLua.{fname}(L, {stackPos}, {GetCountStr(stackPos - 1)});\r");
                 }
                 else
                 {
-                    sb.AppendFormat("{0}{1}[] {2} = ToLua.{3}(L, {4});\r", indent, atstr, arg, fname, stackPos);
+                    sb.AppendFormat($"{indent}{atstr}[] {arg} = ToLua.{fname}(L, {stackPos});\r");
                 }
             }
         }
         else if (varType.IsGenericType && varType.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
-            Type t = TypeChecker.GetNullableType(varType);
+            var t = TypeChecker.GetNullableType(varType);
 
-            if (beCheckTypes)
-            {
-                sb.AppendFormat("{0}var {2} = ToLua.ToNullable<{3}>(L, {4});\r", indent, typeName, arg, GetTypeStr(t),
-                    stackPos);
-            }
-            else
-            {
-                sb.AppendFormat("{0}var {2} = ToLua.CheckNullable<{3}>(L, {4});\r", indent, typeName, arg, GetTypeStr(t),
-                    stackPos);
-            }
+            sb.AppendFormat($"{indent}var {arg} = ToLua.{(beCheckTypes ? "ToNullable" : "CheckNullable")}<{GetTypeStr(t)}>(L, {stackPos});\r");
         }
         else if (varType.IsValueType && !varType.IsEnum)
         {
-            string func = beCheckTypes ? "To" : "Check";
-            sb.AppendFormat("{0}var {2} = StackTraits<{1}>.{3}(L, {4});\r", indent, typeName, arg, func, stackPos);
+            sb.AppendFormat($"{indent}var {arg} = StackTraits<{typeName}>.{(beCheckTypes ? "To" : "Check")}(L, {stackPos});\r");
         }
         else //从object派生但不是object
         {
             if (beCheckTypes)
             {
-                sb.AppendFormat("{0}var {2} = ({1})ToLua.ToObject(L, {3});\r", indent, typeName, arg, stackPos);
+                sb.AppendFormat($"{indent}var {arg} = ({typeName})ToLua.ToObject(L, {stackPos});\r", indent, typeName, arg, stackPos);
             }
             else
             {
                 if (IsSealedType(varType))
                 {
-                    sb.AppendFormat("{0}var {2} = ({1})ToLua.CheckObject(L, {3}, typeof({1}));\r", indent, typeName, arg,
-                        stackPos);
+                    sb.AppendFormat($"{indent}var {arg} = ({typeName})ToLua.CheckObject(L, {stackPos}, typeof({typeName}));\r");
                 }
                 else
                 {
-                    sb.AppendFormat("{0}var {2} = ToLua.CheckObject<{1}>(L, {3});\r", indent, typeName, arg, stackPos);
+                    sb.AppendFormat($"{indent}var {arg} = ToLua.CheckObject<{typeName}>(L, {stackPos});\r");
                 }
             }
         }
