@@ -365,6 +365,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("\tpublic static void Register(LuaState L)");
         sb.AppendLineEx("\t{");
         sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
+
         sb.AppendLineEx("\t\tL.BeginModule(null);");
 
         GenRegisterInfo(null, sb, delegateTypes, wrappedDelegateTypes);
