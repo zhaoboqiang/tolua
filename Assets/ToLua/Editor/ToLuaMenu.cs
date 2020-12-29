@@ -375,7 +375,7 @@ public static class ToLuaMenu
             if (node.value == null)
                 return;
 
-            sb.Append($"\t\tL.BeginModule(\"{node.value}\");\r");
+            sb.AppendLineEx($"\t\tL.BeginModule(\"{node.value}\");");
             var space = GetSpaceNameFromTree(node);
 
             GenRegisterInfo(space, sb, delegateTypes, wrappedDelegateTypes);
@@ -401,7 +401,9 @@ public static class ToLuaMenu
             export.GenerateDelegate(type, sb);
         }
 
-        sb.AppendLineEx("}\r");
+        sb.AppendLineEx("}");
+        sb.AppendLineEx();
+
         var file = ToLuaSettingsUtility.Settings.SaveDir + "LuaBinder.cs";
 
         using (var textWriter = new StreamWriter(file, false, Encoding.UTF8))
@@ -433,34 +435,10 @@ public static class ToLuaMenu
 
             ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
 
-            sb.Append("\t\t" + bindType.wrapName + "Wrap.Register(L);\r");
+            sb.AppendLineEx($"\t\t{bindType.wrapName}Wrap.Register(L);");
 
             ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
         }
-
-        /*
-        foreach (var type in delegateTypes)
-        {
-            var typeSpace = ToLuaExport.GetNameSpace(type, out var funcName);
-            if (typeSpace != nameSpace)
-                continue;
-
-            var platformFlags = ReflectTypes.GetPlatformFlags(type);
-            if (platformFlags == ToLuaPlatformFlags.None)
-                continue;
-
-            var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
-
-            funcName = ToLuaExport.ConvertToLibSign(funcName);
-            var typeFullName = ToLuaExport.GetTypeFullName(type);
-
-            ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
-            sb.AppendFormat("\t\tL.RegFunction(\"{0}\", {1}); // [GenRegisterInfo]\r", funcName, typeFullName);
-            ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
-
-            wrappedDelegateTypes.Add(type);
-        }
-        */
     }
 
     static string GetOS()
