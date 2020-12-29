@@ -1641,7 +1641,8 @@ public class ToLuaExport
 
     void DefaultConstruct()
     {
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int _Create{wrapClassName}(IntPtr L)");
         sb.AppendLineEx("\t{");
         sb.AppendLineEx($"\t\tvar obj = new {className}();");
@@ -1663,7 +1664,8 @@ public class ToLuaExport
         if (isStaticClass)
             return;
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx("\tstatic int get_out(IntPtr L)");
         sb.AppendLineEx("\t{");
         sb.AppendLineEx($"\t\tToLua.PushOut<{className}>(L, new LuaOut<{className}>());");
@@ -1752,7 +1754,9 @@ public class ToLuaExport
 
         ctorList.Sort(Compare);
         var checkTypeMap = CheckCheckTypePos(ctorList);
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int _Create{wrapClassName}(IntPtr L)");
         sb.AppendLineEx("\t{");
 
@@ -1870,7 +1874,8 @@ public class ToLuaExport
 
         if (getItems.Count > 0)
         {
-            sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+            sb.AppendLineEx();
+            sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
             sb.AppendLineEx("\tstatic int _get_this(IntPtr L)");
             sb.AppendLineEx("\t{");
             BeginTry();
@@ -2872,7 +2877,8 @@ public class ToLuaExport
 
         BeginPlatformMacro(fieldPlatformFlagsText);
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int {GetRegisterFunctionName(name)}(IntPtr L)");
         sb.AppendLineEx("\t{");
 
@@ -3022,7 +3028,8 @@ public class ToLuaExport
 
         var fieldName = memberInfo.Name;
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int {(beOverride ? "_get" : "get")}_{fieldName}(IntPtr L)");
         sb.AppendLineEx("\t{");
 
@@ -3071,7 +3078,8 @@ public class ToLuaExport
 
         var fieldName = memberInfo.Name;
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int get_{fieldName}(IntPtr L)");
         sb.AppendLineEx("\t{");
         sb.AppendLineEx($"\t\tToLua.Push(L, new EventObject(typeof({GetTypeStr(varType)})));");
@@ -3129,7 +3137,8 @@ public class ToLuaExport
 
         var fieldName = memberInfo.Name;
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int {(beOverride ? "_set" : "set")}_{fieldName}(IntPtr L)");
         sb.AppendLineEx("\t{");
 
@@ -3177,7 +3186,8 @@ public class ToLuaExport
 
         var fieldName = memberInfo.Name;
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int set_{fieldName}(IntPtr L)");
         sb.AppendLineEx("\t{");
         BeginTry();
@@ -3620,7 +3630,8 @@ public class ToLuaExport
             }
         }
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx("\tstatic int IntToEnum(IntPtr L)");
         sb.AppendLineEx("\t{");
         sb.AppendLineEx("\t\tvar arg0 = (int)LuaDLL.lua_tonumber(L, 1);");
