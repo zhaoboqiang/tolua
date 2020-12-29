@@ -31,6 +31,7 @@ using System.Linq;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+
 namespace LuaInterface.Editor
 {
 [System.Flags]
@@ -255,16 +256,16 @@ public class ToLuaExport
             return indent;
         }
 
-        public string GetTotalName(ToLuaExport export)
+        public string GetTotalName()
         {
             var ss = new string[args.Length];
 
             for (int i = 0; i < args.Length; i++)
             {
-                ss[i] = export.GetTypeStr(args[i].GetType());
+                ss[i] = ToLuaExport.GetTypeStr(args[i].GetType());
             }
 
-            if (!export.IsGenericMethod(method))
+            if (!ToLuaExport.IsGenericMethod(method))
             {
                 return Name + "(" + string.Join(",", ss) + ")";
             }
@@ -275,7 +276,7 @@ public class ToLuaExport
 
                 for (int i = 0; i < gts.Length; i++)
                 {
-                    ts[i] = export.GetTypeStr(gts[i]);
+                    ts[i] = ToLuaExport.GetTypeStr(gts[i]);
                 }
 
                 return Name + "<" + string.Join(",", ts) + ">" + "(" + string.Join(",", ss) + ")";
@@ -502,7 +503,7 @@ public class ToLuaExport
             else
             {
                 Type genericType = GetGenericBaseType(method, retType);
-                string ret = export.GetTypeStr(genericType);
+                string ret = ToLuaExport.GetTypeStr(genericType);
 
                 if (method.Name.StartsWith("op_"))
                 {
@@ -1442,7 +1443,7 @@ public class ToLuaExport
     }
 
     //没有未知类型的模版类型List<int> 返回false, List<T>返回true
-    bool IsGenericConstraintType(Type t)
+    static bool IsGenericConstraintType(Type t)
     {
         if (!t.IsGenericType)
             return t.IsGenericParameter || t == typeof(System.ValueType);
@@ -1463,7 +1464,7 @@ public class ToLuaExport
         return false;
     }
 
-    bool IsGenericConstraints(Type[] constraints)
+    static bool IsGenericConstraints(Type[] constraints)
     {
         for (int i = 0; i < constraints.Length; i++)
         {
@@ -1476,7 +1477,7 @@ public class ToLuaExport
         return true;
     }
 
-    bool IsGenericMethod(MethodBase md)
+    static bool IsGenericMethod(MethodBase md)
     {
         if (md.IsGenericMethod)
         {
@@ -1520,7 +1521,7 @@ public class ToLuaExport
             if (IsGenericMethod(m.Method))
             {
                 var typeName = LuaMisc.GetTypeName(type);
-                var totalName = m.GetTotalName(this);
+                var totalName = m.GetTotalName();
 
                 logs.Add($"Generic Method {typeName}.{totalName} cannot be export to lua");
                 continue;
@@ -1530,7 +1531,7 @@ public class ToLuaExport
             if (!nameCounter.TryGetValue(name, out var count))
             {
                 var typeName = LuaMisc.GetTypeName(type);
-                var totalName = m.GetTotalName(this);
+                var totalName = m.GetTotalName();
 
                 logs.Add($"Not register method {typeName}.{totalName}");
                 continue;
@@ -1576,7 +1577,7 @@ public class ToLuaExport
         return false;
     }
 
-    bool IsIEnumerator(Type t)
+    static bool IsIEnumerator(Type t)
     {
         if (t == typeof(IEnumerator) || t == typeof(CharEnumerator))
             return true;
@@ -2633,7 +2634,7 @@ public class ToLuaExport
         { typeof(ushort), 5 },
         { typeof(short), 6 },
         { typeof(uint), 7 },
-        { typeof(int), 8 },                
+        { typeof(int), 8 },
         //{ typeof(ulong), 9 },
         //{ typeof(long), 10 },
         { typeof(decimal), 11 },
@@ -2719,14 +2720,14 @@ public class ToLuaExport
         {
             if (CompareMethod(list[index], r) == 2)
             {
-                logs.Add($"{className}.{list[index].GetTotalName(this)} has been dropped as function {r.GetTotalName(this)} more match lua");
+                logs.Add($"{className}.{list[index].GetTotalName()} has been dropped as function {r.GetTotalName()} more match lua");
                 list.RemoveAt(index);
                 list.Add(r);
                 return;
             }
             else
             {
-                logs.Add($"{className}.{r.GetTotalName(this)} has been dropped as function {list[index].GetTotalName(this)} more match lua");
+                logs.Add($"{className}.{r.GetTotalName()} has been dropped as function {list[index].GetTotalName()} more match lua");
                 return;
             }
         }
@@ -2906,7 +2907,7 @@ public class ToLuaExport
     }
 
     //获取类型名字
-    public string GetTypeStr(Type t)
+    public static string GetTypeStr(Type t)
     {
         if (t.IsByRef)
         {
@@ -3813,25 +3814,25 @@ public class ToLuaExport
             foreach (var type in delegateTypes)
             {
                 var platformFlags = ReflectTypes.GetPlatformFlags(type);
-                if (platformFlags != ToLuaPlatformFlags.None)
+                if (platformFlags == ToLuaPlatformFlags.None)
+                    continue;
+
+                var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+                BeginPlatformMacro(platformFlagsText);
+
+                var typeName = GetTypeStr(type);
+                var typeFullName = GetTypeFullName(type);
+
+                action(type, typeName, typeFullName);
+
+                sb.AppendLineEx();
+
+                EndPlatformMacro(platformFlagsText);
+
+                if (multiLine)
                 {
-                    var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
-
-                    BeginPlatformMacro(platformFlagsText);
-
-                    var typeName = GetTypeStr(type);
-                    var typeFullName = GetTypeFullName(type);
-
-                    action(type, typeName, typeFullName);
-
-                    sb.AppendLineEx();
-
-                    EndPlatformMacro(platformFlagsText);
-
-                    if (multiLine)
-                    {
-                        sb.AppendLine();
-                    }
+                    sb.AppendLine();
                 }
             }
         }
