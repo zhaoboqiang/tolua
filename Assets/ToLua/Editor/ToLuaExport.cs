@@ -3641,35 +3641,35 @@ public class ToLuaExport
         sb.AppendLineEx("\t}");
     }
 
-    static string CreateDelegate = @"    
+    static string CreateDelegate = @"
     public static Delegate CreateDelegate(Type t, LuaFunction func = null)
     {
         if (!delegates.TryGetValue(t, out var Create))
         {
-            throw new LuaException(string.Format(""Delegate {0} not register"", LuaMisc.GetTypeName(t)));            
+            throw new LuaException(string.Format(""Delegate {0} not register"", LuaMisc.GetTypeName(t)));
         }
 
         if (func != null)
         {
             var state = func.GetLuaState();
             var target = state.GetLuaDelegate(func);
-            
+
             if (target != null)
             {
                 return Delegate.CreateDelegate(t, target, target.method);
-            }  
+            }
             else
             {
                 Delegate d = Create(func, null, false);
                 target = d.Target as LuaDelegate;
                 state.AddLuaDelegate(target, func);
                 return d;
-            }       
+            }
         }
 
-        return Create(null, null, false);        
+        return Create(null, null, false);
     }
-    
+
     public static Delegate CreateDelegate(Type t, LuaFunction func, LuaTable self)
     {
         if (!delegates.TryGetValue(t, out var Create))
@@ -3699,7 +3699,7 @@ public class ToLuaExport
     }
 ";
 
-    static string RemoveDelegate = @"    
+    static string RemoveDelegate = @"
     public static Delegate RemoveDelegate(Delegate obj, LuaFunction func)
     {
         var state = func.GetLuaState();
@@ -3719,7 +3719,7 @@ public class ToLuaExport
 
         return obj;
     }
-    
+
     public static Delegate RemoveDelegate(Delegate obj, Delegate dg)
     {
         var remove = dg.Target as LuaDelegate;
@@ -3731,7 +3731,7 @@ public class ToLuaExport
         }
 
         var state = remove.func.GetLuaState();
-        var ds = obj.GetInvocationList();        
+        var ds = obj.GetInvocationList();
 
         for (int i = 0; i < ds.Length; i++)
         {
@@ -3853,13 +3853,11 @@ public class ToLuaExport
 
                 action(type, typeName, typeFullName);
 
-                sb.AppendLineEx();
-
                 EndPlatformMacro(platformFlagsText);
 
                 if (multiLine)
                 {
-                    sb.AppendLine();
+                    sb.AppendLineEx();
                 }
             }
         }
@@ -3953,7 +3951,7 @@ public class ToLuaExport
             sb.AppendLineEx($"\tstatic void Push_{typeFullName}(IntPtr L, {typeName} o)");
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tToLua.Push(L, o);");
-            sb.Append("\t}");
+            sb.AppendLineEx("\t}");
         }, true);
 
         sb.AppendLineEx("}");
