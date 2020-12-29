@@ -2130,42 +2130,42 @@ public class ToLuaExport
         return false;
     }
 
-    void CheckObject(string head, Type type, string className, int pos)
+    void CheckObject(string indent, Type type, string className, int pos)
     {
         if (type == typeof(object))
         {
-            sb.AppendFormat("{0}object obj = ToLua.CheckObject(L, {1});\r", head, pos);
+            sb.AppendLineEx($"{indent}var obj = ToLua.CheckObject(L, {pos});\r");
         }
         else if (type == typeof(Type))
         {
-            sb.AppendFormat("{0}{1} obj = ToLua.CheckMonoType(L, {2});\r", head, className, pos);
+            sb.AppendLineEx($"{indent}var obj = ToLua.CheckMonoType(L, {pos});\r");
         }
         else if (IsIEnumerator(type))
         {
-            sb.AppendFormat("{0}{1} obj = ToLua.CheckIter(L, {2});\r", head, className, pos);
+            sb.AppendLineEx($"{indent}var obj = ToLua.CheckIter(L, {pos});\r");
         }
         else
         {
             if (IsSealedType(type))
             {
-                sb.AppendFormat("{0}var obj = ({1})ToLua.CheckObject(L, {2}, typeof({1}));\r", head, className, pos);
+                sb.AppendLineEx($"{indent}var obj = ({className})ToLua.CheckObject(L, {pos}, typeof({className}));\r");
             }
             else
             {
-                sb.AppendFormat("{0}var obj = ToLua.CheckObject<{1}>(L, {2});\r", head, className, pos);
+                sb.AppendLineEx($"{indent}var obj = ToLua.CheckObject<{className}>(L, {pos});\r");
             }
         }
     }
 
-    void ToObject(string head, Type type, string className, int pos)
+    void ToObject(string indent, Type type, string className, int pos)
     {
         if (type == typeof(object))
         {
-            sb.AppendFormat("{0}object obj = ToLua.ToObject(L, {1});\r", head, pos);
+            sb.AppendLineEx($"{indent}var obj = ToLua.ToObject(L, {pos});\r");
         }
         else
         {
-            sb.AppendFormat("{0}var obj = ({1})ToLua.ToObject(L, {2});\r", head, className, pos);
+            sb.AppendLineEx($"{indent}var obj = ({className})ToLua.ToObject(L, {pos});\r");
         }
     }
 
