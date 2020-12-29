@@ -1411,7 +1411,8 @@ public class ToLuaExport
 
         var name = GetMethodName(m.Method);
 
-        sb.AppendLineEx("\r\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
         sb.AppendLineEx($"\tstatic int {GetRegisterFunctionName(name)}(IntPtr L)");
         sb.AppendLineEx("\t{");
 
@@ -2133,24 +2134,29 @@ public class ToLuaExport
         if (type == typeof(object))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.CheckObject(L, {pos});");
+			sb.AppendLineEx();
         }
         else if (type == typeof(Type))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.CheckMonoType(L, {pos});");
+			sb.AppendLineEx();
         }
         else if (IsIEnumerator(type))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.CheckIter(L, {pos});");
+			sb.AppendLineEx();
         }
         else
         {
             if (IsSealedType(type))
             {
                 sb.AppendLineEx($"{indent}var obj = ({className})ToLua.CheckObject(L, {pos}, typeof({className}));");
+				sb.AppendLineEx();
             }
             else
             {
                 sb.AppendLineEx($"{indent}var obj = ToLua.CheckObject<{className}>(L, {pos});");
+				sb.AppendLineEx();
             }
         }
     }
@@ -2160,10 +2166,12 @@ public class ToLuaExport
         if (type == typeof(object))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.ToObject(L, {pos});");
+			sb.AppendLineEx();
         }
         else
         {
             sb.AppendLineEx($"{indent}var obj = ({className})ToLua.ToObject(L, {pos});");
+			sb.AppendLineEx();
         }
     }
 
@@ -3029,6 +3037,7 @@ public class ToLuaExport
         else
         {
             sb.AppendLineEx("\t\tobject o = null;");
+			sb.AppendLineEx();
             BeginTry();
             sb.AppendLineEx("\t\t\to = ToLua.ToObject(L, 1);");
             sb.AppendLineEx($"\t\t\tvar obj = ({className})o;");
@@ -3127,6 +3136,7 @@ public class ToLuaExport
         if (!isStatic)
         {
             sb.AppendLineEx("\t\tobject o = null;");
+			sb.AppendLineEx();
             BeginTry();
             sb.AppendLineEx("\t\t\to = ToLua.ToObject(L, 1);");
             sb.AppendLineEx($"\t\t\t{className} obj = ({className})o;");
@@ -3179,6 +3189,7 @@ public class ToLuaExport
         string objStr = isStatic ? className : "obj";
 
         sb.AppendLineEx("\t\t\tEventObject arg0 = null;");
+		sb.AppendLineEx();
         sb.AppendLineEx("\t\t\tif (LuaDLL.lua_isuserdata(L, 2) != 0)");
         sb.AppendLineEx("\t\t\t{");
         sb.AppendLineEx("\t\t\t\targ0 = (EventObject)ToLua.ToObject(L, 2);");
@@ -3459,6 +3470,7 @@ public class ToLuaExport
             }
 
             sb.AppendLineEx($"{indent}\tfunc.EndPCall();");
+			sb.AppendLineEx();
         }
         else
         {
@@ -3477,6 +3489,7 @@ public class ToLuaExport
         }
 
         sb.AppendLineEx($"{indent}}}");
+		sb.AppendLineEx();
     }
 
     public bool IsNeedOp(string name)
@@ -4094,6 +4107,7 @@ public class ToLuaExport
         if (platformFlags == ToLuaPlatformFlags.None)
             return;
 
+        sb.AppendLineEx();
         sb.AppendLineEx();
 
         var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
