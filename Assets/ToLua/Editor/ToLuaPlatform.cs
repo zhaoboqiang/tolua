@@ -64,7 +64,7 @@ namespace LuaInterface.Editor
         {
             if (flags != string.Empty)
             {
-                sb.AppendLine($"#if {flags}");
+                sb.AppendLineEx($"#if {flags}");
             }
         }
 
@@ -72,7 +72,7 @@ namespace LuaInterface.Editor
         {
             if (flags != string.Empty)
             {
-                sb.AppendLine($"#endif // {flags}");
+                sb.AppendLineEx($"#endif // {flags}");
             }
         }
     }
