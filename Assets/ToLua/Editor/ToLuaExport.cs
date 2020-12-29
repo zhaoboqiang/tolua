@@ -2327,7 +2327,7 @@ public class ToLuaExport
             }
             else
             {
-                sb.AppendLineEx($"{0}System.Collections.IEnumerator {arg} = ToLua.CheckIter(L, {stackPos});");
+                sb.AppendLineEx($"{indent}System.Collections.IEnumerator {arg} = ToLua.CheckIter(L, {stackPos});");
             }
         }
         else if (varType.IsArray && varType.GetArrayRank() == 1)
