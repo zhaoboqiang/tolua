@@ -783,7 +783,7 @@ public class ToLuaExport
 
             if (!ReflectMethods.Included(methodInfo))
                 continue;
- 
+
             methodBases.Add(new _MethodBase(methodInfo));
         }
 
@@ -3480,7 +3480,6 @@ public class ToLuaExport
             }
 
             sb.AppendLineEx($"{indent}\tfunc.EndPCall();");
-			sb.AppendLineEx();
         }
         else
         {
@@ -3499,7 +3498,6 @@ public class ToLuaExport
         }
 
         sb.AppendLineEx($"{indent}}}");
-		sb.AppendLineEx();
     }
 
     public bool IsNeedOp(string name)
@@ -3853,6 +3851,8 @@ public class ToLuaExport
 
                 action(type, typeName, typeFullName);
 
+                sb.AppendLineEx();
+
                 EndPlatformMacro(platformFlagsText);
 
                 if (multiLine)
@@ -3874,23 +3874,22 @@ public class ToLuaExport
             "\tpublic static Dictionary<Type, DelegateCreate> delegates => new Dictionary<Type, DelegateCreate>();");
         sb.AppendLineEx();
         sb.AppendLineEx("\tstatic LuaDelegates()");
-        sb.AppendLineEx();
         sb.AppendLineEx("\t{");
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendLineEx($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});")
+            sb.Append($"\t\tdelegates.Add(typeof({typeName}), {typeFullName});")
         );
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendLineEx($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});")
+            sb.Append($"\t\tDelegateTraits<{typeName}>.Init({typeFullName});")
         );
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendLineEx($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});")
+            sb.Append($"\t\tTypeTraits<{typeName}>.Init(Check_{typeFullName});")
         );
 
         ForEachDelegates(delegateTypes, (type, typeName, typeFullName) =>
-            sb.AppendLineEx($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};")
+            sb.Append($"\t\tStackTraits<{typeName}>.Push = Push_{typeFullName};")
         );
 
         sb.AppendLineEx("\t}");
@@ -3911,7 +3910,6 @@ public class ToLuaExport
             sb.AppendLineEx();
             sb.AppendLineEx($"\t\tpublic {returnTypeText} Call({args})");
             GenDelegateBody(sb, type, "\t\t");
-            sb.AppendLineEx();
             sb.AppendLineEx($"\t\tpublic {returnTypeText} CallWithSelf({args})");
             GenDelegateBody(sb, type, "\t\t", true);
             sb.AppendLineEx("\t}");
@@ -3922,7 +3920,7 @@ public class ToLuaExport
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tif (func == null)");
             sb.AppendLineEx("\t\t{");
-            sb.AppendLineEx($"\t\t\t{typeName} fn = delegate({args}) {GetDefaultDelegateBody(mi)}");
+            sb.Append($"\t\t\t{typeName} fn = delegate({args}) {GetDefaultDelegateBody(mi)}");
             sb.AppendLineEx("\t\t\treturn fn;");
             sb.AppendLineEx("\t\t}");
             sb.AppendLineEx("\t\tif(!flag)");
@@ -3951,7 +3949,7 @@ public class ToLuaExport
             sb.AppendLineEx($"\tstatic void Push_{typeFullName}(IntPtr L, {typeName} o)");
             sb.AppendLineEx("\t{");
             sb.AppendLineEx("\t\tToLua.Push(L, o);");
-            sb.AppendLineEx("\t}");
+            sb.Append("\t}");
         }, true);
 
         sb.AppendLineEx("}");

@@ -8,38 +8,37 @@ public static class LuaDelegates
 	public static Dictionary<Type, DelegateCreate> delegates => new Dictionary<Type, DelegateCreate>();
 
 	static LuaDelegates()
-
 	{
 	}
-    
+
     public static Delegate CreateDelegate(Type t, LuaFunction func = null)
     {
         if (!delegates.TryGetValue(t, out var Create))
         {
-            throw new LuaException(string.Format("Delegate {0} not register", LuaMisc.GetTypeName(t)));            
+            throw new LuaException(string.Format("Delegate {0} not register", LuaMisc.GetTypeName(t)));
         }
 
         if (func != null)
         {
             var state = func.GetLuaState();
             var target = state.GetLuaDelegate(func);
-            
+
             if (target != null)
             {
                 return Delegate.CreateDelegate(t, target, target.method);
-            }  
+            }
             else
             {
                 Delegate d = Create(func, null, false);
                 target = d.Target as LuaDelegate;
                 state.AddLuaDelegate(target, func);
                 return d;
-            }       
+            }
         }
 
-        return Create(null, null, false);        
+        return Create(null, null, false);
     }
-    
+
     public static Delegate CreateDelegate(Type t, LuaFunction func, LuaTable self)
     {
         if (!delegates.TryGetValue(t, out var Create))
@@ -67,7 +66,7 @@ public static class LuaDelegates
 
         return Create(null, null, true);
     }
-    
+
     public static Delegate RemoveDelegate(Delegate obj, LuaFunction func)
     {
         var state = func.GetLuaState();
@@ -87,7 +86,7 @@ public static class LuaDelegates
 
         return obj;
     }
-    
+
     public static Delegate RemoveDelegate(Delegate obj, Delegate dg)
     {
         var remove = dg.Target as LuaDelegate;
@@ -99,7 +98,7 @@ public static class LuaDelegates
         }
 
         var state = remove.func.GetLuaState();
-        var ds = obj.GetInvocationList();        
+        var ds = obj.GetInvocationList();
 
         for (int i = 0; i < ds.Length; i++)
         {
