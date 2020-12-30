@@ -296,13 +296,9 @@ public class ToLuaExport
                 if (hasParams)
                 {
                     sb.AppendLineEx($"{indent}if (arg{(argCount - 1)} != null)");
-                    sb.AppendLineEx($"{indent}{{");
                     sb.AppendLineEx($"{indent}\t{obj}.{method.Name}({args});");
-                    sb.AppendLineEx($"{indent}}}");
                     sb.AppendLineEx($"{indent}else");
-                    sb.AppendLineEx($"{indent}{{");
                     sb.AppendLineEx($"{indent}\t{obj}.{method.Name}({RemoveLastArg(args)});"); // TODO: Instead remove of append.
-                    sb.AppendLineEx($"{indent}}}");
                 }
                 else
                 {
