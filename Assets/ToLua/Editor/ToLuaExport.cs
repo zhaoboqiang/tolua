@@ -2139,29 +2139,24 @@ public class ToLuaExport
         if (type == typeof(object))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.CheckObject(L, {pos});");
-			sb.AppendLineEx();
         }
         else if (type == typeof(Type))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.CheckMonoType(L, {pos});");
-			sb.AppendLineEx();
         }
         else if (IsIEnumerator(type))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.CheckIter(L, {pos});");
-			sb.AppendLineEx();
         }
         else
         {
             if (IsSealedType(type))
             {
                 sb.AppendLineEx($"{indent}var obj = ({className})ToLua.CheckObject(L, {pos}, typeof({className}));");
-				sb.AppendLineEx();
             }
             else
             {
                 sb.AppendLineEx($"{indent}var obj = ToLua.CheckObject<{className}>(L, {pos});");
-				sb.AppendLineEx();
             }
         }
     }
@@ -2171,12 +2166,10 @@ public class ToLuaExport
         if (type == typeof(object))
         {
             sb.AppendLineEx($"{indent}var obj = ToLua.ToObject(L, {pos});");
-			sb.AppendLineEx();
         }
         else
         {
             sb.AppendLineEx($"{indent}var obj = ({className})ToLua.ToObject(L, {pos});");
-			sb.AppendLineEx();
         }
     }
 
