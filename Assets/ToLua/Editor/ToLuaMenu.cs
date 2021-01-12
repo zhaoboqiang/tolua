@@ -359,11 +359,15 @@ public static class ToLuaMenu
         sb.AppendLineEx("using System;");
         sb.AppendLineEx("using UnityEngine;");
         sb.AppendLineEx("using LuaInterface;");
+        sb.AppendLineEx("using System.Collections.Generic;");
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
         sb.AppendLineEx("{");
         sb.AppendLineEx("\tpublic static void Register(LuaState L)");
         sb.AppendLineEx("\t{");
+		sb.AppendLineEx("\t\tLuaBinderRuntime.Register(L);");
+        sb.AppendLineEx();
+        sb.AppendLineEx("\t\t// Preregister");
         sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
 
         sb.AppendLineEx("\t\tL.BeginModule(null);");
@@ -392,8 +396,12 @@ public static class ToLuaMenu
         tree.DepthFirstTraversal(begin, end, tree.GetRoot());
         sb.AppendLineEx("\t\tL.EndModule();");
 
-        sb.AppendLineEx("\t\tDebugger.Log(\"Register lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
+        sb.AppendLineEx("\t\tDebugger.Log(\"Preregister lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
+
         sb.AppendLineEx("\t}");
+        sb.AppendLineEx();
+
+        GenerateUsingRegisters(sb, 1, BindTypes);
 
         foreach (var type in wrappedDelegateTypes)
         {
@@ -415,6 +423,33 @@ public static class ToLuaMenu
 
         AssetDatabase.Refresh();
         Debugger.Log("Generate LuaBinder over !");
+    }
+
+    static void GenerateUsingRegisters(StringBuilder sb, int indentLevel, BindType[] bindTypes)
+    {
+        var indent = ToLuaFormat.GetIndent(indentLevel);
+
+        sb.AppendLineEx($"{indent}public static Dictionary<string, LuaBinderRuntime.Item> Binders = new Dictionary<string, LuaBinderRuntime.Item>()");
+        sb.AppendLineEx($"{indent}{{");
+
+        var itemIndent = ToLuaFormat.GetIndent(indentLevel + 1);
+
+        foreach (var bindType in bindTypes)
+        {
+            var platformFlags = ReflectTypes.GetPlatformFlags(bindType.type);
+            if (platformFlags == ToLuaPlatformFlags.None)
+                continue;
+
+            var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+            ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
+
+            sb.AppendLineEx($"{itemIndent}{{ \"{bindType.name}\", new LuaBinderRuntime.Item {{ UsingCount = 0, Binder = {bindType.wrapName}Wrap.Register }} }},");
+
+            ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
+        }
+
+        sb.AppendLineEx($"{indent}}};");
     }
 
     static void GenRegisterInfo(string nameSpace, StringBuilder sb, Type[] delegateTypes,
@@ -550,6 +585,7 @@ public static class ToLuaMenu
 
         var sb = new StringBuilder();
         sb.AppendLineEx("using System;");
+        sb.AppendLineEx("using System.Collections.Generic;");
         sb.AppendLineEx("using LuaInterface;");
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
@@ -558,6 +594,10 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t{");
         sb.AppendLineEx("\t\tthrow new LuaException(\"Please generate LuaBinder files first!\");");
         sb.AppendLineEx("\t}");
+        sb.AppendLineEx();
+
+        GenerateUsingRegisters(sb, 1, new BindType[] {});
+
         sb.AppendLineEx("}");
 
         var file = ToLuaSettingsUtility.Settings.SaveDir + "LuaBinder.cs";

@@ -247,14 +247,6 @@ public class ToLuaExport
             return m != null ? m.ReturnType : null;
         }
 
-        private string GetIndent(int indentLevel)
-        {
-            var indent = string.Empty;
-            for (int i = 0; i < indentLevel; ++i)
-                indent += "\t";
-            return indent;
-        }
-
         public string GetTotalName()
         {
             var ss = new string[args.Length];
@@ -390,7 +382,7 @@ public class ToLuaExport
             }
 
             var count = parameters.Length;
-            var indent = GetIndent(tab);
+            var indent = ToLuaFormat.GetIndent(tab);
             var methodType = export.GetMethodType(method, out var pi);
             var offset = ((method.IsStatic && !BeExtend) || beConstruct) ? 1 : 2;
 
