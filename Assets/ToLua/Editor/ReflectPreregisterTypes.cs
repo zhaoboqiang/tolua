@@ -15,7 +15,7 @@ namespace LuaInterface.Editor
             {
                 var isUnsupport = ReflectTypes.IsIncluded(type);
 
-                lines.Add($"{type.FullName}");
+                lines.Add($"{ToLuaTypes.GetNormalizedFullName(type)}");
             }
             ReflectUtility.SaveCsv(lines, $"{Application.dataPath}/EditorSetting/{fileName}.csv");
         }

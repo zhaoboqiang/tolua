@@ -4100,7 +4100,7 @@ public class ToLuaExport
 
         var space = ToLuaTypes.GetNamespace(t);
         var funcName = ToLuaTypes.GetTypeName(t);
-        funcName = ToLuaTypes.CombineTypeStr(space, funcName);
+        funcName = ToLuaTypes.Combine(space, funcName);
         funcName = ToLuaTypes.NormalizeName(funcName);
 
         var typeText = GetTypeStr(t);

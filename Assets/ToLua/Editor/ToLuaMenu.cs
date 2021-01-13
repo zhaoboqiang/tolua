@@ -90,7 +90,6 @@ public static class ToLuaMenu
         public Type type { get; private set; }
         public bool IsStatic => type.IsClass && type.IsAbstract && type.IsSealed;
         public string wrapName = ""; //产生的wrap文件名字
-        public string NormalizedTypeName { get; private set; } //注册到lua的名字
         public Type baseType { get; private set; }
         public string nameSpace { get; private set; } //注册到lua的table层级
 
@@ -105,8 +104,7 @@ public static class ToLuaMenu
             type = t;
             nameSpace = ToLuaTypes.GetNamespace(t);
             var typeName = ToLuaTypes.GetTypeName(t);
-            name = ToLuaTypes.CombineTypeStr(nameSpace, typeName);
-            NormalizedTypeName = ToLuaTypes.NormalizeName(typeName);
+            name = ToLuaTypes.Combine(nameSpace, typeName);
 
             switch (name)
             {
@@ -150,7 +148,7 @@ public static class ToLuaMenu
         export.isStaticClass = bindType.IsStatic;
         export.baseType = bindType.baseType;
         export.wrapClassName = bindType.wrapName;
-        export.libClassName = bindType.NormalizedTypeName;
+        export.libClassName = ToLuaTypes.GetNormalizedFullName(bindType.type);
         export.Generate(wrapperSaveDir);
     }
 

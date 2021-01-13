@@ -148,7 +148,7 @@ namespace LuaInterface.Editor
                     offset += count;
                 }
 
-                name = CombineTypeStr(name, str);
+                name = Combine(name, str);
                 pos = typeName.IndexOf("+");
             }
 
@@ -197,7 +197,7 @@ namespace LuaInterface.Editor
                     offset += count;
                 }
 
-                name = CombineTypeStr(name, str);
+                name = Combine(name, str);
                 pos = typeName.IndexOf("+");
             }
 
@@ -227,9 +227,21 @@ namespace LuaInterface.Editor
             return libName;
         }
 
-        public static string CombineTypeStr(string space, string name)
+        public static string Combine(string ns, string name)
         {
-            return string.IsNullOrEmpty(space) ? name : space + "." + name;
+            return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
+        }
+
+        public static string GetFullName(Type type)
+        {
+            var ns = GetNamespace(type);
+            var name = GetTypeName(type);
+            return Combine(ns, name);
+        }
+
+        public static string GetNormalizedFullName(Type type)
+        {
+            return NormalizeName(GetFullName(type));
         }
 
         public static string NormalizeName(string str)
