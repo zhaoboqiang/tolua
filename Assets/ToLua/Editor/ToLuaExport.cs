@@ -1305,8 +1305,8 @@ public class ToLuaExport
             BeginPlatformMacro(fieldPlatformFlagsText);
 
             var funcName = ToLuaTypes.GetTypeName(t);
-            funcName = ConvertToLibSign(funcName);
-            var funcFullName = ConvertToLibSign(space) + "_" + funcName;
+            funcName = ToLuaTypes.NormalizeName(funcName);
+            var funcFullName = ToLuaTypes.NormalizeName(space) + "_" + funcName;
 
             sb.AppendLineEx($"\t\tL.RegFunction(\"{funcName}\", {funcFullName}); // [RegisterEvents]");
 
@@ -2918,7 +2918,7 @@ public class ToLuaExport
     public string GetTypeFullName(Type type)
     {
         var typeName = GetTypeStr(type);
-        return ConvertToLibSign(typeName);
+        return ToLuaTypes.NormalizeName(typeName);
     }
 
     //获取 typeof(string) 这样的名字
@@ -4101,7 +4101,7 @@ public class ToLuaExport
         var space = ToLuaTypes.GetNamespace(t);
         var funcName = ToLuaTypes.GetTypeName(t);
         funcName = ToLuaTypes.CombineTypeStr(space, funcName);
-        funcName = ConvertToLibSign(funcName);
+        funcName = ToLuaTypes.NormalizeName(funcName);
 
         var typeText = GetTypeStr(t);
 
@@ -4142,32 +4142,6 @@ public class ToLuaExport
         {
             GenerateDelegate(t, sb);
         }
-    }
-
-    static string RemoveChar(string str, char c)
-    {
-        int index = str.IndexOf(c);
-
-        while (index > 0)
-        {
-            str = str.Remove(index, 1);
-            index = str.IndexOf(c);
-        }
-
-        return str;
-    }
-
-    public static string ConvertToLibSign(string str)
-    {
-        if (string.IsNullOrEmpty(str))
-            return null;
-
-        str = str.Replace('<', '_');
-        str = RemoveChar(str, '>');
-        str = str.Replace('[', 's');
-        str = RemoveChar(str, ']');
-        str = str.Replace('.', '_');
-        return str.Replace(',', '_');
     }
 
 }

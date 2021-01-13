@@ -231,5 +231,20 @@ namespace LuaInterface.Editor
         {
             return string.IsNullOrEmpty(space) ? name : space + "." + name;
         }
+
+        public static string NormalizeName(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return null;
+
+            str = str.Replace('<', '_');
+            str = ToLuaStrings.RemoveChar(str, '>');
+            str = str.Replace('[', 's');
+            str = ToLuaStrings.RemoveChar(str, ']');
+            str = str.Replace('.', '_');
+            return str.Replace(',', '_');
+        }
+
+
     }
 }

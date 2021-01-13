@@ -104,9 +104,9 @@ public static class ToLuaMenu
 
             type = t;
             nameSpace = ToLuaTypes.GetNamespace(t);
-            var libName = ToLuaTypes.GetTypeName(t);
-            name = ToLuaTypes.CombineTypeStr(nameSpace, libName);
-            NormalizedTypeName = ToLuaExport.ConvertToLibSign(libName);
+            var typeName = ToLuaTypes.GetTypeName(t);
+            name = ToLuaTypes.CombineTypeStr(nameSpace, typeName);
+            NormalizedTypeName = ToLuaTypes.NormalizeName(typeName);
 
             switch (name)
             {
@@ -120,7 +120,7 @@ public static class ToLuaMenu
                     break;
                 default:
                     wrapName = name.Replace('.', '_');
-                    wrapName = ToLuaExport.ConvertToLibSign(wrapName);
+                    wrapName = ToLuaTypes.NormalizeName(wrapName);
                     break;
             }
 
