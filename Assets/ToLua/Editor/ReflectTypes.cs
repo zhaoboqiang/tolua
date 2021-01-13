@@ -8,26 +8,26 @@ namespace LuaInterface.Editor
 {
     public static class ReflectTypes
     {
-        private static Dictionary<string, LuaIncludedType> includedTypes;
-        public static Dictionary<string, LuaIncludedType> IncludedTypes
+        private static Dictionary<string, LuaTypeSetting> typeSettings;
+        public static Dictionary<string, LuaTypeSetting> TypeSettings
         {
             get
             {
-                if (includedTypes == null)
+                if (typeSettings == null)
                 {
-                    var types = LuaSettingsUtility.LoadCsv<LuaIncludedType>(ToLuaSettingsUtility.Settings.TypeCsv);
+                    var types = LuaSettingsUtility.LoadCsv<LuaTypeSetting>(ToLuaSettingsUtility.Settings.TypeCsv);
                     if (types == null)
-                        includedTypes = new Dictionary<string, LuaIncludedType>();
+                        typeSettings = new Dictionary<string, LuaTypeSetting>();
                     else
-                        includedTypes = types.ToDictionary(key => key.FullName);
+                        typeSettings = types.ToDictionary(key => key.FullName);
                 }
-                return includedTypes;
+                return typeSettings;
             }
         }
 
         public static void Reset()
         {
-            includedTypes = null;
+            typeSettings = null;
         }
 
         private static bool IsTypeIncluded(Type type)
@@ -52,7 +52,7 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlagsFromCsv(Type type, ToLuaPlatformFlags flags)
         {
-            if (IncludedTypes.TryGetValue(ToLuaTypes.GetName(type), out var value))
+            if (TypeSettings.TryGetValue(ToLuaTypes.GetName(type), out var value))
                 flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
@@ -89,10 +89,10 @@ namespace LuaInterface.Editor
             return selectedAssembly.GetType(typeName);
         }
 
-        private static void UpdateCsv(List<LuaIncludedType> newTypes)
+        private static void UpdateCsv(List<LuaTypeSetting> newTypes)
         {
             // Load previous configurations
-            var oldTypes = IncludedTypes;
+            var oldTypes = TypeSettings;
 
             // Merge previous configurations
             for (int index = 0, count = newTypes.Count; index < count; ++index)
@@ -127,9 +127,9 @@ namespace LuaInterface.Editor
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.TypeCsv);
         }
 
-        private static void AddNewType(List<LuaIncludedType> newTypes, Type type, Type outerType)
+        private static void AddNewType(List<LuaTypeSetting> newTypes, Type type, Type outerType)
         {
-            newTypes.Add(new LuaIncludedType
+            newTypes.Add(new LuaTypeSetting
             {
                 FullName = type.FullName,
                 Android = true,
@@ -143,7 +143,7 @@ namespace LuaInterface.Editor
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var newTypes = new List<LuaIncludedType>();
+            var newTypes = new List<LuaTypeSetting>();
 
             foreach (var assembly in assemblies)
             {

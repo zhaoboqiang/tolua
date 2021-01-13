@@ -7,42 +7,42 @@ namespace LuaInterface.Editor
 {
     public static class ReflectAssemblies
     {
-        private static Dictionary<string, LuaIncludedAssembly> includedAssemblies;
-        public static Dictionary<string, LuaIncludedAssembly> IncludedAssemblies
+        private static Dictionary<string, LuaAssemblySetting> assemblySettings;
+        public static Dictionary<string, LuaAssemblySetting> AssemblySettings
         {
             get
             {
-                if (includedAssemblies == null)
+                if (assemblySettings == null)
                 {
-                    var assemblies = LuaSettingsUtility.LoadCsv<LuaIncludedAssembly>(ToLuaSettingsUtility.Settings.AssemblyCsv);
+                    var assemblies = LuaSettingsUtility.LoadCsv<LuaAssemblySetting>(ToLuaSettingsUtility.Settings.AssemblyCsv);
                     if (assemblies == null)
-                        includedAssemblies = new Dictionary<string, LuaIncludedAssembly>();
+                        assemblySettings = new Dictionary<string, LuaAssemblySetting>();
                     else
-                        includedAssemblies = assemblies.ToDictionary(key => key.Name);
+                        assemblySettings = assemblies.ToDictionary(key => key.Name);
                 }
-                return includedAssemblies;
+                return assemblySettings;
             }
         }
 
         public static void Reset()
         {
-            includedAssemblies = null;
+            assemblySettings = null;
         }
 
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
             var flags = ToLuaPlatformFlags.None; // allow list
 
-            if (IncludedAssemblies.TryGetValue(name, out var value))
+            if (AssemblySettings.TryGetValue(name, out var value))
                 flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
         }
 
-        private static void UpdateCsv(List<LuaIncludedAssembly> newAssemblies)
+        private static void UpdateCsv(List<LuaAssemblySetting> newAssemblies)
         {
             // Load previous configurations
-            var oldAssemblies = IncludedAssemblies;
+            var oldAssemblies = AssemblySettings;
 
             // merge previous configurations
             for (int index = 0, count = newAssemblies.Count; index < count; ++index)
@@ -81,13 +81,13 @@ namespace LuaInterface.Editor
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var newAssemblies = new List<LuaIncludedAssembly>();
+            var newAssemblies = new List<LuaAssemblySetting>();
 
             foreach (var assembly in assemblies)
             {
                 var assemblyName = assembly.GetName().Name;
 
-                newAssemblies.Add(new LuaIncludedAssembly { Name = assemblyName, Android = true, iOS = true, Editor = true });
+                newAssemblies.Add(new LuaAssemblySetting { Name = assemblyName, Android = true, iOS = true, Editor = true });
             }
 
             UpdateCsv(newAssemblies);

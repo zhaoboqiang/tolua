@@ -8,33 +8,33 @@ namespace LuaInterface.Editor
 {
     public static class ReflectProperties
     {
-        private static Dictionary<string, LuaIncludedProperty> includedProperties;
-        private static Dictionary<string, LuaIncludedProperty> IncludedFields
+        private static Dictionary<string, LuaPropertySetting> propertySettings;
+        private static Dictionary<string, LuaPropertySetting> fieldSettings
         {
             get
             {
-                if (includedProperties == null)
+                if (propertySettings == null)
                 {
-                    var fields = LuaSettingsUtility.LoadCsv<LuaIncludedProperty>(ToLuaSettingsUtility.Settings.PropertyCsv);
+                    var fields = LuaSettingsUtility.LoadCsv<LuaPropertySetting>(ToLuaSettingsUtility.Settings.PropertyCsv);
                     if (fields == null)
-                        includedProperties = new Dictionary<string, LuaIncludedProperty>();
+                        propertySettings = new Dictionary<string, LuaPropertySetting>();
                     else
-                        includedProperties = fields.ToDictionary(key => key.FieldFullName);
+                        propertySettings = fields.ToDictionary(key => key.FieldFullName);
                 }
-                return includedProperties;
+                return propertySettings;
             }
         }
 
         public static void Reset()
         {
-            includedProperties = null;
+            propertySettings = null;
         }
 
-        public static LuaIncludedProperty Lookup(string name)
+        public static LuaPropertySetting Lookup(string name)
         {
-            var property = new LuaIncludedProperty();
+            var property = new LuaPropertySetting();
 
-            if (!IncludedFields.TryGetValue(name, out property))
+            if (!fieldSettings.TryGetValue(name, out property))
             {
                 property.CanRead = true;
                 property.CanWrite = true;
@@ -43,7 +43,7 @@ namespace LuaInterface.Editor
             return property;
         }
 
-        public static LuaIncludedProperty Lookup(MemberInfo memberInfo)
+        public static LuaPropertySetting Lookup(MemberInfo memberInfo)
         {
             var name = $"{ToLuaMembers.GetTypeName(memberInfo)}.{memberInfo.Name}";
             return Lookup(name);

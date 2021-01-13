@@ -11,7 +11,7 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaIncludedAssembly
+    public struct LuaAssemblySetting
     {
         public string Name;
         public bool Android;
@@ -20,7 +20,7 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaIncludedNamespace
+    public struct LuaNamespaceSetting
     {
         public string Namespace;
         public bool Android;
@@ -29,7 +29,7 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaIncludedType
+    public struct LuaTypeSetting
     {
         public string FullName;
         public string Note;
@@ -39,7 +39,7 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaIncludedField
+    public struct LuaFieldSetting
     {
         public string FieldFullName;
         public bool Android;
@@ -48,7 +48,7 @@ namespace LuaInterface
     }
 
     [Serializable]
-    public struct LuaIncludedProperty
+    public struct LuaPropertySetting
     {
         public string FieldFullName;
         public bool CanRead;

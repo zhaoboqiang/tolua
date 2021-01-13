@@ -7,26 +7,26 @@ namespace LuaInterface.Editor
 {
     public static class ReflectNamespaces
     {
-        private static Dictionary<string, LuaIncludedNamespace> includedNamespaces;
-        public static Dictionary<string, LuaIncludedNamespace> IncludedNamespaces
+        private static Dictionary<string, LuaNamespaceSetting> namespaceSettings;
+        public static Dictionary<string, LuaNamespaceSetting> NamespaceSettings
         {
             get
             {
-                if (includedNamespaces == null)
+                if (namespaceSettings == null)
                 {
-                    var namespaces = LuaSettingsUtility.LoadCsv<LuaIncludedNamespace>(ToLuaSettingsUtility.Settings.NamespaceCsv);
+                    var namespaces = LuaSettingsUtility.LoadCsv<LuaNamespaceSetting>(ToLuaSettingsUtility.Settings.NamespaceCsv);
                     if (namespaces == null)
-                        includedNamespaces = new Dictionary<string, LuaIncludedNamespace>();
+                        namespaceSettings = new Dictionary<string, LuaNamespaceSetting>();
                     else
-                        includedNamespaces = namespaces.ToDictionary(key => key.Namespace);
+                        namespaceSettings = namespaces.ToDictionary(key => key.Namespace);
                 }
-                return includedNamespaces;
+                return namespaceSettings;
             }
         }
 
         public static void Reset()
         {
-            includedNamespaces = null;
+            namespaceSettings = null;
         }
 
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
@@ -36,16 +36,16 @@ namespace LuaInterface.Editor
             if (string.IsNullOrEmpty(name))
                 return flags;
 
-            if (IncludedNamespaces.TryGetValue(name, out var value))
+            if (NamespaceSettings.TryGetValue(name, out var value))
                 flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
         }
 
-        private static void UpdateCsv(Dictionary<string, LuaIncludedNamespace> newNamespaces)
+        private static void UpdateCsv(Dictionary<string, LuaNamespaceSetting> newNamespaces)
         {
             // Load previous configurations
-            var oldNamespaces = IncludedNamespaces;
+            var oldNamespaces = NamespaceSettings;
 
             // merge previous configurations
             var keys = newNamespaces.Keys.ToArray<string>();
@@ -83,7 +83,7 @@ namespace LuaInterface.Editor
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var newNamespaces = new Dictionary<string, LuaIncludedNamespace>();
+            var newNamespaces = new Dictionary<string, LuaNamespaceSetting>();
 
             foreach (var assembly in assemblies)
             {
@@ -97,7 +97,7 @@ namespace LuaInterface.Editor
                     if (newNamespaces.ContainsKey(ns))
                         continue;
 
-                    newNamespaces.Add(ns, new LuaIncludedNamespace { Namespace = ns, Android = true, iOS = true, Editor = true });
+                    newNamespaces.Add(ns, new LuaNamespaceSetting { Namespace = ns, Android = true, iOS = true, Editor = true });
                 }
             }
 

@@ -8,33 +8,33 @@ namespace LuaInterface.Editor
 {
     public static class ReflectFields
     {
-        private static Dictionary<string, LuaIncludedField> includedFields;
-        public static Dictionary<string, LuaIncludedField> IncludedFields
+        private static Dictionary<string, LuaFieldSetting> fieldSettings;
+        public static Dictionary<string, LuaFieldSetting> FieldSettings
         {
             get
             {
-                if (includedFields == null)
+                if (fieldSettings == null)
                 {
-                    var fields = LuaSettingsUtility.LoadCsv<LuaIncludedField>(ToLuaSettingsUtility.Settings.FieldCsv);
+                    var fields = LuaSettingsUtility.LoadCsv<LuaFieldSetting>(ToLuaSettingsUtility.Settings.FieldCsv);
                     if (fields == null)
-                        includedFields = new Dictionary<string, LuaIncludedField>();
+                        fieldSettings = new Dictionary<string, LuaFieldSetting>();
                     else
-                        includedFields = fields.ToDictionary(key => key.FieldFullName);
+                        fieldSettings = fields.ToDictionary(key => key.FieldFullName);
                 }
-                return includedFields;
+                return fieldSettings;
             }
         }
 
         public static void Reset()
         {
-            includedFields = null;
+            fieldSettings = null;
         }
 
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
             var flags = ToLuaPlatformFlags.All; // deny list
 
-            if (IncludedFields.TryGetValue(name, out var value))
+            if (FieldSettings.TryGetValue(name, out var value))
                 flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
             return flags;
