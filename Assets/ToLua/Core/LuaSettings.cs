@@ -54,4 +54,12 @@ namespace LuaInterface
         public bool CanRead;
         public bool CanWrite;
     }
+
+    [Serializable]
+    public struct LuaUsingSetting
+    {
+        public string FullName;
+        public bool Preload;
+    }
+
 }

@@ -35,4 +35,5 @@ public class CustomToLuaSettings : ToLuaSettings
     public string TypeCsv => GetCsvPath("Types");
     public string FieldCsv => GetCsvPath("Fields");
     public string PropertyCsv => GetCsvPath("Properties");
+    public string UsingCsv => GetCsvPath("Usings");
 }

@@ -127,7 +127,7 @@ namespace LuaInterface.Editor
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.TypeCsv);
         }
 
-        private static void AddNewType(List<LuaTypeSetting> newTypes, Type type, Type outerType)
+        private static void AddNewType(List<LuaTypeSetting> newTypes, Type type)
         {
             newTypes.Add(new LuaTypeSetting
             {
@@ -149,7 +149,7 @@ namespace LuaInterface.Editor
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    AddNewType(newTypes, type, null);
+                    AddNewType(newTypes, type);
                 }
             }
 

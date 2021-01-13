@@ -13,5 +13,6 @@
         string TypeCsv { get; } 
         string FieldCsv { get; } 
         string PropertyCsv { get; } 
+        string UsingCsv { get; }
     }
 }
