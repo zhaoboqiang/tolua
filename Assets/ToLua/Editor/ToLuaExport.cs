@@ -1289,7 +1289,7 @@ public class ToLuaExport
 
         foreach (var t in eventSet)
         {
-            var space = GetNameSpace(t, out var funcName);
+            var space = GetNamespace(t);
             if (space != className)
             {
                 list.Add(t);
@@ -1304,6 +1304,7 @@ public class ToLuaExport
 
             BeginPlatformMacro(fieldPlatformFlagsText);
 
+            var funcName = GetTypeName(t);
             funcName = ConvertToLibSign(funcName);
             var funcFullName = ConvertToLibSign(space) + "_" + funcName;
 
@@ -4062,7 +4063,7 @@ public class ToLuaExport
         foreach (var extendType in extendTypes)
         {
             ProcessExtendType(extendType, methodBases);
-            var nameSpace = GetNameSpace(extendType, out var _);
+            var nameSpace = GetNamespace(extendType);
 
             if (!string.IsNullOrEmpty(nameSpace))
             {
@@ -4102,7 +4103,8 @@ public class ToLuaExport
 
         BeginPlatformMacro(platformFlagsText);
 
-        var space = GetNameSpace(t, out var funcName);
+        var space = GetNamespace(t);
+        var funcName = GetTypeName(t);
         funcName = CombineTypeStr(space, funcName);
         funcName = ConvertToLibSign(funcName);
 
@@ -4173,11 +4175,11 @@ public class ToLuaExport
         return str.Replace(',', '_');
     }
 
-    public static string GetNameSpace(Type t, out string libName)
+    public static string GetNamespace(Type t)
     {
         if (t.IsGenericType)
         {
-            return GetGenericNameSpace(t, out libName);
+            return GetGenericNameSpace(t);
         }
         else
         {
@@ -4187,18 +4189,39 @@ public class ToLuaExport
             {
                 space = space.Replace('+', '.');
                 int index = space.LastIndexOf('.');
-                libName = space.Substring(index + 1);
                 return space.Substring(0, index);
             }
             else
             {
-                libName = t.Namespace == null ? space : space.Substring(t.Namespace.Length + 1);
                 return t.Namespace;
             }
         }
     }
 
-    static string GetGenericNameSpace(Type t, out string libName)
+    public static string GetTypeName(Type t)
+    {
+        if (t.IsGenericType)
+        {
+            return GetGenericTypeName(t);
+        }
+        else
+        {
+            var space = t.FullName;
+
+            if (space.Contains("+"))
+            {
+                space = space.Replace('+', '.');
+                int index = space.LastIndexOf('.');
+                return space.Substring(index + 1);
+            }
+            else
+            {
+                return t.Namespace == null ? space : space.Substring(t.Namespace.Length + 1);
+            }
+        }
+    }
+
+    static string GetGenericNameSpace(Type t)
     {
         var gArgs = t.GetGenericArguments();
         string typeName = t.FullName;
@@ -4241,7 +4264,56 @@ public class ToLuaExport
             str += "<" + string.Join(",", LuaMisc.GetGenericName(gArgs, offset, count)) + ">";
         }
 
-        libName = str;
+        if (string.IsNullOrEmpty(space))
+            space = t.Namespace;
+
+        return space;
+    }
+
+    static string GetGenericTypeName(Type t)
+    {
+        var gArgs = t.GetGenericArguments();
+        string typeName = t.FullName;
+        int count = gArgs.Length;
+        int pos = typeName.IndexOf("[");
+        if (pos > 0)
+            typeName = typeName.Substring(0, pos);
+
+        string str = null;
+        string name = null;
+        int offset = 0;
+        pos = typeName.IndexOf("+");
+
+        while (pos > 0)
+        {
+            str = typeName.Substring(0, pos);
+            typeName = typeName.Substring(pos + 1);
+            pos = str.IndexOf('`');
+
+            if (pos > 0)
+            {
+                count = (int)(str[pos + 1] - '0');
+                str = str.Substring(0, pos);
+                str += "<" + string.Join(",", LuaMisc.GetGenericName(gArgs, offset, count)) + ">";
+                offset += count;
+            }
+
+            name = CombineTypeStr(name, str);
+            pos = typeName.IndexOf("+");
+        }
+
+        var space = name;
+        str = typeName;
+
+        if (offset < gArgs.Length)
+        {
+            pos = str.IndexOf('`');
+            count = (int)(str[pos + 1] - '0');
+            str = str.Substring(0, pos);
+            str += "<" + string.Join(",", LuaMisc.GetGenericName(gArgs, offset, count)) + ">";
+        }
+
+        var libName = str;
 
         if (string.IsNullOrEmpty(space))
         {
@@ -4253,7 +4325,7 @@ public class ToLuaExport
             }
         }
 
-        return space;
+        return libName;
     }
 }
 }
