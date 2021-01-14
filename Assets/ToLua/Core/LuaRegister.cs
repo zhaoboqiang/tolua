@@ -1,4 +1,3 @@
-﻿namespace LuaInterface
-{
-    public delegate void LuaRegister(LuaState L);
-}
+﻿using LuaInterface;
+
+public delegate void LuaRegister(LuaState L);
