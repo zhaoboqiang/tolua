@@ -362,42 +362,6 @@ public static class ToLuaMenu
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
         sb.AppendLineEx("{");
-        sb.AppendLineEx("\tpublic static void Register(LuaState L)");
-        sb.AppendLineEx("\t{");
-		sb.AppendLineEx("\t\tLuaBinderRuntime.Register(L);");
-        sb.AppendLineEx();
-        sb.AppendLineEx("\t\t// Preregister");
-        sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
-
-        sb.AppendLineEx("\t\tL.BeginModule(null);");
-
-        GenRegisterInfo(null, sb, delegateTypes, wrappedDelegateTypes);
-
-        Action<ToLuaNode<string>> begin = (node) =>
-        {
-            if (node.value == null)
-                return;
-
-            sb.AppendLineEx($"\t\tL.BeginModule(\"{node.value}\");");
-            var space = GetSpaceNameFromTree(node);
-
-            GenRegisterInfo(space, sb, delegateTypes, wrappedDelegateTypes);
-        };
-
-        Action<ToLuaNode<string>> end = (node) =>
-        {
-            if (node.value != null)
-            {
-                sb.AppendLineEx("\t\tL.EndModule();");
-            }
-        };
-
-        tree.DepthFirstTraversal(begin, end, tree.GetRoot());
-        sb.AppendLineEx("\t\tL.EndModule();");
-
-        sb.AppendLineEx("\t\tDebugger.Log(\"Preregister lua type cost time: {0}\", Time.realtimeSinceStartup - t);");
-
-        sb.AppendLineEx("\t}");
         sb.AppendLineEx();
 
         GenerateUsingRegisters(sb, 1, BindTypes);
@@ -589,10 +553,6 @@ public static class ToLuaMenu
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
         sb.AppendLineEx("{");
-        sb.AppendLineEx("\tpublic static void Register(LuaState L)");
-        sb.AppendLineEx("\t{");
-        sb.AppendLineEx("\t\tthrow new LuaException(\"Please generate LuaBinder files first!\");");
-        sb.AppendLineEx("\t}");
         sb.AppendLineEx();
 
         GenerateUsingRegisters(sb, 1, new BindType[] {});

@@ -141,7 +141,7 @@ public class LuaClient : MonoBehaviour
 
     protected virtual void Bind()
     {
-        LuaSettingsUtility.Settings.luaRegister(L);
+        LuaBinderRuntime.Register(L);
         LuaCoroutine.Register(L, this);
     }
 
@@ -149,7 +149,6 @@ public class LuaClient : MonoBehaviour
     {
         LuaSettingsUtility.Initialize(new LuaSettings
         {
-            luaRegister = LuaBinder.Register,
             delegates = LuaDelegates.delegates,
             UsingCsvPath = Application.dataPath + "/Settings/Usings.csv" 
         });

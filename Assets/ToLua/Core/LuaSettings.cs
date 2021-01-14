@@ -4,8 +4,6 @@ using LuaInterface;
 
 public struct LuaSettings
 {
-    public LuaRegister luaRegister;
-
     public Dictionary<Type, DelegateCreate> delegates;
 
     public string UsingCsvPath;

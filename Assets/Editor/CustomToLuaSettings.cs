@@ -16,7 +16,6 @@ public class CustomToLuaSettings : ToLuaSettings
 
         LuaSettingsUtility.Initialize(new LuaSettings
         {
-            luaRegister = LuaBinder.Register,
             delegates = LuaDelegates.delegates,
             UsingCsvPath = customToLuaSettings.UsingCsv
         });

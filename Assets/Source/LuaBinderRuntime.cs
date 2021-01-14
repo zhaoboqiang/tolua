@@ -1,4 +1,5 @@
 using LuaInterface;
+using UnityEngine;
 
 public static class LuaBinderRuntime
 {
@@ -18,6 +19,8 @@ public static class LuaBinderRuntime
 
 		var settings = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath);
 
+        float t = Time.realtimeSinceStartup;
+
 		foreach (var setting in settings)
 		{
 			if (setting.Preload)
@@ -25,5 +28,7 @@ public static class LuaBinderRuntime
 				LuaBinderWrap.Using(L, setting.FullName);
 			}
 		}
+
+        Debugger.Log("Preregister lua type cost time: {0}", Time.realtimeSinceStartup - t);
 	}
 }
