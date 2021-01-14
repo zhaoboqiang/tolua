@@ -494,20 +494,12 @@ namespace LuaInterface
 #else
 
             if (mainState != null && mainState.L == ptr)
-            {
                 return mainState;
-            }            
 
-            LuaState state = null;
-
-            if (stateMap.TryGetValue(ptr, out state))
-            {
+            if (stateMap.TryGetValue(ptr, out var state))
                 return state;
-            }
-            else
-            {
-                return Get(LuaDLL.tolua_getmainstate(ptr));
-            }
+
+            return Get(LuaDLL.tolua_getmainstate(ptr));
 #endif
         }
 
@@ -517,9 +509,7 @@ namespace LuaInterface
             return mainState.translator;
 #else
             if (mainState != null && mainState.L == ptr)
-            {
                 return mainState.translator;
-            }
 
             return Get(ptr).translator;
 #endif
@@ -529,9 +519,7 @@ namespace LuaInterface
         {
 #if UNITY_EDITOR
             if (!beStart)
-            {
                 throw new LuaException("you must call Start() first to initialize LuaState");
-            }
 #endif
             var buffer = Encoding.UTF8.GetBytes(chunk);
             LuaLoadBuffer(buffer, chunkName);
@@ -547,9 +535,7 @@ namespace LuaInterface
         {
 #if UNITY_EDITOR
             if (!beStart)
-            {
                 throw new LuaException("you must call Start() first to initialize LuaState");
-            }
 #endif
             var buffer = LuaFileUtils.Instance.ReadFile(fileName);
 
@@ -566,9 +552,7 @@ namespace LuaInterface
         string LuaChunkName(string name)
         {
             if (LuaConst.openLuaDebugger)
-            {
                 name = LuaFileUtils.Instance.FindFile(name);
-            }
 
             return "@" + name;
         }
