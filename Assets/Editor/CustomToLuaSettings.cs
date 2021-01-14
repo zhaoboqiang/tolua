@@ -28,12 +28,13 @@ public class CustomToLuaSettings : ToLuaSettings
     public string baseLuaDir => dataPath + "/ToLua/Lua/";
     public string injectionFilesPath => dataPath + "/ToLua/Injection/";
 
-    private string GetCsvPath(string filename) => dataPath + "/EditorSetting/" + filename + ".csv";
+    private string GetEditorCsvPath(string filename) => dataPath + "/EditorSettings/" + filename + ".csv";
+    private string GetPlayerCsvPath(string filename) => dataPath + "/Settings/" + filename + ".csv";
 
-    public string AssemblyCsv => GetCsvPath("Assemblies");
-    public string NamespaceCsv => GetCsvPath("Namespaces");
-    public string TypeCsv => GetCsvPath("Types");
-    public string FieldCsv => GetCsvPath("Fields");
-    public string PropertyCsv => GetCsvPath("Properties");
-    public string UsingCsv => GetCsvPath("Usings");
+    public string AssemblyCsv => GetEditorCsvPath("Assemblies");
+    public string NamespaceCsv => GetEditorCsvPath("Namespaces");
+    public string TypeCsv => GetEditorCsvPath("Types");
+    public string FieldCsv => GetEditorCsvPath("Fields");
+    public string PropertyCsv => GetEditorCsvPath("Properties");
+    public string UsingCsv => GetPlayerCsvPath("Usings");
 }
