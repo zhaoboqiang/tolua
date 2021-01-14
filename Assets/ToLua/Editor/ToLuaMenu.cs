@@ -362,7 +362,6 @@ public static class ToLuaMenu
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
         sb.AppendLineEx("{");
-        sb.AppendLineEx();
 
         GenerateUsingRegisters(sb, 1, BindTypes);
 
@@ -553,7 +552,6 @@ public static class ToLuaMenu
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
         sb.AppendLineEx("{");
-        sb.AppendLineEx();
 
         GenerateUsingRegisters(sb, 1, new BindType[] {});
 
