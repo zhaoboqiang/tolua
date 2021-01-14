@@ -150,7 +150,8 @@ public class LuaClient : MonoBehaviour
         LuaSettingsUtility.Initialize(new LuaSettings
         {
             luaRegister = LuaBinder.Register,
-            delegates = LuaDelegates.delegates
+            delegates = LuaDelegates.delegates,
+            UsingCsvPath = Application.dataPath + "/Settings/Usings.csv" 
         });
         
         InitLoader();
