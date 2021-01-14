@@ -8,6 +8,8 @@ namespace LuaInterface
         public LuaRegister luaRegister;
 
         public Dictionary<Type, DelegateCreate> delegates;
+
+        public string UsingCsvPath;
     }
 
     [Serializable]

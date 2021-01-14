@@ -15,5 +15,7 @@ public static class LuaBinderRuntime
 		L.BeginModule(null);
 		LuaBinderWrap.Register(L);
 		L.EndModule();
+
+
 	}
 }

@@ -6,65 +6,48 @@ using UnityEngine;
 
 namespace LuaInterface.Editor
 {
-    public static class PrintUsings
+    public static class ReflectUsings
     {
-        private static Dictionary<string, LuaUsingSetting> usingSettings;
-        public static Dictionary<string, LuaUsingSetting> UsingSettings
-        {
-            get
-            {
-                if (usingSettings == null)
-                {
-                    var types = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(ToLuaSettingsUtility.Settings.UsingCsv);
-                    if (types == null)
-                        usingSettings = new Dictionary<string, LuaUsingSetting>();
-                    else
-                        usingSettings = types.ToDictionary(key => key.FullName);
-                }
-                return usingSettings;
-            }
-        }
-
-        private static void UpdateCsv(List<LuaUsingSetting> newTypes)
+        private static void UpdateCsv(List<LuaUsingSetting> newSettings)
         {
             // Load previous configurations
-            var oldTypes = UsingSettings;
+            var oldSettings = LuaUsingSettings.Settings;
 
             // Merge previous configurations
-            for (int index = 0, count = newTypes.Count; index < count; ++index)
+            for (int index = 0, count = newSettings.Count; index < count; ++index)
             {
-                var newType = newTypes[index];
+                var newSetting = newSettings[index];
 
-                if (oldTypes.TryGetValue(newType.FullName, out var oldType))
+                if (oldSettings.TryGetValue(newSetting.FullName, out var oldSetting))
                 {
-                    newTypes[index] = oldType;
+                    newSettings[index] = oldSetting;
                 }
             }
 
             // Merge not exist previous configurations
-            var mergedTypes = newTypes.ToDictionary(key => key.FullName);
-            foreach (var kv in oldTypes)
+            var mergedSettings = newSettings.ToDictionary(key => key.FullName);
+            foreach (var kv in oldSettings)
             {
-                if (mergedTypes.ContainsKey(kv.Key))
+                if (mergedSettings.ContainsKey(kv.Key))
                     continue;
 
-                mergedTypes.Add(kv.Key, kv.Value);
+                mergedSettings.Add(kv.Key, kv.Value);
             }
 
             // Sort
-            var resultTypes = mergedTypes.Values.ToList();
-            resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
+            var resultSettings = mergedSettings.Values.ToList();
+            resultSettings.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // Save configurations
             var lines = new List<string> { "FullName,Preload" };
-            lines.AddRange(from type in resultTypes
-                           select $"{type.FullName},{type.Preload}");
+            lines.AddRange(from setting in resultSettings
+                           select $"{setting.FullName},{setting.Preload}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.UsingCsv);
         }
         
-        private static void AddNewType(List<LuaUsingSetting> newTypes, Type type)
+        private static void AddNewSetting(List<LuaUsingSetting> newSettings, Type type)
         {
-            newTypes.Add(new LuaUsingSetting
+            newSettings.Add(new LuaUsingSetting
             {
                 FullName = ToLuaTypes.GetFullName(type),
                 Preload = false
@@ -74,13 +57,12 @@ namespace LuaInterface.Editor
         [MenuItem("Reflect/Update usings")]
         public static void Print()
         {
-            var newTypes = new List<LuaUsingSetting>();
+            var newSettings = new List<LuaUsingSetting>();
 
-            var types = ToLuaSettingsUtility.Types;
-            foreach (var type in types)
-                AddNewType(newTypes, type);
+            foreach (var type in ToLuaSettingsUtility.Types)
+                AddNewSetting(newSettings, type);
 
-            UpdateCsv(newTypes);
+            UpdateCsv(newSettings);
         }
     }
 }

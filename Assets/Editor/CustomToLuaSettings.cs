@@ -10,12 +10,15 @@ public class CustomToLuaSettings : ToLuaSettings
 {
     static CustomToLuaSettings()
     {
-        ToLuaSettingsUtility.Initialize(new CustomToLuaSettings());
+        var customToLuaSettings = new CustomToLuaSettings();
+
+        ToLuaSettingsUtility.Initialize(customToLuaSettings);
 
         LuaSettingsUtility.Initialize(new LuaSettings
         {
             luaRegister = LuaBinder.Register,
-            delegates = LuaDelegates.delegates
+            delegates = LuaDelegates.delegates,
+            UsingCsvPath = customToLuaSettings.UsingCsv
         });
     }
 
@@ -28,13 +31,14 @@ public class CustomToLuaSettings : ToLuaSettings
     public string baseLuaDir => dataPath + "/ToLua/Lua/";
     public string injectionFilesPath => dataPath + "/ToLua/Injection/";
 
-    private string GetEditorCsvPath(string filename) => dataPath + "/EditorSettings/" + filename + ".csv";
-    private string GetPlayerCsvPath(string filename) => dataPath + "/Settings/" + filename + ".csv";
+    private static string GetEditorCsvPath(string filename) => dataPath + "/EditorSettings/" + filename + ".csv";
+    private static string GetPlayerCsvPath(string filename) => dataPath + "/Settings/" + filename + ".csv";
 
     public string AssemblyCsv => GetEditorCsvPath("Assemblies");
     public string NamespaceCsv => GetEditorCsvPath("Namespaces");
     public string TypeCsv => GetEditorCsvPath("Types");
     public string FieldCsv => GetEditorCsvPath("Fields");
     public string PropertyCsv => GetEditorCsvPath("Properties");
+
     public string UsingCsv => GetPlayerCsvPath("Usings");
 }
