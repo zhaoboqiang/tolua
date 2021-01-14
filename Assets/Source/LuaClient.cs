@@ -101,10 +101,10 @@ public class LuaClient : MonoBehaviour
     {
         LuaConst.openLuaSocket = true;
 
-        L.BeginPreLoad();
+        L.BeginDynamic();
         L.RegFunction("socket.core", LuaOpen_Socket_Core);
         L.RegFunction("mime.core", LuaOpen_Mime_Core);
-        L.EndPreLoad();
+        L.EndDynamic();
     }
 
     //cjson 比较特殊，只new了一个table，没有注册库，这里注册一下

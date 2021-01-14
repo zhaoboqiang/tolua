@@ -77,7 +77,7 @@ namespace LuaInterface
 
         Dictionary<Type, int> metaMap = new Dictionary<Type, int>();        
         Dictionary<Enum, object> enumMap = new Dictionary<Enum, object>();
-        Dictionary<Type, LuaCSFunction> preLoadMap = new Dictionary<Type, LuaCSFunction>();
+        Dictionary<Type, LuaCSFunction> dynamicTypes = new Dictionary<Type, LuaCSFunction>();
 
         Dictionary<int, Type> typeMap = new Dictionary<int, Type>();
         HashSet<Type> genericSet = new HashSet<Type>();
@@ -203,26 +203,26 @@ namespace LuaInterface
             return ret;
         }
 
-        public void BeginPreLoad()
+        public void BeginDynamic()
         {
             LuaGetGlobal("package");
-            LuaGetField(-1, "preload");
+            LuaGetField(-1, "dynamic");
             moduleSet = new HashSet<string>();
         }
 
-        public void EndPreLoad()
+        public void EndDynamic()
         {
             LuaPop(2);
             moduleSet = null;
         }
 
-        public void AddPreLoad(string name, LuaCSFunction func, Type type)
+        public void AddDynamic(string name, LuaCSFunction func, Type type)
         {            
-            if (!preLoadMap.ContainsKey(type))
+            if (!dynamicTypes.ContainsKey(type))
             {
                 LuaDLL.tolua_pushcfunction(L, func);
                 LuaSetField(-2, name);
-                preLoadMap[type] = func;
+                dynamicTypes[type] = func;
                 var module = type.Namespace;
 
                 if (!string.IsNullOrEmpty(module) && !moduleSet.Contains(module))
@@ -234,13 +234,13 @@ namespace LuaInterface
         }
 
         //慎用，需要自己保证不会重复Add相同的name,并且上面函数没有使用过这个name
-        public void AddPreLoad(string name, LuaCSFunction func)
+        public void AddDynamic(string name, LuaCSFunction func)
         {
             LuaDLL.tolua_pushcfunction(L, func);
             LuaSetField(-2, name);
         }
 
-        public int BeginPreModule(string name)
+        public int BeginDynamicModule(string name)
         {
             int top = LuaGetTop();
 
@@ -259,26 +259,26 @@ namespace LuaInterface
             throw new LuaException($"create table {name} fail");            
         }
 
-        public void EndPreModule(int reference)
+        public void EndDynamicModule(int reference)
         {
             --beginCount;            
             LuaDLL.tolua_endpremodule(L, reference);
         }
 
-        public void EndPreModule(IntPtr L, int reference)
+        public void EndDynamicModule(IntPtr L, int reference)
         {
             --beginCount;
             LuaDLL.tolua_endpremodule(L, reference);
         }
 
-        public void BindPreModule(Type t, LuaCSFunction func)
+        public void BindDynamicModule(Type t, LuaCSFunction func)
         {
-            preLoadMap[t] = func;
+            dynamicTypes[t] = func;
         }
 
-        public LuaCSFunction GetPreModule(Type t)
+        public LuaCSFunction GetDynamicModule(Type t)
         {
-            preLoadMap.TryGetValue(t, out var func);
+            dynamicTypes.TryGetValue(t, out var func);
             return func;
         }
 
@@ -1923,7 +1923,7 @@ namespace LuaInterface
                 metaMap.Clear();                
                 typeMap.Clear();
                 enumMap.Clear();
-                preLoadMap.Clear();
+                dynamicTypes.Clear();
                 genericSet.Clear();                                
                 LuaDLL.lua_close(L);                
                 translator.Dispose();

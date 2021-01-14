@@ -136,10 +136,10 @@ namespace LuaInterface
             return state.EnumMetatable;
         }        
 
-        public static LuaCSFunction GetPreModule(IntPtr L, Type t)
+        public static LuaCSFunction GetDynamicModule(IntPtr L, Type t)
         {
             var state = LuaState.Get(L);
-            return state.GetPreModule(t);
+            return state.GetDynamicModule(t);
         }
     }
 }

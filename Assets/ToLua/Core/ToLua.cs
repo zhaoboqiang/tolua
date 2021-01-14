@@ -2825,7 +2825,7 @@ namespace LuaInterface
 
             if (reference <= 0)
             {
-                reference = LoadPreType(L, type);
+                reference = LoadDynamicType(L, type);
             }
 
             var translator = ObjectTranslator.Get(L);
@@ -2884,15 +2884,15 @@ namespace LuaInterface
             return reference;
         }
 
-        public static int LoadPreType(IntPtr L, Type type)
+        public static int LoadDynamicType(IntPtr L, Type type)
         {
-            var LuaOpenLib = LuaStatic.GetPreModule(L, type);
+            var LuaOpenLib = LuaStatic.GetDynamicModule(L, type);
             var reference = -1;
 
             if (LuaOpenLib != null)
             {
 #if UNITY_EDITOR
-                Debugger.LogWarning("register PreLoad type {0} to lua", LuaMisc.GetTypeName(type));
+                Debugger.LogWarning("register dynamic type {0} to lua", LuaMisc.GetTypeName(type));
 #endif
                 reference = LuaPCall(L, LuaOpenLib);
             }
@@ -2909,12 +2909,10 @@ namespace LuaInterface
         static void PushUserObject(IntPtr L, object o)
         {
             var type = o.GetType();
-            var reference = LuaStatic.GetMetaReference(L, type);
 
+            var reference = LuaStatic.GetMetaReference(L, type);
             if (reference <= 0)
-            {
-                reference = LoadPreType(L, type);
-            }
+                reference = LoadDynamicType(L, type);
 
             PushUserData(L, o, reference);
         }
@@ -2952,11 +2950,8 @@ namespace LuaInterface
             else
             {
                 int reference = TypeTraits<T>.GetLuaReference(L);
-
                 if (reference <= 0)
-                {
-                    reference = LoadPreType(L, o.GetType());
-                }
+                    reference = LoadDynamicType(L, o.GetType());
 
                 ToLua.PushUserData(L, o, reference);
             }
