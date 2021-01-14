@@ -16,6 +16,14 @@ public static class LuaBinderRuntime
 		LuaBinderWrap.Register(L);
 		L.EndModule();
 
+		var settings = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath);
 
+		foreach (var setting in settings)
+		{
+			if (setting.Preload)
+			{
+				LuaBinderWrap.Using(L, setting.FullName);
+			}
+		}
 	}
 }

@@ -2,16 +2,38 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace LuaInterface.Editor
 {
     public static class ReflectUsings
     {
+        private static Dictionary<string, LuaUsingSetting> settings;
+
+        public static Dictionary<string, LuaUsingSetting> Settings
+        {
+            get
+            {
+                if (settings == null)
+                {
+                    var settingArray = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath);
+                    if (settingArray == null)
+                        settings = new Dictionary<string, LuaUsingSetting>();
+                    else
+                        settings = settingArray.ToDictionary(key => key.FullName);
+                }
+                return settings;
+            }
+        }
+
+        public static void Reset()
+        {
+            settings = null;
+        }
+
         private static void UpdateCsv(List<LuaUsingSetting> newSettings)
         {
             // Load previous configurations
-            var oldSettings = LuaUsingSettings.Settings;
+            var oldSettings = Settings;
 
             // Merge previous configurations
             for (int index = 0, count = newSettings.Count; index < count; ++index)

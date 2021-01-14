@@ -5,7 +5,7 @@ public static class LuaBinderWrap
 {
     static LuaState L;
 
-    private static bool Using(LuaState L, string wrapFullName)
+    public static bool Using(LuaState L, string wrapFullName)
     {
         if (!LuaBinder.Binders.TryGetValue(wrapFullName, out var item))
             return false;
