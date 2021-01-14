@@ -3,7 +3,7 @@
 tolua# is a Unity lua static binder solution. the first solution that analyzes code by reflection and generates wrapper classes.<br>
 It is a Unity plugin that greatly simplifies the integration of C# code with Lua. which can automatically generate the binding code to access Unity from Lua and map c# constants, variables, functions, properties, classes, and enums to Lua.<br>
 tolua# grows up from cstolua. it's goal is to be a powerful development environment for Unity.<br>
-Support unity4.6.x and Unity5.x all(copy /Unity5.x/Assets to /Assets) <br>
+~~Support unity4.6.x and Unity5.x all(copy /Unity5.x/Assets to /Assets)~~ <br>
 If you want to test examples(example 1 is excluded)in mobile, first click menu Lua/Copy lua files to Resources. then build it <br>
 如果你想在手机上测试例子(例子1除外)，首先点击菜单Lua/Copy lua files to Resources， 之后再build. <br>
 
@@ -79,9 +79,10 @@ https://github.com/LabOfHoward/unity_tolua-_zerobrane_api<br>
 * 包含第三方lua扩展，包括luasocket, struct, lpeg, utf8, pb等库 <br>
 * 当lua出现异常，能够同时捕获c#端和lua端堆栈，便于调试 <br>
 * print信息，在编辑器点击日志, 能自动打开对应lua文件 <br>
-* 支持unity所有版本 <br>
-* **支持Lua hook C#相代码实现，一定程度上支持利用Lua代码修改C#端代码的bug**（[暖更新使用说明](https://zhuanlan.zhihu.com/p/35124260)） <br>
+* ~~支持unity所有版本~~ <br>
+* ~~**支持Lua hook C#相代码实现，一定程度上支持利用Lua代码修改C#端代码的bug**（[暖更新使用说明](https://zhuanlan.zhihu.com/p/35124260)）~~ <br>
 * 通过csv配置导出 <br>
+* 默认不调用wrapper的Register，需要脚本通过using使用对应的类，通过Usings.csv配置提前using的类 <br>
 
 # 快速入门
 在CustomSetting.cs中添加需要导出的类或者委托，类加入到customTypeList列表，委托加入到customDelegateList列表 <br>
