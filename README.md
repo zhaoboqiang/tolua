@@ -73,7 +73,7 @@ https://github.com/LabOfHoward/unity_tolua-_zerobrane_api<br>
 * 支持静态反射操作, 形式同c# <br>
 * 支持peer表，可在lua端扩展导出的userdata <br>
 * 支持自定义struct压入和读取，做到无GC，并且结构成员无类型限制, 参考例子24 <br>
-* 支持preloading, 可以通过requie后绑定wrap文件 <br>
+* ~~支持preloading, 可以通过requie后绑定wrap文件 ~~<br>
 * 支持int64, uint64  <br>
 * 大量的lua数学类型，如Quaternion, Vector3, Mathf等
 * 包含第三方lua扩展，包括luasocket, struct, lpeg, utf8, pb等库 <br>
@@ -85,7 +85,7 @@ https://github.com/LabOfHoward/unity_tolua-_zerobrane_api<br>
 * 默认不调用wrapper的Register，需要脚本通过using使用对应的类，通过Usings.csv配置提前using的类 <br>
 
 # 快速入门
-在CustomSetting.cs中添加需要导出的类或者委托，类加入到customTypeList列表，委托加入到customDelegateList列表 <br>
+跟导出相关的配置文件在EditorSettings目录下，using配置文件在Settings/Usings.csv <br>
 通过设置saveDir变量更改导出目录,默认生成在Assets/Source/Generate/下,点击菜单Lua->Generate All,生成绑定文件 <br>
 在LuaConst.cs中配置开发lua文件目录luaDir以及tolua lua文件目录toluaDir <br>
 ```csharp
@@ -183,7 +183,7 @@ end
 # 关于反射
 tolua# 不支持动态反射。动态反射对于重载函数有参数匹配问题，函数排序问题，ref,out 参数问题等等。<br>
 tolua#提供的替换方法是:<br>
-1. preloading, 把你未来可能需要的类型添加到导出列表customTypeList，同时也添加到dynamicList列表中，这样导出后该类型并不会随binder注册到lua中，你可以通过 require "namespace.classname" 动态注册到lua中，对于非枚举类型tolua#系统也可以在第一次push该类型时动态载入，当然也可在过场动画、资源下载、登录、场景加载或者某个的函数中require这个类型。<br>
+1. ~~preloading, 把你未来可能需要的类型添加到导出列表customTypeList，同时也添加到dynamicList列表中，这样导出后该类型并不会随binder注册到lua中，你可以通过 require "namespace.classname" 动态注册到lua中，对于非枚举类型tolua#系统也可以在第一次push该类型时动态载入，当然也可在过场动画、资源下载、登录、场景加载或者某个的函数中require这个类型。~~<br>
 2. 静态反射，参考例子22。通过静态反射支持精确的函数参数匹配和类型检查。不会存在重载函数参数混乱匹配错误问题, 注意iOS必须配置好link.xml<br>
 
 # Performance
