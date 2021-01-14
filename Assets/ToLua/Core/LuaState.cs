@@ -1796,7 +1796,7 @@ namespace LuaInterface
         }
 
         //慎用
-        public void ReLoad(string moduleFileName)
+        public void Reload(string moduleFileName)
         {
             LuaGetGlobal("package");
             LuaGetField(-1, "loaded");
@@ -1812,7 +1812,7 @@ namespace LuaInterface
 
             LuaPop(3);
             var require = $"require '{moduleFileName}'";
-            DoString(require, "ReLoad");
+            DoString(require, "Reload");
         }
 
         public int GetMetaReference(Type t)
