@@ -30,12 +30,12 @@ public class LuaClient : MonoBehaviour
 {
     public static LuaClient Instance { get; private set; }
 
-    private LuaState L = null;
+    public LuaState L { get; private set; } = null;
+
     private LuaLooper loop = null;
     private LuaFunction levelLoaded = null;
 
     protected bool openLuaSocket = false;
-    protected bool beZbStart = false;
 
     protected virtual LuaFileUtils InitLoader()
     {
@@ -101,10 +101,10 @@ public class LuaClient : MonoBehaviour
     {
         LuaConst.openLuaSocket = true;
 
-        L.BeginDynamic();
+        L.BeginPreload();
         L.RegFunction("socket.core", LuaOpen_Socket_Core);
         L.RegFunction("mime.core", LuaOpen_Mime_Core);
-        L.EndDynamic();
+        L.EndPreload();
     }
 
     //cjson 比较特殊，只new了一个table，没有注册库，这里注册一下
@@ -136,7 +136,7 @@ public class LuaClient : MonoBehaviour
     private void StartLooper()
     {
         loop = gameObject.AddComponent<LuaLooper>();
-        loop.luaState = L;
+        loop.L = L;
     }
 
     protected virtual void Bind()
