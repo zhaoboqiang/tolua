@@ -31,7 +31,7 @@ namespace LuaInterface.Editor
 
         public static ToLuaPlatformFlags GetPlatformFlags(string name)
         {
-            var flags = ToLuaPlatformFlags.All; // deny list
+            var flags = ToLuaPlatformFlags.All;
 
             if (string.IsNullOrEmpty(name))
                 return flags;
