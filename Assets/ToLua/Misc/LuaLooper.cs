@@ -43,7 +43,7 @@ public class LuaLooper : MonoBehaviour
         private set;
     }
 
-    public LuaState luaState = null;
+    public LuaState L = null;
 
     private void Start() 
     {
@@ -62,12 +62,10 @@ public class LuaLooper : MonoBehaviour
 
     private LuaBeatEvent GetEvent(string name)
     {
-        var table = luaState.GetTable(name);
+        var table = L.GetTable(name);
 
         if (table == null)
-        {
             throw new LuaException($"Lua table {name} not exists");
-        }
 
         var e = new LuaBeatEvent(table);
         table.Dispose();
@@ -77,8 +75,8 @@ public class LuaLooper : MonoBehaviour
 
     private void ThrowException()
     {
-        var error = luaState.LuaToString(-1);
-        luaState.LuaPop(2);                
+        var error = L.LuaToString(-1);
+        L.LuaPop(2);                
         throw new LuaException(error, LuaException.GetLastError());
     }
 
@@ -86,22 +84,20 @@ public class LuaLooper : MonoBehaviour
     {
         if (Application.isEditor)
         {
-            if (luaState == null)
+            if (L == null)
             {
                 return;
             }
         }
 
-        if (luaState.LuaUpdate(Time.deltaTime, Time.unscaledDeltaTime) != 0)
-        {
+        if (L.LuaUpdate(Time.deltaTime, Time.unscaledDeltaTime) != 0)
             ThrowException();
-        }
 
-        luaState.LuaPop(1);
-        luaState.Collect();
+        L.LuaPop(1);
+        L.Collect();
         if (Application.isEditor)
         {
-            luaState.CheckTop();
+            L.CheckTop();
         }
     }
 
@@ -109,41 +105,37 @@ public class LuaLooper : MonoBehaviour
     {
         if (Application.isEditor)
         {
-            if (luaState == null)
+            if (L == null)
             {
                 return;
             }
         }
 
-        if (luaState.LuaLateUpdate() != 0)
-        {
+        if (L.LuaLateUpdate() != 0)
             ThrowException();
-        }
 
-        luaState.LuaPop(1);
+        L.LuaPop(1);
     }
 
     private void FixedUpdate()
     {
         if (Application.isEditor)
         {
-            if (luaState == null)
+            if (L == null)
             {
                 return;
             }
         }
 
-        if (luaState.LuaFixedUpdate(Time.fixedDeltaTime) != 0)
-        {
+        if (L.LuaFixedUpdate(Time.fixedDeltaTime) != 0)
             ThrowException();
-        }
 
-        luaState.LuaPop(1);
+        L.LuaPop(1);
     }
 
     public void Destroy()
     {
-        if (luaState == null)
+        if (L == null)
             return;
         
         if (UpdateEvent != null)
@@ -164,12 +156,12 @@ public class LuaLooper : MonoBehaviour
             FixedUpdateEvent = null;
         }
 
-        luaState = null;
+        L = null;
     }
 
     private void OnDestroy()
     {
-        if (luaState != null)
+        if (L != null)
         {
             Destroy();
         }
