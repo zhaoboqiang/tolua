@@ -2886,7 +2886,7 @@ namespace LuaInterface
 
         public static int LoadDynamicType(IntPtr L, Type type)
         {
-            var LuaOpenLib = LuaStatic.GetDynamicModule(L, type);
+            var LuaOpenLib = LuaStatic.GetPreloadModule(L, type);
             var reference = -1;
 
             if (LuaOpenLib != null)
