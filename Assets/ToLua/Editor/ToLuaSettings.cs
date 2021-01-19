@@ -1,4 +1,6 @@
-﻿namespace LuaInterface
+﻿using System;
+
+namespace LuaInterface
 {
     public interface ToLuaSettings
     {
@@ -14,5 +16,7 @@
         string FieldCsv { get; } 
         string PropertyCsv { get; } 
         string UsingCsv { get; }
+
+        Type[] DelegateTypes { get; }
     }
 }

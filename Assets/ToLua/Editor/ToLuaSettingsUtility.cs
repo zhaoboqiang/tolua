@@ -138,6 +138,11 @@ namespace LuaInterface.Editor
                     }
                 }
 
+                foreach (var type in ToLuaSettingsUtility.Settings.DelegateTypes)
+                {
+                    delegateTypes.Add(type);
+                }
+
                 return delegateTypes.ToArray();
             }
         }

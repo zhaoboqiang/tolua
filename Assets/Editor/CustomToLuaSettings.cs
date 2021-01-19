@@ -40,4 +40,13 @@ public class CustomToLuaSettings : ToLuaSettings
     public string PropertyCsv => GetEditorCsvPath("Properties");
 
     public string UsingCsv => GetPlayerCsvPath("Usings");
+
+    public Type[] DelegateTypes => new Type[] {
+        typeof(Action),                
+        typeof(UnityEngine.Events.UnityAction),
+        typeof(System.Predicate<int>),
+        typeof(System.Action<int>),
+        typeof(System.Comparison<int>),
+        typeof(System.Func<int, int>), // Example 03
+    };
 }
