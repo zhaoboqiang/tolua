@@ -285,6 +285,7 @@ public class ToLuaExport
         {
             if (ret == null)
             {
+                #if TOLUA_CHECK_PARAMS_NULL
                 if (hasParams)
                 {
                     sb.AppendLineEx($"{indent}if (arg{(argCount - 1)} != null)");
@@ -293,12 +294,14 @@ public class ToLuaExport
                     sb.AppendLineEx($"{indent}\t{obj}.{method.Name}({RemoveLastArg(args)});"); // TODO: Instead remove of append.
                 }
                 else
+                #endif // TOLUA_CHECK_PARAMS_NULL
                 {
                     sb.AppendLineEx($"{indent}{obj}.{method.Name}({args});");
                 }
             }
             else
             {
+                #if TOLUA_CHECK_PARAMS_NULL
                 if (hasParams)
                 {
                     sb.AppendLineEx($"{indent}{ret} o;");
@@ -308,6 +311,7 @@ public class ToLuaExport
                     sb.AppendLineEx($"{indent}\to = {obj}.{method.Name}({RemoveLastArg(args)});"); // TODO: Instead remove of append.
                 }
                 else
+                #endif // TOLUA_CHECK_PARAMS_NULL
                 {
                     sb.AppendLineEx($"{indent}{ret} o = {obj}.{method.Name}({args});");
                 }
