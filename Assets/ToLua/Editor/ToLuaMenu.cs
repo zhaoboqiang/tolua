@@ -133,6 +133,7 @@ public static class ToLuaMenu
         ReflectNamespaces.Reset();
         ReflectProperties.Reset();
         ReflectTypes.Reset();
+        ReflectUsings.Reset();
     }
 
     private static void GenerateClassWrap(BindType bindType)
@@ -180,10 +181,22 @@ public static class ToLuaMenu
         AssetDatabase.Refresh();
     }
 
+    [MenuItem("Lua/Gen delegate wrap for debug", false, 1)]
+    public static void GenerateDelegateWrapForDebug()
+    {
+        Reset();
+
+        var sb = new StringBuilder();
+        GenerateDelegateWraps(sb, new Type[] {
+            typeof(System.Func<int, int>),
+        });
+    }
 
     [MenuItem("Lua/Gen Lua wrap file for debug", false, 1)]
     public static void GenerateClassWrapForDebug()
     {
+        Reset();
+
         GenerateClassWraps(new Type[] {
             // ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition")
             typeof(UnityEngine.CanvasRenderer)
@@ -332,6 +345,15 @@ public static class ToLuaMenu
         return str;
     }
 
+    static void GenerateDelegateWraps(StringBuilder sb, Type[] types)
+    {
+        foreach (var type in types)
+        {
+            var export = new ToLuaExport();
+            export.GenerateDelegate(type, sb);
+        }
+    }
+ 
     [MenuItem("Lua/Gen LuaBinder File", false, 4)]
     static void GenLuaBinder()
     {
@@ -344,7 +366,6 @@ public static class ToLuaMenu
         var tree = InitTree();
         var sb = new StringBuilder();
 
-        var wrappedDelegateTypes = new List<Type>();
         var delegateTypes = ToLuaSettingsUtility.DelegateTypes;
 
         var root = tree.GetRoot();
@@ -365,11 +386,7 @@ public static class ToLuaMenu
 
         GenerateUsingRegisters(sb, 1, BindTypes);
 
-        foreach (var type in wrappedDelegateTypes)
-        {
-            var export = new ToLuaExport();
-            export.GenerateDelegate(type, sb);
-        }
+        GenerateDelegateWraps(sb, delegateTypes);
 
         sb.AppendLineEx("}");
         sb.AppendLineEx();
@@ -412,30 +429,6 @@ public static class ToLuaMenu
         }
 
         sb.AppendLineEx($"{indent}}};");
-    }
-
-    static void GenRegisterInfo(string nameSpace, StringBuilder sb, Type[] delegateTypes,
-        List<Type> wrappedDelegateTypes)
-    {
-        var bindTypes = BindTypes;
-
-        foreach (var bindType in bindTypes)
-        {
-            if (bindType.nameSpace != nameSpace)
-                continue;
-
-            var platformFlags = ReflectTypes.GetPlatformFlags(bindType.type);
-            if (platformFlags == ToLuaPlatformFlags.None)
-                continue;
-
-            var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
-
-            ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
-
-            sb.AppendLineEx($"\t\t{bindType.wrapName}Wrap.Register(L);");
-
-            ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
-        }
     }
 
     static string GetOS()
