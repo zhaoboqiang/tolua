@@ -1,6 +1,11 @@
 Name,Android,iOS,Editor
+Anonymously Hosted DynamicMethods Assembly,True,True,True
+Assembly-CSharp,True,True,True
 Assembly-CSharp-Editor,False,False,False
+Cinemachine,True,True,True
+com.unity.cinemachine.editor,False,False,False
 CString,False,False,False
+CSVSerializer,False,False,False
 Debugger,False,False,False
 ExCSS.Unity,False,False,False
 ICSharpCode.NRefactory,False,False,False
@@ -11,7 +16,7 @@ Mono.Cecil.Pdb,False,False,False
 Mono.Cecil.Rocks,False,False,False
 Mono.CompilerServices.SymbolWriter,False,False,False
 Mono.Security,False,False,False
-mscorlib,False,False,False
+mscorlib,True,True,True
 nunit.framework,False,False,False
 System,True,True,True
 System.ComponentModel,False,False,False
@@ -76,10 +81,10 @@ UnityEditor,False,False,False
 UnityEditor.Advertisements,False,False,False
 UnityEditor.Android.Extensions,False,False,False
 UnityEditor.Graphs,False,False,False
-UnityEditor.iOS_I2Loc.Xcode,False,False,False
 UnityEditor.iOS.Extensions,False,False,False
 UnityEditor.iOS.Extensions.Common,False,False,False
 UnityEditor.iOS.Extensions.Xcode,False,False,False
+UnityEditor.iOS_I2Loc.Xcode,False,False,False
 UnityEditor.OSXStandalone.Extensions,False,False,False
 UnityEditor.Purchasing,False,False,False
 UnityEditor.SpatialTracking,False,False,False
@@ -118,6 +123,7 @@ UnityEngine.PerformanceReportingModule,True,True,True
 UnityEngine.Physics2DModule,True,True,True
 UnityEngine.PhysicsModule,True,True,True
 UnityEngine.ProfilerModule,True,True,True
+UnityEngine.Purchasing,True,True,True
 UnityEngine.ScreenCaptureModule,True,True,True
 UnityEngine.SharedInternalsModule,True,True,True
 UnityEngine.SpatialTracking,True,True,True
