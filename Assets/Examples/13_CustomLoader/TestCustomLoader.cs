@@ -1,0 +1,52 @@
+﻿using UnityEngine;
+using System.IO;
+using LuaInterface;
+
+//use menu Lua->Copy lua files to Resources. 之后才能发布到手机
+[NoToLua]
+public class TestCustomLoader : LuaClient 
+{
+    string tips = "Test custom loader";
+
+    protected override LuaFileUtils InitLoader()
+    {
+        return new LuaResLoader();
+    }
+
+    protected override void CallMain()
+    {
+        LuaFunction func = L.GetFunction("Test");
+        func.Call();
+        func.Dispose();
+    }
+
+    protected override void StartMain()
+    {
+        L.DoFile("TestLoader.lua");
+        CallMain();
+    }
+
+    new void Awake()
+    {
+        Application.logMessageReceived += Logger;
+        base.Awake();
+    }
+
+    new void OnApplicationQuit()
+    {
+        base.OnApplicationQuit();
+
+        Application.logMessageReceived -= Logger;
+    }
+
+    void Logger(string msg, string stackTrace, LogType type)
+    {
+        tips += msg;
+        tips += "\r\n";
+    }
+
+    void OnGUI()
+    {
+        GUI.Label(new Rect(Screen.width / 2 - 200, Screen.height / 2 - 200, 400, 400), tips);
+    }
+}
