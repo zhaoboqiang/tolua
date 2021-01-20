@@ -15,9 +15,13 @@ public class TestUsing : LuaClient
 
     protected override void CallMain()
     {
-        var func = L.GetFunction("Test");
-        func.Call();
-        func.Dispose();
+        var test0 = L.GetFunction("Test0");
+        test0.Call();
+        test0.Dispose();
+
+        var test1 = L.GetFunction("Test1");
+        test1.Call();
+        test1.Dispose();
     }
 
     protected override void StartMain()
