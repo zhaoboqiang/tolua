@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/ToLua/Examples/Performance/Performance.unity
+    path: Assets/Examples/Performance/Performance.unity
     guid: 0693d19658479a642a7faaa61feb2c09
   m_configObjects: {}
