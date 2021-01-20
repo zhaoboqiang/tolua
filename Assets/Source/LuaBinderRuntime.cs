@@ -17,7 +17,7 @@ public static class LuaBinderRuntime
 		LuaBinderWrap.Register(L);
 		L.EndModule();
 
-		var settings = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath);
+		var settings = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath, ':');
 
         float t = Time.realtimeSinceStartup;
 
