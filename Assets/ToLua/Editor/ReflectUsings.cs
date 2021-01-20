@@ -15,7 +15,7 @@ namespace LuaInterface.Editor
             {
                 if (settings == null)
                 {
-                    var settingArray = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath);
+                    var settingArray = LuaSettingsUtility.LoadCsv<LuaUsingSetting>(LuaSettingsUtility.Settings.UsingCsvPath, ':');
                     if (settingArray == null)
                         settings = new Dictionary<string, LuaUsingSetting>();
                     else
@@ -61,9 +61,9 @@ namespace LuaInterface.Editor
             resultSettings.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // Save configurations
-            var lines = new List<string> { "FullName,Preload" };
+            var lines = new List<string> { "FullName:Preload" };
             lines.AddRange(from setting in resultSettings
-                           select $"{setting.FullName},{setting.Preload}");
+                           select $"{setting.FullName}:{setting.Preload}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.UsingCsv);
         }
         
