@@ -9,9 +9,9 @@ using UnityEditor;
 
 public class CSVSerializer
 {
-    static public T[] Deserialize<T>(string text)
+    static public T[] Deserialize<T>(string text, char separator = ',')
     {
-        return (T[])CreateArray(typeof(T), ParseCSV(text));
+        return (T[])CreateArray(typeof(T), ParseCSV(text, separator));
     }
 
     static public T[] Deserialize<T>(List<string[]> rows)
