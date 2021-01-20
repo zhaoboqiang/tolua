@@ -1,0 +1,27 @@
+print("This is a script from a utf8 file")
+print("tolua: 你好! こんにちは! 안녕하세요!")
+
+
+function Test()
+	print("this is lua file load by Resource.Load")
+
+    if UnityEngine then
+        print("UnityEngine ~= nil")
+
+        if UnityEngine.Debug then
+            print("UnityEngine.Debug ~= nil")
+        end
+    end
+ 
+    using("UnityEngine.Debug")
+    
+    if UnityEngine then
+        print("UnityEngine ~= nil")
+        
+        if UnityEngine.Debug then
+            print("UnityEngine.Debug ~= nil")
+        end
+    end
+ 
+    UnityEngine.Debug.Log("Using UnityEngine.Debug.Log")
+end
