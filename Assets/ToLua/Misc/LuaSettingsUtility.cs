@@ -13,12 +13,12 @@ namespace LuaInterface
             Settings = settings;
         }
 
-        public static T[] LoadCsv<T>(string filepath)
+        public static T[] LoadCsv<T>(string filepath, char seperator = ',')
         {
             var text = System.IO.File.ReadAllText(filepath);
             if (string.IsNullOrEmpty(text))
                 return default;
-            return CSVSerializer.Deserialize<T>(text);
+            return CSVSerializer.Deserialize<T>(text, seperator);
         }
     }
 }
