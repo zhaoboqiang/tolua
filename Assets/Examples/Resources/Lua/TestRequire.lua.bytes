@@ -1,0 +1,28 @@
+print("This is a script from a utf8 file")
+print("tolua: 你好! こんにちは! 안녕하세요!")
+
+function Test0()
+	print("this is lua file load by Resource.Load")
+
+    if UnityEngine then
+        print("UnityEngine ~= nil")
+
+        if UnityEngine.Debug then
+            print("UnityEngine.Debug ~= nil")
+        end
+    end
+end
+
+Debug = require("UnityEngine.Debug")
+
+function Test1()
+    if UnityEngine then
+        print("UnityEngine ~= nil")
+        
+        if UnityEngine.Debug then
+            print("UnityEngine.Debug ~= nil")
+        end
+    end
+ 
+    Debug.Log("require UnityEngine.Debug.Log")
+end
