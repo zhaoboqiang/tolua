@@ -26,7 +26,13 @@ local function prequire(modname)
 
 	local status = using(modname)
 	if status then
-		return get_lib_from_name_path(modname)
+		local lib = get_lib_from_name_path(modname)
+		if lib ~= nil then
+			package.loaded[modname] = lib
+		else
+			package.loaded[modname] = true
+		end
+		return lib
 	end
 
     print(debug.traceback(lib))
