@@ -12,7 +12,7 @@ public static class LuaBinderWrap
             return true;
 
         // prepare namespace
-        var delimiterIndex = wrapFullName.IndexOf('<');
+        var delimiterIndex = wrapFullName.IndexOf('<'); // handle this condition: ns0.ns1.ns2.t<ns3.t>
         if (delimiterIndex > 0)
         {
             // strip template <>
