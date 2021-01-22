@@ -280,7 +280,7 @@ namespace LuaInterface
             LuaSetField(-2, name);
         }
 
-        public int BeginDynamicModule(string name)
+        public int BeginPreloadModule(string name)
         {
             int top = LuaGetTop();
 
