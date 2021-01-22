@@ -2892,7 +2892,7 @@ namespace LuaInterface
             if (LuaOpenLib != null)
             {
 #if UNITY_EDITOR
-                Debugger.LogWarning("register dynamic type {0} to lua", LuaMisc.GetTypeName(type));
+                Debugger.LogWarning("register preload type {0} to lua", LuaMisc.GetTypeName(type));
 #endif
                 reference = LuaPCall(L, LuaOpenLib);
             }
