@@ -282,7 +282,7 @@ namespace LuaInterface
             {
                 int reference = TypeTraits<GameObject>.GetLuaReference(L);
                 if (reference <= 0)
-                    reference = ToLua.LoadDynamicType(L, typeof(GameObject));
+                    reference = ToLua.LoadPreloadType(L, typeof(GameObject));
 
                 ToLua.PushUserData(L, o, reference);
             }
@@ -305,7 +305,7 @@ namespace LuaInterface
                     reference = LuaStatic.GetMetaReference(L, type);
 
                 if (reference <= 0)
-                    reference = ToLua.LoadDynamicType(L, type);
+                    reference = ToLua.LoadPreloadType(L, type);
 
                 ToLua.PushUserData(L, o, reference);
             }

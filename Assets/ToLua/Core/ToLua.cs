@@ -2825,7 +2825,7 @@ namespace LuaInterface
 
             if (reference <= 0)
             {
-                reference = LoadDynamicType(L, type);
+                reference = LoadPreloadType(L, type);
             }
 
             var translator = ObjectTranslator.Get(L);
@@ -2884,7 +2884,7 @@ namespace LuaInterface
             return reference;
         }
 
-        public static int LoadDynamicType(IntPtr L, Type type)
+        public static int LoadPreloadType(IntPtr L, Type type)
         {
             var LuaOpenLib = LuaStatic.GetPreloadModule(L, type);
             var reference = -1;
@@ -2912,7 +2912,7 @@ namespace LuaInterface
 
             var reference = LuaStatic.GetMetaReference(L, type);
             if (reference <= 0)
-                reference = LoadDynamicType(L, type);
+                reference = LoadPreloadType(L, type);
 
             PushUserData(L, o, reference);
         }
@@ -2951,7 +2951,7 @@ namespace LuaInterface
             {
                 int reference = TypeTraits<T>.GetLuaReference(L);
                 if (reference <= 0)
-                    reference = LoadDynamicType(L, o.GetType());
+                    reference = LoadPreloadType(L, o.GetType());
 
                 ToLua.PushUserData(L, o, reference);
             }
