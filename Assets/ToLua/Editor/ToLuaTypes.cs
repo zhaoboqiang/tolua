@@ -78,7 +78,7 @@ namespace LuaInterface.Editor
         {
             if (t.IsGenericType)
             {
-                return GetGenericNameSpace(t);
+                return GetGenericNamespace(t);
             }
             else
             {
@@ -120,7 +120,7 @@ namespace LuaInterface.Editor
             }
         }
 
-        static string GetGenericNameSpace(Type t)
+        static string GetGenericNamespace(Type t)
         {
             var gArgs = t.GetGenericArguments();
             string typeName = t.FullName;
@@ -256,7 +256,5 @@ namespace LuaInterface.Editor
             str = str.Replace('.', '_');
             return str.Replace(',', '_');
         }
-
-
     }
 }
