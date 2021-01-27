@@ -149,7 +149,7 @@ public static class ToLuaMenu
         export.isStaticClass = bindType.IsStatic;
         export.baseType = bindType.baseType;
         export.wrapClassName = bindType.wrapName;
-        export.libClassName = ToLuaTypes.GetNormalizedFullName(bindType.type);
+        export.libClassName = ToLuaTypes.GetNormalizedName(bindType.type);
         export.Generate(wrapperSaveDir);
     }
 

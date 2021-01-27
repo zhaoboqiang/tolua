@@ -239,9 +239,9 @@ namespace LuaInterface.Editor
             return Combine(ns, name);
         }
 
-        public static string GetNormalizedFullName(Type type)
+        public static string GetNormalizedName(Type type)
         {
-            return NormalizeName(GetFullName(type));
+            return NormalizeName(GetName(type));
         }
 
         public static string NormalizeName(string str)
