@@ -6,7 +6,7 @@ namespace LuaInterface.Editor
     {
         public static string GetTypeName(MemberInfo memberInfo)
         {
-            return ToLuaTypes.GetName(memberInfo.ReflectedType);
+            return ToLuaTypes.GetFullName(memberInfo.ReflectedType);
         }
 
         public static string GetName(MemberInfo memberInfo)

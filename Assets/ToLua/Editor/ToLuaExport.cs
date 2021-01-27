@@ -2894,7 +2894,7 @@ public class ToLuaExport
 
     public static string GetBaseTypeStr(Type t)
     {
-        return t.IsGenericType ? LuaMisc.GetTypeName(t) : ToLuaTypes.GetName(t);
+        return t.IsGenericType ? LuaMisc.GetTypeName(t) : ToLuaTypes.GetFullName(t);
     }
 
     //获取类型名字

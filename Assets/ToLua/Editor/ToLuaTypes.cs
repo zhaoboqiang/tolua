@@ -241,7 +241,7 @@ namespace LuaInterface.Editor
 
         public static string GetNormalizedName(Type type)
         {
-            return NormalizeName(GetName(type));
+            return NormalizeName(GetTypeName(type));
         }
 
         public static string NormalizeName(string str)
