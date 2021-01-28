@@ -84,6 +84,9 @@ namespace LuaInterface.Editor
             foreach (var type in ToLuaSettingsUtility.Types)
                 AddNewSetting(newSettings, type);
 
+            foreach (var type in ToLuaSettingsUtility.DelegateTypes)
+                AddNewSetting(newSettings, type);
+
             UpdateCsv(newSettings);
         }
     }
