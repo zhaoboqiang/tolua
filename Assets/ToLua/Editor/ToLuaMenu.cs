@@ -386,6 +386,10 @@ public static class ToLuaMenu
 
         GenerateUsingRegisters(sb, 1, BindTypes);
 
+        sb.AppendLineEx();
+
+        GenerateDelegateRegisters(sb, 1, delegateTypes.ToArray());
+
         GenerateDelegateWraps(sb, delegateTypes);
 
         sb.AppendLineEx("}");
@@ -408,7 +412,7 @@ public static class ToLuaMenu
     {
         var indent = ToLuaFormat.GetIndent(indentLevel);
 
-        sb.AppendLineEx($"{indent}public static Dictionary<string, LuaBinderRuntime.Item> Binders = new Dictionary<string, LuaBinderRuntime.Item>()");
+        sb.AppendLineEx($"{indent}public static Dictionary<string, LuaBinderRuntime.Type> TypeBinders = new Dictionary<string, LuaBinderRuntime.Type>()");
         sb.AppendLineEx($"{indent}{{");
 
         var itemIndent = ToLuaFormat.GetIndent(indentLevel + 1);
@@ -423,7 +427,39 @@ public static class ToLuaMenu
 
             ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
 
-            sb.AppendLineEx($"{itemIndent}{{ \"{bindType.name}\", new LuaBinderRuntime.Item {{ UsingCount = 0, Binder = {bindType.wrapName}Wrap.Register }} }},");
+            sb.AppendLineEx($"{itemIndent}{{ \"{bindType.name}\", new LuaBinderRuntime.Type {{ UsingCount = 0, Binder = {bindType.wrapName}Wrap.Register }} }},");
+
+            ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
+        }
+
+        sb.AppendLineEx($"{indent}}};");
+    }
+
+    static void GenerateDelegateRegisters(StringBuilder sb, int indentLevel, Type[] delegateTypes)
+    {
+        var indent = ToLuaFormat.GetIndent(indentLevel);
+
+        sb.AppendLineEx($"{indent}public static Dictionary<string, LuaBinderRuntime.Function> FunctionBinders = new Dictionary<string, LuaBinderRuntime.Function>()");
+        sb.AppendLineEx($"{indent}{{");
+
+        var itemIndent = ToLuaFormat.GetIndent(indentLevel + 1);
+
+        foreach (var type in delegateTypes)
+        {
+            var platformFlags = ReflectTypes.GetPlatformFlags(type);
+            if (platformFlags == ToLuaPlatformFlags.None)
+                continue;
+
+            var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+            ToLuaPlatformUtility.BeginPlatformMacro(sb, platformFlagsText);
+
+            var ns = ToLuaTypes.GetNamespace(type);
+            var typeName = ToLuaTypes.GetTypeName(type);
+            var name = ToLuaTypes.Combine(ns, typeName);
+            var functionName = ToLuaTypes.NormalizeName(ToLuaExport.GetTypeStr(type));
+
+            sb.AppendLineEx($"{itemIndent}{{ \"{name}\", new LuaBinderRuntime.Function {{ UsingCount = 0, Binder = {functionName} }} }},");
 
             ToLuaPlatformUtility.EndPlatformMacro(sb, platformFlagsText);
         }
@@ -547,6 +583,10 @@ public static class ToLuaMenu
         sb.AppendLineEx("{");
 
         GenerateUsingRegisters(sb, 1, new BindType[] {});
+
+        sb.AppendLineEx();
+
+        GenerateDelegateRegisters(sb, 1, new Type[] {});
 
         sb.AppendLineEx("}");
 

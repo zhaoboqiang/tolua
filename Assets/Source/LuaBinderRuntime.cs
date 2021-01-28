@@ -1,14 +1,21 @@
+using System;
 using LuaInterface;
 using UnityEngine;
 
 public static class LuaBinderRuntime
 {
-	public delegate void Binder(LuaState L);
+	public delegate void TypeBinder(LuaState L);
 
-	public struct Item
+	public struct Type
 	{
-		public int UsingCount; 
-		public Binder Binder;
+		public int UsingCount;
+		public TypeBinder Binder;
+	};
+
+	public struct Function
+	{
+		public int UsingCount;
+		public LuaCSFunction Binder;
 	};
 
 	public static void Register(LuaState L)
