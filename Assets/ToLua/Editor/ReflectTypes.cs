@@ -15,7 +15,7 @@ namespace LuaInterface.Editor
             {
                 if (typeSettings == null)
                 {
-                    var types = LuaSettingsUtility.LoadCsv<LuaTypeSetting>(ToLuaSettingsUtility.Settings.TypeCsv);
+                    var types = LuaSettingsUtility.LoadCsv<LuaTypeSetting>(ToLuaSettingsUtility.Settings.TypeCsv, ':');
                     if (types == null)
                         typeSettings = new Dictionary<string, LuaTypeSetting>();
                     else
@@ -120,10 +120,10 @@ namespace LuaInterface.Editor
             resultTypes.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
 
             // Save configurations
-            var lines = new List<string> { "FullName,Note,Android,iOS,Editor" };
+            var lines = new List<string> { "FullName:Note:Android:iOS:Editor" };
             lines.AddRange(from type in resultTypes
                            where !type.Android || !type.iOS || !type.Editor || oldTypes.ContainsKey(type.FullName)
-                           select $"{type.FullName},{type.Note},{type.Android},{type.iOS},{type.Editor}");
+                           select $"{type.FullName}:{type.Note}:{type.Android}:{type.iOS}:{type.Editor}");
             ReflectUtility.SaveCsv(lines, ToLuaSettingsUtility.Settings.TypeCsv);
         }
 
