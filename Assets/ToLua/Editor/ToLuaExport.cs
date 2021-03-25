@@ -2861,8 +2861,6 @@ public class ToLuaExport
             {
                 Push(methodBases, method);
             }
-
-            Debug.Log($"GenOverrideFunc {curName} {curName == name} {IsGenericMethod(method.Method)}");
         }
 
         if (methodBases.Count == 1)
