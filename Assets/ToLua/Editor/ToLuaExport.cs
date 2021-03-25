@@ -1323,6 +1323,22 @@ public class ToLuaExport
         }
     }
 
+    static string StripNamespace(string fullName)
+    {
+        var path = fullName;
+        var delimiterIndex = path.IndexOf('<'); // handle this condition: ns0.ns1.ns2.t<ns3.t>
+        if (delimiterIndex > 0)
+            path = path.Substring(0, delimiterIndex); // strip template <>
+
+        var names = path.Split('.');
+        var name = names[names.Length - 1];
+
+        if (delimiterIndex > 0)
+            name += fullName.Substring(delimiterIndex);
+        
+        return name;
+    }
+
     bool BeginRegisterClass()
     {
         sb.AppendLineEx("\tpublic static void Register(LuaState L)");
@@ -1347,11 +1363,11 @@ public class ToLuaExport
         {
             if (baseType == null)
             {
-                sb.AppendLineEx($"\t\tL.BeginClass(typeof({className}), null, \"{libClassName}\");");
+                sb.AppendLineEx($"\t\tL.BeginClass(typeof({className}), null, \"{StripNamespace(className)}\");");
             }
             else
             {
-                sb.AppendLineEx($"\t\tL.BeginClass(typeof({className}), typeof({GetBaseTypeStr(baseType)}), \"{libClassName}\");");
+                sb.AppendLineEx($"\t\tL.BeginClass(typeof({className}), typeof({GetBaseTypeStr(baseType)}), \"{StripNamespace(className)}\");");
             }
         }
 
@@ -2838,12 +2854,15 @@ public class ToLuaExport
 
         for (int i = 0; i < methods.Count; i++)
         {
-            string curName = GetMethodName(methods[i].Method);
+            var method = methods[i];
 
-            if (curName == name && !IsGenericMethod(methods[i].Method))
+            string curName = GetMethodName(method.Method);
+            if (curName == name && !IsGenericMethod(method.Method))
             {
-                Push(methodBases, methods[i]);
+                Push(methodBases, method);
             }
+
+            Debug.Log($"GenOverrideFunc {curName} {curName == name} {IsGenericMethod(method.Method)}");
         }
 
         if (methodBases.Count == 1)
@@ -3174,7 +3193,7 @@ public class ToLuaExport
         BeginTry();
 
         if (!isStatic)
-            sb.AppendLineEx($"\t\t\t{className} obj = ({className})ToLua.CheckObject(L, 1, typeof({className}));");
+            sb.AppendLineEx($"\t\t\tvar obj = ({className})ToLua.CheckObject(L, 1, typeof({className}));");
 
         string strVarType = GetTypeStr(varType);
         string objStr = isStatic ? className : "obj";
