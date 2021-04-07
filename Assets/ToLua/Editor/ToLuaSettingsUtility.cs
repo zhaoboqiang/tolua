@@ -75,7 +75,7 @@ namespace LuaInterface.Editor
 
                 AddBaseTypes(types);
 
-                return types.ToArray();
+                return types.Distinct().OrderBy(t => t.Namespace).ThenBy(t => t.Name).ToArray();
             }
         }
 

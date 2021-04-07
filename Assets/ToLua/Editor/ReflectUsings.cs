@@ -32,6 +32,9 @@ namespace LuaInterface.Editor
 
         private static void UpdateCsv(List<LuaUsingSetting> newSettings)
         {
+            newSettings.Sort((lhs, rhs) => lhs.FullName.CompareTo(rhs.FullName));
+            newSettings = newSettings.Distinct().ToList();
+
             // Load previous configurations
             var oldSettings = Settings;
 
