@@ -130,6 +130,7 @@ public static class ToLuaMenu
     {
         ReflectAssemblies.Reset();
         ReflectFields.Reset();
+        ReflectMethods.Reset();
         ReflectNamespaces.Reset();
         ReflectProperties.Reset();
         ReflectTypes.Reset();
@@ -199,7 +200,7 @@ public static class ToLuaMenu
 
         GenerateClassWraps(new Type[] {
             // ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition")
-            typeof(UnityEngine.CanvasRenderer)
+            typeof(System.Collections.Generic.Dictionary<string, string>)
         });
     }
 

@@ -1,0 +1,2 @@
+MethodSignature:Android:iOS:Editor
+System.Collections.Generic.Dictionary<string,string>.Remove(string,out string&):False:False:False

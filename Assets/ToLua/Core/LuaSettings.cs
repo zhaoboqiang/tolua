@@ -47,6 +47,15 @@ public struct LuaFieldSetting
 }
 
 [Serializable]
+public struct LuaMethodSetting
+{
+    public string MethodSignature;
+    public bool Android;
+    public bool iOS;
+    public bool Editor;
+}
+
+[Serializable]
 public struct LuaPropertySetting
 {
     public string FieldFullName;

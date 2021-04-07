@@ -2747,8 +2747,23 @@ public class ToLuaExport
         list.Add(r);
     }
 
+    ToLuaPlatformFlags GetOverrideMethodPlatformFlags(_MethodBase methodBase)
+    {
+        var platformFlags = ToLuaPlatformFlags.All;
+
+        platformFlags &= ReflectFields.GetPlatformFlags(methodBase.FullName);
+        platformFlags &= ReflectMethods.GetPlatformFlags(methodBase.Method as MethodInfo);
+
+        return platformFlags;
+    }
+
     void GenOverrideFuncBody(_MethodBase md, bool beIf, int checkTypeOffset)
     {
+        var platformFlags = GetOverrideMethodPlatformFlags(md);
+        var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+        BeginPlatformMacro(platformFlagsText);
+
         int offset = md.IsStatic ? 0 : 1;
         int ret = md.GetReturnType() == typeof(void) ? 0 : 1;
         string strIf = beIf ? "if " : "else if ";
@@ -2792,6 +2807,8 @@ public class ToLuaExport
         int count = md.ProcessParams(this, 4, false, checkTypeOffset);
         sb.AppendLineEx($"\t\t\t\treturn {ret + count};");
         sb.AppendLineEx("\t\t\t}");
+
+        EndPlatformMacro(platformFlagsText);
     }
 
     int[] CheckCheckTypePos<T>(List<T> list) where T : _MethodBase
@@ -2848,6 +2865,19 @@ public class ToLuaExport
         return map;
     }
 
+    ToLuaPlatformFlags GetOverrideMethodsPlatformFlags(List<_MethodBase> methodBases)
+    {
+        var platformFlags = ToLuaPlatformFlags.All;
+
+        foreach (var methodBase in methodBases)
+        {
+            platformFlags &= ReflectFields.GetPlatformFlags(methodBase.FullName);
+            platformFlags &= ReflectMethods.GetPlatformFlags(methodBase.Method as MethodInfo);
+        }
+ 
+        return platformFlags;
+    }
+
     _MethodBase GenOverrideFunc(string name)
     {
         var methodBases = new List<_MethodBase>();
@@ -2868,17 +2898,17 @@ public class ToLuaExport
         else if (methodBases.Count == 0)
             return null;
 
-        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(methodBases[0].FullName);
-        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+        var platformFlags = GetOverrideMethodsPlatformFlags(methodBases);
+        if (platformFlags == ToLuaPlatformFlags.None)
             return null;
 
         methodBases.Sort(Compare);
 
         var checkTypeMap = CheckCheckTypePos(methodBases);
 
-        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+        var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
 
-        BeginPlatformMacro(fieldPlatformFlagsText);
+        BeginPlatformMacro(platformFlagsText);
 
         sb.AppendLineEx();
         sb.AppendLineEx("\t[MonoPInvokeCallback(typeof(LuaCSFunction))]");
@@ -2904,7 +2934,7 @@ public class ToLuaExport
         EndTry();
         sb.AppendLineEx("\t}");
 
-        EndPlatformMacro(fieldPlatformFlagsText);
+        EndPlatformMacro(platformFlagsText);
 
         return null;
     }

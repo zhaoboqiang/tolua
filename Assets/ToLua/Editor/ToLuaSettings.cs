@@ -14,6 +14,7 @@ namespace LuaInterface
         string NamespaceCsv { get; } 
         string TypeCsv { get; } 
         string FieldCsv { get; } 
+        string MethodCsv { get; } 
         string PropertyCsv { get; } 
         string UsingCsv { get; }
 
