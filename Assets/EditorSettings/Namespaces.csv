@@ -84,7 +84,7 @@ Packages.Rider.Editor.PostProcessors,False,False,False
 Packages.Rider.Editor.UnitTesting,False,False,False
 Packages.Rider.Editor.Util,False,False,False
 SaveDuringPlay,False,False,False
-System,True,True,True
+System,False,False,False
 System.Buffers,False,False,False
 System.Buffers.Binary,False,False,False
 System.CodeDom,False,False,False

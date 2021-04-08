@@ -204,8 +204,8 @@ public static class ToLuaMenu
 
         GenerateClassWraps(new Type[] {
             // ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition")
-            typeof(System.Collections.Generic.Dictionary<string, string>)
-            // typeof(LuaInterface.EventObject)
+            // typeof(System.Collections.Generic.Dictionary<string, string>)
+            typeof(LuaInterface.EventObject)
         });
     }
 

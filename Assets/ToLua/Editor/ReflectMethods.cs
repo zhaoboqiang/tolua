@@ -2,11 +2,14 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System;
 
 namespace LuaInterface.Editor
 {
     public static class ReflectMethods
     {
+        static readonly NLog.Logger log = NLog.LoggerFactory.GetLogger(typeof(ToLuaTypes).Name);
+
         private static Dictionary<string, LuaMethodSetting> methodSettings;
         public static Dictionary<string, LuaMethodSetting> MethodSettings
         {
@@ -31,7 +34,7 @@ namespace LuaInterface.Editor
 
         private static string GetParameterText(ParameterInfo parameterInfo)
         {
-            var parameterText = parameterInfo.ParameterType.ToString();
+            var parameterText = ToLuaTypes.GetFullName(parameterInfo.ParameterType);
 
             if ((parameterInfo.Attributes & ParameterAttributes.In) != ParameterAttributes.None)
                 return "in " + parameterText;
@@ -45,7 +48,11 @@ namespace LuaInterface.Editor
         private static string GetMethodSignature(MethodInfo methodInfo)
         {
             var signature = new StringBuilder();
-            signature.Append($"{methodInfo.ReflectedType.FullName}.{methodInfo.Name}(");
+
+            var fullName = ToLuaTypes.GetFullName(methodInfo.ReflectedType);
+
+            signature.Append($"{fullName}.{methodInfo.Name}(");
+
             var parameterTexts = new List<string>();
             foreach (var parameter in methodInfo.GetParameters())
             {
@@ -68,6 +75,7 @@ namespace LuaInterface.Editor
             if (MethodSettings.TryGetValue(signature, out var value))
                 flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
 
+            /*
             // return
             var returnType = methodInfo.ReturnType;
             flags &= ReflectTypes.GetPlatformFlags(returnType);
@@ -75,19 +83,38 @@ namespace LuaInterface.Editor
             // parameters
             foreach (var parameter in methodInfo.GetParameters())
                 flags &= ReflectTypes.GetPlatformFlags(parameter.GetType());
-
+            */
             return flags;
         }
  
         public static bool Included(MethodInfo methodInfo)
         {
-            if (ToLuaTypes.IsUnsupported(methodInfo))
-                return false; 
- 
-            if (GetPlatformFlags(methodInfo) == ToLuaPlatformFlags.None)
-                return false;
+            try
+            {
+                if (ToLuaTypes.IsUnsupported(methodInfo))
+                    return false; 
+    
+                var flags = ToLuaPlatformFlags.All;
+                if (methodInfo == null)
+                    return false;
 
-            return true;
+                var signature = GetMethodSignature(methodInfo);
+                if (MethodSettings.TryGetValue(signature, out var value))
+                {
+                    flags = ToLuaPlatformUtility.From(value.Android, value.iOS, value.Editor);
+                    if (flags == ToLuaPlatformFlags.None)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                log.Error($"{methodInfo.Name} {exception.Message}");
+                return true;
+            }
         }
     }
 }

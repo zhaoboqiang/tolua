@@ -2865,17 +2865,20 @@ public class ToLuaExport
         return map;
     }
 
-    ToLuaPlatformFlags GetOverrideMethodsPlatformFlags(List<_MethodBase> methodBases)
+    bool HasOverrideMethods(List<_MethodBase> methodBases)
     {
-        var platformFlags = ToLuaPlatformFlags.All;
-
         foreach (var methodBase in methodBases)
         {
+            var platformFlags = ToLuaPlatformFlags.All;
             platformFlags &= ReflectFields.GetPlatformFlags(methodBase.FullName);
             platformFlags &= ReflectMethods.GetPlatformFlags(methodBase.Method as MethodInfo);
+            if (platformFlags != ToLuaPlatformFlags.None)
+            {
+                return true;
+            }
         }
  
-        return platformFlags;
+        return false;
     }
 
     _MethodBase GenOverrideFunc(string name)
@@ -2898,8 +2901,7 @@ public class ToLuaExport
         else if (methodBases.Count == 0)
             return null;
 
-        var platformFlags = GetOverrideMethodsPlatformFlags(methodBases);
-        if (platformFlags == ToLuaPlatformFlags.None)
+        if (!HasOverrideMethods(methodBases))
             return null;
 
         methodBases.Sort(Compare);
