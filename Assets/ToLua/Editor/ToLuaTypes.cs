@@ -6,6 +6,8 @@ namespace LuaInterface.Editor
 {
     public static class ToLuaTypes
     {
+        static readonly NLog.Logger log = NLog.LoggerFactory.GetLogger(typeof(ToLuaTypes).Name);
+
         public static string GetName(Type type)
         {
             return type.FullName.Replace("+", ".");
@@ -77,47 +79,42 @@ namespace LuaInterface.Editor
         public static string GetNamespace(Type t)
         {
             if (t.IsGenericType)
-            {
                 return GetGenericNamespace(t);
-            }
-            else
-            {
-                var space = t.FullName;
 
-                if (space.Contains("+"))
-                {
-                    space = space.Replace('+', '.');
-                    int index = space.LastIndexOf('.');
-                    return space.Substring(0, index);
-                }
-                else
-                {
-                    return t.Namespace;
-                }
+            var space = t.FullName;
+            if (space == null)
+                return t.Namespace;
+
+            if (space.Contains("+"))
+            {
+                space = space.Replace('+', '.');
+                int index = space.LastIndexOf('.');
+                return space.Substring(0, index);
             }
+
+            return t.Namespace;
         }
 
         public static string GetTypeName(Type t)
         {
             if (t.IsGenericType)
-            {
                 return GetGenericTypeName(t);
-            }
-            else
-            {
-                var space = t.FullName;
 
-                if (space.Contains("+"))
-                {
-                    space = space.Replace('+', '.');
-                    int index = space.LastIndexOf('.');
-                    return space.Substring(index + 1);
-                }
-                else
-                {
-                    return t.Namespace == null ? space : space.Substring(t.Namespace.Length + 1);
-                }
+            var space = t.FullName;
+            if (space == null)
+                return t.Name;
+
+            if (space.Contains("+"))
+            {
+                space = space.Replace('+', '.');
+                int index = space.LastIndexOf('.');
+                return space.Substring(index + 1);
             }
+
+            if (t.Namespace == null)
+                return space;
+                
+            return space.Substring(t.Namespace.Length + 1);
         }
 
         static string GetGenericNamespace(Type t)
@@ -234,9 +231,75 @@ namespace LuaInterface.Editor
 
         public static string GetFullName(Type type)
         {
-            var ns = GetNamespace(type);
+            if (type == typeof(void))
+                return "void";
+
             var name = GetTypeName(type);
-            return Combine(ns, name);
+            var ns = GetNamespace(type);
+            var fullName = Combine(ns, name);
+ 
+            if (fullName == "System.Single")
+                return "float";
+            if (fullName == "System.String")
+                return "string";
+            if (fullName == "System.Int32")
+                return "int";
+            if (fullName == "System.Double")
+                return "double";
+            if (fullName == "System.Boolean")
+                return "bool";
+            if (fullName == "System.UInt32")
+                return "uint";
+            if (fullName == "System.SByte")
+                return "sbyte";
+            if (fullName == "System.Byte")
+                return "byte";
+            if (fullName == "System.Int16")
+                return "short";
+            if (fullName == "System.UInt16")
+                return "ushort";
+            if (fullName == "System.Char")
+                return "char";
+            if (fullName == "System.Int64")
+                return "long";
+            if (fullName == "System.UInt64")
+                return "ulong";
+            if (fullName == "System.Decimal")
+                return "decimal";
+            if (fullName == "System.Object")
+                return "object";
+             if (fullName == "System.Single&")
+                return "float&";
+            if (fullName == "System.String&")
+                return "string&";
+            if (fullName == "System.Int32&")
+                return "int&";
+            if (fullName == "System.Double&")
+                return "double&";
+            if (fullName == "System.Boolean&")
+                return "bool&";
+            if (fullName == "System.UInt32&")
+                return "uint&";
+            if (fullName == "System.SByte&")
+                return "sbyte&";
+            if (fullName == "System.Byte&")
+                return "byte&";
+            if (fullName == "System.Int16&")
+                return "short&";
+            if (fullName == "System.UInt16&")
+                return "ushort&";
+            if (fullName == "System.Char&")
+                return "char&";
+            if (fullName == "System.Int64&")
+                return "long&";
+            if (fullName == "System.UInt64&")
+                return "ulong&";
+            if (fullName == "System.Decimal&")
+                return "decimal&";
+            if (fullName == "System.Object&")
+                return "object&";
+ 
+            return fullName;
         }
 
         public static string GetNormalizedName(Type type)

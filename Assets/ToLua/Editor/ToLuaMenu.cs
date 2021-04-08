@@ -176,7 +176,11 @@ public static class ToLuaMenu
 
         ToLuaExport.allTypes = types;
 
+        LuaInterface.Editor.Logger.Initialize();
+
         Parallel.ForEach(BindTypes, bindType => GenerateClassWrap(bindType));
+
+        LuaInterface.Editor.Logger.Terminate();
 
         Debug.Log("Generate lua binding files over");
         AssetDatabase.Refresh();
@@ -201,6 +205,7 @@ public static class ToLuaMenu
         GenerateClassWraps(new Type[] {
             // ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition")
             typeof(System.Collections.Generic.Dictionary<string, string>)
+            // typeof(LuaInterface.EventObject)
         });
     }
 
