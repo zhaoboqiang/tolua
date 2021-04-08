@@ -1,0 +1,6 @@
+﻿{
+	"name": "NLog.Unity",
+	"references": [
+		"NLog"
+	]
+}
