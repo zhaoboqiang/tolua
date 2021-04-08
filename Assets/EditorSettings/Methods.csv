@@ -1,2 +1,3 @@
 MethodSignature:Android:iOS:Editor
 System.Collections.Generic.Dictionary<string,string>.Remove(string,out string&):False:False:False
+System.Collections.Generic.Dictionary<string,string>.TryAdd(string,string):False:False:False
