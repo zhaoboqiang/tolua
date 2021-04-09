@@ -266,9 +266,11 @@ namespace LuaInterface.Editor
                 return "ulong";
             if (fullName == "System.Decimal")
                 return "decimal";
+            /*
             if (fullName == "System.Object")
                 return "object";
-             if (fullName == "System.Single&")
+            */
+            if (fullName == "System.Single&")
                 return "float&";
             if (fullName == "System.String&")
                 return "string&";
@@ -296,8 +298,10 @@ namespace LuaInterface.Editor
                 return "ulong&";
             if (fullName == "System.Decimal&")
                 return "decimal&";
+            /*
             if (fullName == "System.Object&")
                 return "object&";
+            */
  
             return fullName;
         }
