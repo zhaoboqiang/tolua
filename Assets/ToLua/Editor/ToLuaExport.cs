@@ -1205,7 +1205,7 @@ public class ToLuaExport
     {
         var memberPlatformFlagsText = string.Empty;
         if (memberPlatformFlags != platformFlags) 
-            memberPlatformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+            memberPlatformFlagsText = ToLuaPlatformUtility.GetText(memberPlatformFlags);
 
         var preprocessConditionsText = FieldPreprocessConditions.Lookup(memberInfo);
         
@@ -1318,7 +1318,7 @@ public class ToLuaExport
             if (fieldPlatformFlags == ToLuaPlatformFlags.None)
                 continue;
 
-            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+            var fieldPlatformFlagsText = GetMemberPreprocessorConditions(fieldPlatformFlags, t);
 
             BeginPreprocessor(fieldPlatformFlagsText);
 
@@ -3191,7 +3191,7 @@ public class ToLuaExport
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
 
-        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+        var fieldPlatformFlagsText = GetMemberPreprocessorConditions(fieldPlatformFlags, memberInfo);
 
         BeginPreprocessor(fieldPlatformFlagsText);
 
@@ -3240,7 +3240,7 @@ public class ToLuaExport
         if (fieldPlatformFlags == ToLuaPlatformFlags.None)
             return;
 
-        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+        var fieldPlatformFlagsText = GetMemberPreprocessorConditions(fieldPlatformFlags, memberInfo);
 
         BeginPreprocessor(fieldPlatformFlagsText);
 
