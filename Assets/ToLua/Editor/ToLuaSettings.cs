@@ -15,9 +15,11 @@ namespace LuaInterface
         string TypeCsv { get; } 
         string FieldCsv { get; } 
         string MethodCsv { get; } 
-        string MethodPreprocessConditionCsv { get; } 
         string PropertyCsv { get; } 
         string UsingCsv { get; }
+
+        string FieldPreprocessConditionCsv { get; } 
+        string MethodPreprocessConditionCsv { get; } 
 
         Type[] DelegateTypes { get; }
     }

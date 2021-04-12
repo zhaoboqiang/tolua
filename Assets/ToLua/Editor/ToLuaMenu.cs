@@ -136,6 +136,7 @@ public static class ToLuaMenu
         ReflectTypes.Reset();
         ReflectUsings.Reset();
 
+        FieldPreprocessConditions.Reset();
         MethodPreprocessConditions.Reset();
     }
 

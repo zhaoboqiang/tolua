@@ -8,8 +8,6 @@ namespace LuaInterface.Editor
 {
     public static class MethodPreprocessConditions
     {
-        static readonly NLog.Logger log = NLog.LoggerFactory.GetLogger(typeof(MethodPreprocessConditions).Name);
-
         private static Dictionary<string, LuaMethodPreprocessConditionSetting> settings;
         public static Dictionary<string, LuaMethodPreprocessConditionSetting> Settings
         {

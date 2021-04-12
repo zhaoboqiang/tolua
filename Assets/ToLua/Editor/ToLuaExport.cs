@@ -1201,6 +1201,21 @@ public class ToLuaExport
         return propertyFieldSetting.CanWrite && propertyInfo.CanWrite && propertyInfo.GetSetMethod(true).IsPublic;
     }
 
+    string GetMemberPlatformMacro(ToLuaPlatformFlags memberPlatformFlags, MemberInfo memberInfo)
+    {
+        var memberPlatformFlagsText = string.Empty;
+        if (memberPlatformFlags != platformFlags) 
+            memberPlatformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+
+        var preprocessConditionsText = FieldPreprocessConditions.Lookup(memberInfo);
+        
+        if (!string.IsNullOrEmpty(memberPlatformFlagsText) && !string.IsNullOrEmpty(preprocessConditionsText))
+            return $"{memberPlatformFlagsText} || {preprocessConditionsText}";
+        if (!string.IsNullOrEmpty(memberPlatformFlagsText))
+            return memberPlatformFlagsText;
+        return preprocessConditionsText;
+    }
+
     void RegisterProperties()
     {
         foreach (var field in fields)
@@ -1415,9 +1430,9 @@ public class ToLuaExport
 
         var preprocessConditions = MethodPreprocessConditions.Lookup(methodBase.Method as MethodInfo);
 
-        if (methodPlatformFlagsText != string.Empty && preprocessConditions != string.Empty)
+        if (!string.IsNullOrEmpty(methodPlatformFlagsText) && !string.IsNullOrEmpty(preprocessConditions))
             return $"{methodPlatformFlagsText} || {preprocessConditions}";
-        else if (methodPlatformFlagsText != string.Empty)
+        if (!string.IsNullOrEmpty(methodPlatformFlagsText))
             return methodPlatformFlagsText;
         return preprocessConditions;
     }
