@@ -1113,17 +1113,17 @@ public class ToLuaExport
             if (IsGenericMethod(m.Method))
                 continue;
 
-            var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
-            if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+            var methodPlatformFlags = GetMethodPlatformFlags(m);
+            if (methodPlatformFlags == ToLuaPlatformFlags.None)
                 continue;
 
-            var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+            var methodPlatformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags);
 
-            string name = GetMethodName(m.Method);
+            var name = GetMethodName(m.Method);
 
             if (!nameCounter.TryGetValue(name, out count))
             {
-                RegisterMethod(m.Method, name, fieldPlatformFlagsText);
+                RegisterMethod(m.Method, name, methodPlatformFlagsText);
 
                 nameCounter[name] = 1;
             }
@@ -1132,7 +1132,6 @@ public class ToLuaExport
                 nameCounter[name] = count + 1;
             }
         }
-
     }
 
     void RegisterConstructor()
@@ -1335,7 +1334,7 @@ public class ToLuaExport
 
         if (delimiterIndex > 0)
             name += fullName.Substring(delimiterIndex);
-        
+
         return name;
     }
 
@@ -1408,15 +1407,22 @@ public class ToLuaExport
         return param.GetCustomAttributes(typeof(ParamArrayAttribute), false).Length > 0;
     }
 
+    string GetMethodPlatformFlagsText(ToLuaPlatformFlags methodPlatformFlags)
+    {
+        if (methodPlatformFlags == platformFlags)
+            return string.Empty;
+        return ToLuaPlatformUtility.GetText(methodPlatformFlags);
+    }
+
     void GenFunction(_MethodBase m)
     {
-        var fieldPlatformFlags = ReflectFields.GetPlatformFlags(m.FullName);
-        if (fieldPlatformFlags == ToLuaPlatformFlags.None)
+        var methodPlatformFlags = GetMethodPlatformFlags(m);
+        if (methodPlatformFlags == ToLuaPlatformFlags.None)
             return;
 
-        var fieldPlatformFlagsText = ToLuaPlatformUtility.GetText(fieldPlatformFlags);
+        var methodPlatformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags);
 
-        BeginPlatformMacro(fieldPlatformFlagsText);
+        BeginPlatformMacro(methodPlatformFlagsText);
 
         var name = GetMethodName(m.Method);
 
@@ -1450,7 +1456,7 @@ public class ToLuaExport
 
         sb.AppendLineEx("\t}");
 
-        EndPlatformMacro(fieldPlatformFlagsText);
+        EndPlatformMacro(methodPlatformFlagsText);
     }
 
     //没有未知类型的模版类型List<int> 返回false, List<T>返回true
@@ -2747,7 +2753,7 @@ public class ToLuaExport
         list.Add(r);
     }
 
-    ToLuaPlatformFlags GetOverrideMethodPlatformFlags(_MethodBase methodBase)
+    ToLuaPlatformFlags GetMethodPlatformFlags(_MethodBase methodBase)
     {
         var platformFlags = ToLuaPlatformFlags.All;
 
@@ -2759,8 +2765,8 @@ public class ToLuaExport
 
     void GenOverrideFuncBody(_MethodBase md, bool beIf, int checkTypeOffset)
     {
-        var platformFlags = GetOverrideMethodPlatformFlags(md);
-        var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+        var methodPlatformFlags = GetMethodPlatformFlags(md);
+        var platformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags);
 
         BeginPlatformMacro(platformFlagsText);
 
@@ -2908,7 +2914,8 @@ public class ToLuaExport
 
         var checkTypeMap = CheckCheckTypePos(methodBases);
 
-        var platformFlagsText = ToLuaPlatformUtility.GetText(platformFlags);
+        var methodPlatformFlags = GetMethodPlatformFlags(methodBases[0]);
+        var platformFlagsText = GetMethodPlatformFlagsText(platformFlags);
 
         BeginPlatformMacro(platformFlagsText);
 

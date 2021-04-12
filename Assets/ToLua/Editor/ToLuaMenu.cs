@@ -203,9 +203,10 @@ public static class ToLuaMenu
         Reset();
 
         GenerateClassWraps(new Type[] {
+            ReflectTypes.GetType("UnityEngine.AndroidJNIModule", "UnityEngine.AndroidJNI")
             // ReflectTypes.GetType("System.Configuration", "ConfigurationAllowDefinition")
             // typeof(System.Collections.Generic.Dictionary<string, string>)
-            typeof(LuaInterface.EventObject)
+            //typeof(LuaInterface.EventObject)
         });
     }
 
