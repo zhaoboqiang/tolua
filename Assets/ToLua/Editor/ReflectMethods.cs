@@ -41,7 +41,7 @@ namespace LuaInterface.Editor
 
             if ((parameterInfo.Attributes & ParameterAttributes.Out) != ParameterAttributes.None)
                 return "out " + parameterText;
-            
+
             return parameterText;
         }
 
