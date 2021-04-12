@@ -60,7 +60,7 @@ namespace LuaInterface.Editor
             return text;
         }
 
-        public static void BeginPlatformMacro(StringBuilder sb, string flags)
+        public static void BeginPreprocessor(StringBuilder sb, string flags)
         {
             if (flags != string.Empty)
             {
@@ -68,7 +68,7 @@ namespace LuaInterface.Editor
             }
         }
 
-        public static void EndPlatformMacro(StringBuilder sb, string flags)
+        public static void EndPreprocessor(StringBuilder sb, string flags)
         {
             if (flags != string.Empty)
             {
