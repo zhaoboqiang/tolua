@@ -1117,7 +1117,7 @@ public class ToLuaExport
             if (methodPlatformFlags == ToLuaPlatformFlags.None)
                 continue;
 
-            var methodPlatformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags);
+            var methodPlatformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags, m);
 
             var name = GetMethodName(m.Method);
 
@@ -1407,11 +1407,19 @@ public class ToLuaExport
         return param.GetCustomAttributes(typeof(ParamArrayAttribute), false).Length > 0;
     }
 
-    string GetMethodPlatformFlagsText(ToLuaPlatformFlags methodPlatformFlags)
+    string GetMethodPlatformFlagsText(ToLuaPlatformFlags methodPlatformFlags, _MethodBase methodBase)
     {
-        if (methodPlatformFlags == platformFlags)
-            return string.Empty;
-        return ToLuaPlatformUtility.GetText(methodPlatformFlags);
+        var methodPlatformFlagsText = string.Empty;
+        if (methodPlatformFlags != platformFlags)
+            methodPlatformFlagsText = ToLuaPlatformUtility.GetText(methodPlatformFlags);
+
+        var preprocessConditions = MethodPreprocessConditions.Lookup(methodBase.Method as MethodInfo);
+
+        if (methodPlatformFlagsText != string.Empty && preprocessConditions != string.Empty)
+            return $"{methodPlatformFlagsText} || {preprocessConditions}";
+        else if (methodPlatformFlagsText != string.Empty)
+            return methodPlatformFlagsText;
+        return preprocessConditions;
     }
 
     void GenFunction(_MethodBase m)
@@ -1420,7 +1428,7 @@ public class ToLuaExport
         if (methodPlatformFlags == ToLuaPlatformFlags.None)
             return;
 
-        var methodPlatformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags);
+        var methodPlatformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags, m);
 
         BeginPlatformMacro(methodPlatformFlagsText);
 
@@ -2766,7 +2774,7 @@ public class ToLuaExport
     void GenOverrideFuncBody(_MethodBase md, bool beIf, int checkTypeOffset)
     {
         var methodPlatformFlags = GetMethodPlatformFlags(md);
-        var platformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags);
+        var platformFlagsText = GetMethodPlatformFlagsText(methodPlatformFlags, md);
 
         BeginPlatformMacro(platformFlagsText);
 
@@ -2915,7 +2923,7 @@ public class ToLuaExport
         var checkTypeMap = CheckCheckTypePos(methodBases);
 
         var methodPlatformFlags = GetMethodPlatformFlags(methodBases[0]);
-        var platformFlagsText = GetMethodPlatformFlagsText(platformFlags);
+        var platformFlagsText = GetMethodPlatformFlagsText(platformFlags, methodBases[0]);
 
         BeginPlatformMacro(platformFlagsText);
 

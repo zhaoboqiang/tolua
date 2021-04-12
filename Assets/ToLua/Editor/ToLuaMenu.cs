@@ -135,6 +135,8 @@ public static class ToLuaMenu
         ReflectProperties.Reset();
         ReflectTypes.Reset();
         ReflectUsings.Reset();
+
+        MethodPreprocessConditions.Reset();
     }
 
     private static void GenerateClassWrap(BindType bindType)

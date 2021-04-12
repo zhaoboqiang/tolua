@@ -8,7 +8,7 @@ namespace LuaInterface.Editor
 {
     public static class ReflectMethods
     {
-        static readonly NLog.Logger log = NLog.LoggerFactory.GetLogger(typeof(ToLuaTypes).Name);
+        static readonly NLog.Logger log = NLog.LoggerFactory.GetLogger(typeof(ReflectMethods).Name);
 
         private static Dictionary<string, LuaMethodSetting> methodSettings;
         public static Dictionary<string, LuaMethodSetting> MethodSettings
@@ -45,7 +45,7 @@ namespace LuaInterface.Editor
             return parameterText;
         }
 
-        private static string GetMethodSignature(MethodInfo methodInfo)
+        public static string GetMethodSignature(MethodInfo methodInfo)
         {
             var signature = new StringBuilder();
 

@@ -56,6 +56,13 @@ public struct LuaMethodSetting
 }
 
 [Serializable]
+public struct LuaMethodPreprocessConditionSetting
+{
+    public string MethodSignature;
+    public string PreprocessConditions;
+}
+
+[Serializable]
 public struct LuaPropertySetting
 {
     public string FieldFullName;

@@ -38,6 +38,7 @@ public class CustomToLuaSettings : ToLuaSettings
     public string TypeCsv => GetEditorCsvPath("Types");
     public string FieldCsv => GetEditorCsvPath("Fields");
     public string MethodCsv => GetEditorCsvPath("Methods");
+    public string MethodPreprocessConditionCsv => GetEditorCsvPath("MethodPreprocessConditions");
     public string PropertyCsv => GetEditorCsvPath("Properties");
 
     public string UsingCsv => GetPlayerCsvPath("Usings");
